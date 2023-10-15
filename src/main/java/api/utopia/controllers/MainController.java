@@ -1,9 +1,6 @@
 package api.utopia.controllers;
 
-import api.utopia.entities.FavouriteProduct;
-import api.utopia.entities.Product;
-import api.utopia.entities.PurchasedProduct;
-import api.utopia.entities.User;
+import api.utopia.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -25,6 +22,7 @@ public class MainController {
     private PurchasedProductsController purchasedProducts;
 
     private FavouritesController favouritesController;
+    private VisitedController visitedController;
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
     public MainController(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -179,4 +177,25 @@ public class MainController {
         return favourites;
     }
 
+
+
+    //Controlling visitedProducts
+    @PostMapping("/visited")
+    @ResponseStatus(HttpStatus.CREATED)
+    public boolean add(@RequestBody VisitedProduct visitedProduct) {
+        visitedController.add(visitedProduct);
+        return true;
+    }
+
+    @DeleteMapping("/visited")
+    public boolean remove(@RequestBody VisitedProduct visitedProduct) {
+        visitedController.remove(visitedProduct);
+        return true;
+    }
+
+    @GetMapping("/visited/{userId}")
+    public List<VisitedProduct> getVisitedProducts(@PathVariable("userId") int userId) {
+        List<VisitedProduct> visitedProducts = visitedController.getAll(userId);
+        return visitedProducts;
+    }
 }
