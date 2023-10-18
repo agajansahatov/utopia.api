@@ -76,6 +76,11 @@ public class MainController {
         throw new IllegalArgumentException();
     }
 
+    @GetMapping("/products/{productId}")
+    public Product getProduct(@PathVariable("ProductId") int id) {
+        return products.getProduct(id);
+    }
+
     @PostMapping("/products")
     @ResponseStatus(HttpStatus.CREATED)
     public Product addNewProduct(@ModelAttribute Product newProduct,

@@ -3,6 +3,7 @@ package api.utopia.controllers;
 import api.utopia.entities.Product;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -51,9 +52,26 @@ public class ProductController {
         return null;
     }
 
+
     public List<Product> getProducts() {
-        return products;
+        List<Product> allProducts = new ArrayList<>();
+
+        for (Product product : products) {
+            // Edit the desired properties of each product
+            String description = product.getDescription();
+            if (description.length() > 51) {
+                description = description.substring(0, 51);
+            }
+            product.setDescription(description);
+
+            // Add the modified product to the allProducts list
+            allProducts.add(product);
+        }
+
+        return allProducts;
     }
+
+
 
     public Product getProduct(long id){
         for (Product product: products) {
