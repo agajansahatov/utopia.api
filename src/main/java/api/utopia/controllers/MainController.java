@@ -77,7 +77,7 @@ public class MainController {
     }
 
     @GetMapping("/products/{productId}")
-    public Product getProduct(@PathVariable("ProductId") int id) {
+    public Product getProduct(@PathVariable("productId") long id) {
         return products.getProduct(id);
     }
 
