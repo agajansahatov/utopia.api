@@ -30,6 +30,7 @@ public class MainController {
         this.products = new ProductController(jdbcTemplate);
         this.purchasedProducts = new PurchasedProductsController(jdbcTemplate);
         this.favouritesController = new FavouritesController(jdbcTemplate);
+        this.visitedController = new VisitedController(jdbcTemplate);
     }
 
     private User userResponse(User user){
@@ -177,7 +178,7 @@ public class MainController {
     }
 
     @GetMapping("/favourites/{userId}")
-    public List<FavouriteProduct> getProducts(@PathVariable("userId") int userId) {
+    public List<FavouriteProduct> getFavouriteProducts(@PathVariable("userId") int userId) {
         List<FavouriteProduct> favourites = favouritesController.getAll(userId);
         return favourites;
     }
@@ -188,6 +189,9 @@ public class MainController {
     @PostMapping("/visited")
     @ResponseStatus(HttpStatus.CREATED)
     public boolean add(@RequestBody VisitedProduct visitedProduct) {
+        if(visitedController.isExists(visitedProduct)){
+            visitedController.remove(visitedProduct);
+        }
         visitedController.add(visitedProduct);
         return true;
     }
@@ -199,7 +203,7 @@ public class MainController {
     }
 
     @GetMapping("/visited/{userId}")
-    public List<VisitedProduct> getVisitedProducts(@PathVariable("userId") int userId) {
+    public List<VisitedProduct> getVisitedProducts(@PathVariable("userId") long userId) {
         List<VisitedProduct> visitedProducts = visitedController.getAll(userId);
         return visitedProducts;
     }
