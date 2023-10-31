@@ -43,5 +43,9 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-/public/images/
 /src/main/resources/application.properties
+
+# Ignore the entire directory
+/public/images/products/
+# Unignore the specific file within the directory
+!/public/images/products/p1.jpg

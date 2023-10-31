@@ -16,16 +16,15 @@ import java.util.List;
 @RestController
 @CrossOrigin
 public class MainController {
-    private final JdbcTemplate jdbcTemplate;
-    private UserController users;
-    private ProductController products;
-    private PurchasedProductsController purchasedProducts;
+    private final UserController users;
+    private final ProductController products;
+    private final PurchasedProductsController purchasedProducts;
 
-    private FavouritesController favouritesController;
-    private VisitedController visitedController;
+    private final FavouritesController favouritesController;
+    private final VisitedController visitedController;
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
     public MainController(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         this.users = new UserController(jdbcTemplate);
         this.products = new ProductController(jdbcTemplate);
         this.purchasedProducts = new PurchasedProductsController(jdbcTemplate);
@@ -71,7 +70,7 @@ public class MainController {
     @GetMapping("/products")
     public List<Product> getProducts() {
         List<Product> productList = products.getProducts();
-        if(productList.size() > 0) {
+        if(!productList.isEmpty()) {
             return productList;
         }
         throw new IllegalArgumentException();
@@ -111,7 +110,7 @@ public class MainController {
     @PostMapping("/products/purchased/all")
     public List<PurchasedProduct> getUserPurchasedProducts(@RequestBody User user) {
         List<PurchasedProduct> p = purchasedProducts.getProducts(user.getId());
-        if(p.size() > 0 ) {
+        if(!p.isEmpty()) {
             return p;
         }
         return null;
@@ -122,7 +121,7 @@ public class MainController {
     @ResponseStatus(HttpStatus.CREATED)
     public boolean addNewPurchasedProducts(@RequestBody List<PurchasedProduct> pProducts) {
 
-        if (pProducts.size() < 1){
+        if (pProducts.isEmpty()){
             return false;
         }
 
@@ -179,8 +178,7 @@ public class MainController {
 
     @GetMapping("/favourites/{userId}")
     public List<FavouriteProduct> getFavouriteProducts(@PathVariable("userId") int userId) {
-        List<FavouriteProduct> favourites = favouritesController.getAll(userId);
-        return favourites;
+        return favouritesController.getAll(userId);
     }
 
 
@@ -204,7 +202,6 @@ public class MainController {
 
     @GetMapping("/visited/{userId}")
     public List<VisitedProduct> getVisitedProducts(@PathVariable("userId") long userId) {
-        List<VisitedProduct> visitedProducts = visitedController.getAll(userId);
-        return visitedProducts;
+        return visitedController.getAll(userId);
     }
 }
