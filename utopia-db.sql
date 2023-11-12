@@ -36,7 +36,7 @@ CREATE TABLE `favourites` (
 
 LOCK TABLES `favourites` WRITE;
 /*!40000 ALTER TABLE `favourites` DISABLE KEYS */;
-INSERT INTO `favourites` VALUES (1,1),(1,10),(1,5),(1,2);
+INSERT INTO `favourites` VALUES (1,10),(1,5),(1,2),(1,3),(2,1),(1,1),(1,17),(3,2),(3,3),(3,4),(3,5),(3,6),(3,7),(3,8),(4,1),(4,2),(3,9),(3,10),(4,8),(3,25),(3,24),(3,23),(3,22),(3,21),(3,20),(3,19),(3,18),(3,17),(3,16),(3,15),(3,14),(3,13),(3,12),(3,11),(3,1);
 /*!40000 ALTER TABLE `favourites` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -57,7 +57,7 @@ CREATE TABLE `products` (
   `popularity` varchar(250) DEFAULT NULL,
   `date` varchar(250) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -86,7 +86,7 @@ CREATE TABLE `purchased_products` (
   `quantity` int NOT NULL,
   `date` varchar(250) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,7 +95,7 @@ CREATE TABLE `purchased_products` (
 
 LOCK TABLES `purchased_products` WRITE;
 /*!40000 ALTER TABLE `purchased_products` DISABLE KEYS */;
-INSERT INTO `purchased_products` VALUES (1,1,10,'Taiyuan University Of Technology','Paid',1,'7.11.2023'),(2,1,1,'Taiyuan University Of Technology','Paid',1,'7.11.2023'),(3,1,23,'Taiyuan University Of Technology','Paid',1,'7.11.2023'),(4,1,19,'Taiyuan University Of Technology','Paid',1,'7.11.2023'),(5,1,16,'Taiyuan University Of Technology','Paid',1,'7.11.2023'),(6,1,13,'Taiyuan University Of Technology','Paid',1,'7.11.2023'),(7,1,7,'Taiyuan University Of Technology','Paid',1,'7.11.2023');
+INSERT INTO `purchased_products` VALUES (1,1,10,'Taiyuan University Of Technology','Paid',1,'7.11.2023'),(2,1,1,'Taiyuan University Of Technology','Paid',1,'7.11.2023'),(3,1,23,'Taiyuan University Of Technology','Paid',1,'7.11.2023'),(4,1,19,'Taiyuan University Of Technology','Paid',1,'7.11.2023'),(5,1,16,'Taiyuan University Of Technology','Paid',1,'7.11.2023'),(6,1,13,'Taiyuan University Of Technology','Paid',1,'7.11.2023'),(7,1,7,'Taiyuan University Of Technology','Paid',1,'7.11.2023'),(8,1,20,'Taiyuan University Of Technology','Paid',23,'10.11.2023'),(9,1,3,'Taiyuan University Of Technology','Paid',4,'10.11.2023'),(10,1,1,'Taiyuan University Of Technology','Paid',1,'10.11.2023'),(11,1,3,'Taiyuan University Of Technology','Paid',4,'10.11.2023'),(12,2,2,'Taiyuan University of Technology','Paid',2,'10.11.2023'),(13,2,3,'Taiyuan University of Technology','Paid',6,'10.11.2023'),(14,2,6,'Taiyuan University of Technology','Paid',2,'10.11.2023'),(15,2,3,'Taiyuan University of Technology','Paid',1,'10.11.2023'),(16,2,4,'Taiyuan University of Technology','Paid',1,'10.11.2023'),(17,2,7,'Taiyuan University of Technology','Paid',1,'10.11.2023'),(18,4,2,'Mary city','Paid',1,'12.11.2023'),(19,3,4,'China Jinzhonv','Paid',1,'12.11.2023'),(20,3,6,'China Jinzhonv','Paid',1,'12.11.2023'),(21,3,7,'China Jinzhonv','Paid',1,'12.11.2023'),(22,3,8,'China Jinzhonv','Paid',1,'12.11.2023'),(23,3,10,'China Jinzhonv','Paid',2,'12.11.2023'),(24,3,15,'China Jinzhonv','Paid',1,'12.11.2023'),(25,3,18,'China Jinzhonv','Paid',1,'12.11.2023'),(26,3,19,'China Jinzhonv','Paid',1,'12.11.2023'),(27,3,21,'China Jinzhonv','Paid',1,'12.11.2023'),(28,3,22,'China Jinzhonv','Paid',1,'12.11.2023'),(29,2,2,'Taiyuan University of Technology','Paid',1,'12.11.2023'),(30,2,2,'Taiyuan University of Technology','Paid',1,'13.11.2023'),(31,1,1,'Taiyuan University Of Technology','Paid',1,'13.11.2023'),(32,1,5,'Taiyuan University Of Technology','Paid',1,'13.11.2023'),(33,1,6,'Taiyuan University Of Technology','Paid',5,'13.11.2023');
 /*!40000 ALTER TABLE `purchased_products` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -115,7 +115,7 @@ CREATE TABLE `users` (
   `address` varchar(500) DEFAULT NULL,
   `balance` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -124,7 +124,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Agajan Sahatov','agajansahatov@mail.com',NULL,'123456','Taiyuan University Of Technology','993595');
+INSERT INTO `users` VALUES (1,'Agajan Sahatov','agajansahatov@mail.com',NULL,'123456','Taiyuan University Of Technology','981568'),(2,NULL,'agajan.st@gmail.com',NULL,'123456','Taiyuan University of Technology','755'),(3,NULL,'17703403272',NULL,'serdar2001','China Jinzhonv','436'),(4,'','Meylisgeldi@gmail.com',NULL,'12345678me','Mary city','994');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -147,7 +147,7 @@ CREATE TABLE `visited` (
 
 LOCK TABLES `visited` WRITE;
 /*!40000 ALTER TABLE `visited` DISABLE KEYS */;
-INSERT INTO `visited` VALUES (1,5),(1,6),(1,8);
+INSERT INTO `visited` VALUES (1,5),(1,6),(1,8),(2,4),(2,12),(2,10),(2,13),(2,23),(2,3),(2,2),(1,4),(1,17),(3,8),(4,2),(3,11),(4,8),(3,24),(3,1),(3,4),(3,25),(4,7),(2,1),(1,1);
 /*!40000 ALTER TABLE `visited` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -160,4 +160,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-08 17:07:54
+-- Dump completed on 2023-11-13  4:15:06
