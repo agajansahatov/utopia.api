@@ -57,15 +57,24 @@ public class ProductController {
         List<Product> allProducts = new ArrayList<>();
 
         for (Product product : products) {
-            // Edit the desired properties of each product
+            // Create a new instance of Product with the modified description
             String description = product.getDescription();
             if (description.length() > 51) {
                 description = description.substring(0, 51);
             }
-            product.setDescription(description);
+            Product modifiedProduct = new Product(
+                    product.getId(),
+                    product.getImage(),
+                    product.getName(),
+                    product.getPrice(),
+                    description,
+                    product.getCategory(),
+                    product.getPopularity(),
+                    product.getDate()
+            );
 
             // Add the modified product to the allProducts list
-            allProducts.add(product);
+            allProducts.add(modifiedProduct);
         }
 
         return allProducts;

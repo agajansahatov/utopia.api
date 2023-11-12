@@ -46,4 +46,10 @@ public class VisitedController {
 
         return count != 0;
     }
+
+    public long getCountOfProduct(long productId) {
+        String checkIfExistsSql = "SELECT COUNT(*) FROM visited WHERE product = ?";
+        int count = jdbcTemplate.queryForObject(checkIfExistsSql, Integer.class, productId);
+        return count;
+    }
 }

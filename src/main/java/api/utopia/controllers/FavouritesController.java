@@ -42,4 +42,10 @@ public class FavouritesController {
             jdbcTemplate.update(removeFromFavouritesSql, favouriteProduct.getUser(), favouriteProduct.getProduct());
         }
     }
+
+    public long getCountOfProduct(long productId) {
+        String checkIfExistsSql = "SELECT COUNT(*) FROM favourites WHERE product = ?";
+        int count = jdbcTemplate.queryForObject(checkIfExistsSql, Integer.class, productId);
+        return count;
+    }
 }

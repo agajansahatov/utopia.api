@@ -181,6 +181,11 @@ public class MainController {
         return favouritesController.getAll(userId);
     }
 
+    @GetMapping("/favourites/count/{productId}")
+    public long getProductFavCount(@PathVariable("productId") long id) {
+        return favouritesController.getCountOfProduct(id);
+    }
+
 
 
     //Controlling visitedProducts
@@ -203,5 +208,10 @@ public class MainController {
     @GetMapping("/visited/{userId}")
     public List<VisitedProduct> getVisitedProducts(@PathVariable("userId") long userId) {
         return visitedController.getAll(userId);
+    }
+
+    @GetMapping("/visited/count/{productId}")
+    public long getProductVisitedCount(@PathVariable("productId") long id) {
+        return visitedController.getCountOfProduct(id);
     }
 }
