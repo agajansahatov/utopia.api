@@ -139,7 +139,7 @@ public class MainController {
 
         }
 
-        //Operations
+        //Operations.
         for (PurchasedProduct p : pProducts) {
             if(p != null) {
                 purchasedProducts.addNewProduct(p);
