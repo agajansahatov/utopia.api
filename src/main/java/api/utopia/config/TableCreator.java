@@ -59,14 +59,16 @@
 //        //favourites
 //        query = "CREATE TABLE favourites (\n" +
 //                "  user INT NOT NULL,\n" +
-//                "  product INT NOT NULL\n" +
+//                "  product INT NOT NULL,\n" +
+//                "  PRIMARY KEY (user, product)\n" +
 //                ")";
 //        jdbcTemplate.execute(query);
 //
 //        //visited
 //        query = "CREATE TABLE visited (\n" +
 //                "  user INT NOT NULL,\n" +
-//                "  product INT NOT NULL\n" +
+//                "  product INT NOT NULL,\n" +
+//                "  PRIMARY KEY (user, product)\n" +
 //                ")";
 //        jdbcTemplate.execute(query);
 //

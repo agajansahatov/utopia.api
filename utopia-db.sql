@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `lz2001` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `lz2001`;
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: localhost    Database: lz2001
@@ -26,7 +24,8 @@ DROP TABLE IF EXISTS `favourites`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `favourites` (
   `user` int NOT NULL,
-  `product` int NOT NULL
+  `product` int NOT NULL,
+  PRIMARY KEY (`user`,`product`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -36,7 +35,7 @@ CREATE TABLE `favourites` (
 
 LOCK TABLES `favourites` WRITE;
 /*!40000 ALTER TABLE `favourites` DISABLE KEYS */;
-INSERT INTO `favourites` VALUES (1,10),(1,5),(1,2),(1,3),(2,1),(1,1),(1,17),(3,2),(3,3),(3,4),(3,5),(3,6),(3,7),(3,8),(4,1),(4,2),(3,9),(3,10),(4,8),(3,25),(3,24),(3,23),(3,22),(3,21),(3,20),(3,19),(3,18),(3,17),(3,16),(3,15),(3,14),(3,13),(3,12),(3,11),(3,1);
+INSERT INTO `favourites` VALUES (1,1),(1,2),(1,3),(1,5),(1,10),(1,17),(2,1),(3,1),(3,2),(3,3),(3,4),(3,5),(3,6),(3,7),(3,8),(3,9),(3,10),(3,11),(3,12),(3,13),(3,14),(3,15),(3,16),(3,17),(3,18),(3,19),(3,20),(3,21),(3,22),(3,23),(3,24),(3,25),(4,1),(4,2),(4,8);
 /*!40000 ALTER TABLE `favourites` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -137,7 +136,8 @@ DROP TABLE IF EXISTS `visited`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `visited` (
   `user` int NOT NULL,
-  `product` int NOT NULL
+  `product` int NOT NULL,
+  PRIMARY KEY (`user`,`product`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -147,7 +147,7 @@ CREATE TABLE `visited` (
 
 LOCK TABLES `visited` WRITE;
 /*!40000 ALTER TABLE `visited` DISABLE KEYS */;
-INSERT INTO `visited` VALUES (1,5),(1,6),(1,8),(2,4),(2,12),(2,10),(2,13),(2,23),(2,3),(2,2),(1,4),(1,17),(3,8),(4,2),(3,11),(4,8),(3,24),(3,1),(3,4),(3,25),(4,7),(2,1),(1,1);
+INSERT INTO `visited` VALUES (1,1),(1,4),(1,5),(1,6),(1,8),(1,17),(2,1),(2,2),(2,3),(2,4),(2,10),(2,12),(2,13),(2,23),(3,1),(3,4),(3,8),(3,11),(3,24),(3,25),(4,2),(4,7),(4,8);
 /*!40000 ALTER TABLE `visited` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -160,4 +160,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-13  4:15:06
+-- Dump completed on 2023-11-13 21:08:26
