@@ -1,14 +1,11 @@
-# Use an official OpenJDK runtime as a parent image
-FROM openjdk:19-jdk-alpine
+FROM ubuntu:latest AS build
+RUN apt-get update
+RUN apt-get install openjdk-19-jdk -y
+COPY . .
+RUN ./gradlew bootJar --no-daemon
 
-# Set the working directory in the container
-WORKDIR /app
-
-# Copy the JAR file into the container
-COPY ./build/libs/utopia.api-0.0.1-SNAPSHOT.jar app.jar
-
-# Expose the port that your Spring Boot application runs on
+FROM openjdk:19-jdk-slim
 EXPOSE 8080
+COPY --from=build /build/libs/utopia.api-1.jar app.jar
 
-# Define the command to run your application
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
