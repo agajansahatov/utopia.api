@@ -1,4 +1,4 @@
-package api.utopia.entities;
+package com.utopia.api.entities;
 
 public class User {
     private long id;

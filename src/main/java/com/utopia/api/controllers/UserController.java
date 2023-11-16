@@ -1,7 +1,8 @@
-package api.utopia.controllers;
+package com.utopia.api.controllers;
 
+import com.utopia.api.entities.User;
 import org.springframework.jdbc.core.JdbcTemplate;
-import api.utopia.entities.User;
+import com.utopia.api.entities.User;
 import java.util.List;
 
 public class UserController {

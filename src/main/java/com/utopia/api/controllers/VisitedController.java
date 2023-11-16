@@ -1,6 +1,6 @@
-package api.utopia.controllers;
+package com.utopia.api.controllers;
 
-import api.utopia.entities.VisitedProduct;
+import com.utopia.api.entities.VisitedProduct;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;

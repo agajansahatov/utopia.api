@@ -1,13 +1,13 @@
-package api.utopia.entities;
+package com.utopia.api.entities;
 
-public class VisitedProduct {
+public class FavouriteProduct {
     private long user;
     private long product;
 
-    public VisitedProduct() {
+    public FavouriteProduct() {
     }
 
-    public VisitedProduct(long user, long product) {
+    public FavouriteProduct(long user, long product) {
         this.user = user;
         this.product = product;
     }

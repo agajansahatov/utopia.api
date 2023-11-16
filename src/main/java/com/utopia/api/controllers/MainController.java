@@ -1,6 +1,6 @@
-package api.utopia.controllers;
+package com.utopia.api.controllers;
 
-import api.utopia.entities.*;
+import com.utopia.api.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

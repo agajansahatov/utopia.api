@@ -1,4 +1,4 @@
-//package api.utopia.config;
+package com.utopia.api.config;
 //
 //import jakarta.annotation.PostConstruct;
 //import org.springframework.jdbc.core.JdbcTemplate;

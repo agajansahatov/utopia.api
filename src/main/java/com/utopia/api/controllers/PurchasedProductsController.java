@@ -1,6 +1,6 @@
-package api.utopia.controllers;
+package com.utopia.api.controllers;
 
-import api.utopia.entities.PurchasedProduct;
+import com.utopia.api.entities.PurchasedProduct;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package api.utopia.entities;
+package com.utopia.api.entities;
 
 public class PurchasedProduct {
     private long id;
