@@ -8,6 +8,7 @@ FROM openjdk:19-jdk-slim
 EXPOSE 8080
 
 COPY ./public /public
+COPY ./application.properties /application.properties
 COPY --from=build /build/libs/utopia.api-1.jar app.jar
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
