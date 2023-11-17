@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -70,10 +71,15 @@ public class MainController {
     @GetMapping("/products")
     public List<Product> getProducts() {
         List<Product> productList = products.getProducts();
-        if(!productList.isEmpty()) {
+
+        // Shuffle the productList
+        Collections.shuffle(productList);
+
+        if (!productList.isEmpty()) {
             return productList;
         }
-        throw new IllegalArgumentException();
+
+        return Collections.emptyList();
     }
 
     @GetMapping("/products/{productId}")
