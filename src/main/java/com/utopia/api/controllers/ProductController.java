@@ -1,10 +1,19 @@
 package com.utopia.api.controllers;
 
 import com.utopia.api.entities.Product;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class ProductController {
@@ -30,23 +39,43 @@ public class ProductController {
         });
     }
 
-    public Product addProduct(Product product){
+    public Product addProduct(Product product) {
         String query = "INSERT INTO products (image, name, price, description, category, popularity, date) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
-        int rowsAffected = jdbcTemplate.update(query,
-                product.getImage(),
-                product.getName(),
-                product.getPrice(),
-                product.getDescription(),
-                product.getCategory(),
-                product.getPopularity(),
-                product.getDate()
-        );
 
-        if (rowsAffected > 0){
-            product.setId(products.size() + 1);
-            products.add(product);
-            return product;
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        try {
+            int rowsAffected = jdbcTemplate.update(
+                    new PreparedStatementCreator() {
+                        @Override
+                        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                            PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+                            ps.setString(1, product.getImage());
+                            ps.setString(2, product.getName());
+                            ps.setString(3, product.getPrice());
+                            ps.setString(4, product.getDescription());
+                            ps.setString(5, product.getCategory());
+                            ps.setString(6, product.getPopularity());
+                            ps.setString(7, product.getDate());
+                            return ps;
+                        }
+                    },
+                    keyHolder
+            );
+
+            if (rowsAffected > 0) {
+                // Retrieve the generated key and set it to the product
+                product.setId(Objects.requireNonNull(keyHolder.getKey()).longValue());
+
+                // Update the 'products' list
+                products.add(product);
+
+                return product;
+            }
+        } catch (DataAccessException e) {
+            // Handle the exception (e.g., log, rethrow, return null, etc.)
+            e.printStackTrace();
         }
 
         return null;

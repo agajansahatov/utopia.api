@@ -30,24 +30,3 @@ tasks.named('bootBuildImage') {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-//jar {
-//	manifest {
-//		attributes(
-//				'Main-Class': 'com.utopia.api.Application' // Replace with your actual main class
-//		)
-//	}
-//
-//	// Include dependencies in the JAR
-//	from {
-//		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-//	}
-//
-//	// Include application.properties in the JAR
-//	from('src/main/resources') {
-//		include 'application.properties'
-//	}
-//
-//	// Set duplicatesStrategy to 'exclude' to resolve the duplicate entry issue
-//	duplicatesStrategy = 'exclude'
-//}

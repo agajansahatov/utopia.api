@@ -42,6 +42,5 @@ out/
 application.properties
 /src/main/resources/application.properties
 
-
 # Unignore the specific file within the directory
 !/public/images/products/p1.jpg
