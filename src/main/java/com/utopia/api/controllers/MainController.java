@@ -54,11 +54,11 @@ public class MainController {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve authenticated user data");
                 }
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong Credentials!");
             }
         } catch (Exception e) {
-            //LOGGER.error("Error during authentication", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
+            LOGGER.error("Error during authentication", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }
 
@@ -77,19 +77,17 @@ public class MainController {
             if (addedUser != null) {
                 return ResponseEntity.status(HttpStatus.CREATED).body(addedUser);
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve the added user data");
+                throw new Exception("Failed to retrieve the added user data!");
             }
         } catch (Exception e) {
-            LOGGER.error("Error during user registration", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
+            LOGGER.error("Error during user registration: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }
 
     // Update user endpoint
-    // Update password ishlanok, hem kone useri almaly, hem updated useri almaly.
-    // Authentication ucin kone useri hem almaly
     @PutMapping("/users")
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
+    public ResponseEntity<Object> updateUser(@RequestBody User user) {
         try {
             if (usersDAO.isAuthenticated(user.getContact(), user.getPassword())) {
                 usersDAO.update(user);
@@ -98,11 +96,11 @@ public class MainController {
                 User authenticatedUser = usersDAO.get(user.getContact(), user.getPassword());;
                 return ResponseEntity.ok(authenticatedUser);
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("You are not authenticated!");
             }
         } catch (Exception e) {
             LOGGER.error("Error during user update", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");;
         }
     }
 
@@ -116,8 +114,8 @@ public class MainController {
             Collections.shuffle(productList);
             return ResponseEntity.ok(productList);
         } catch (Exception e) {
-            //LOGGER.error("Error getting products", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            LOGGER.error("Error getting products", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");;
         }
     }
 
@@ -128,11 +126,11 @@ public class MainController {
             Product product = productsDAO.getProduct(id);
             return ResponseEntity.ok(product);
         } catch (EmptyResultDataAccessException e) {
-            //LOGGER.error("Product not found with ID: " + id, e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            LOGGER.error("Product not found with ID: " + id, e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This product is not found on our server");
         } catch (Exception e) {
-            //LOGGER.error("Error getting product with ID: " + id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            LOGGER.error("Error getting product with ID: " + id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }
 
@@ -179,31 +177,33 @@ public class MainController {
             Product addedProduct = productsDAO.add(product);
             return ResponseEntity.status(HttpStatus.CREATED).body(addedProduct);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            LOGGER.error("Error during file transfer: ", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            LOGGER.error("Error during add product: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }
 
 
     // TRANSACTIONS CONTROLLER
     // Get all transactions of a user endpoint
-    // returns all the order transacstion of a user
+    // returns all the order transactions of a user
     @GetMapping("/transactions/{userId}")
     public ResponseEntity<Object> getTransactions(@PathVariable("userId") long userId) {
         try {
             List<Transaction> transactions = transactionsDAO.getTransactions(userId);
             return ResponseEntity.ok(transactions);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            LOGGER.error("Error during get transactions: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error in retrieving data from db!");
         }
     }
 
     // Add all transactions of a user endpoint
     // this is used for purchasing items
-    // Shuna tazeden seretmeli
     @PostMapping("/transactions")
-    public ResponseEntity<Object> addTransactions(@RequestBody List<Transaction> transactions) {
+    public ResponseEntity<String> addTransactions(@RequestBody List<Transaction> transactions) {
         if(transactions.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Transactions cannot be empty!");
         }
@@ -250,6 +250,7 @@ public class MainController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Transactions added successfully");
         } catch (Exception e) {
+            LOGGER.error("Error during add transactions: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding transactions");
         }
     }
@@ -275,7 +276,8 @@ public class MainController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve the added data");
             }
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
+            LOGGER.error("Error during add favourite: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }
 
@@ -297,7 +299,8 @@ public class MainController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve the updated data");
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
+            LOGGER.error("Error during update favourite: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }
 
@@ -316,7 +319,8 @@ public class MainController {
             // Here, I'm returning a generic success message.
             return ResponseEntity.status(HttpStatus.OK).body("Data removed successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
+            LOGGER.error("Error during delete favourite: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }
 
@@ -327,7 +331,8 @@ public class MainController {
             List<Favourite> favourites = this.favouritesDAO.getAll(userId);
             return ResponseEntity.status(HttpStatus.OK).body(favourites);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
+            LOGGER.error("Error during get all favourites of a user: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }
 
@@ -339,7 +344,8 @@ public class MainController {
             long count = favouritesDAO.getCountOfProduct(id);
             return ResponseEntity.status(HttpStatus.OK).body(count);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
+            LOGGER.error("Error during favourite count: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }
 
@@ -364,7 +370,8 @@ public class MainController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve the added data");
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
+            LOGGER.error("Error during add trace: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }
 
@@ -385,7 +392,8 @@ public class MainController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
+            LOGGER.error("Error during update trace", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }
 
@@ -403,30 +411,33 @@ public class MainController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
+            LOGGER.error("Error during delete trace: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }
 
     // Get all traces of a user endpoint
     @GetMapping("/traces/{userId}")
-    public ResponseEntity<List<Trace>> getTraces(@PathVariable("userId") long userId) {
+    public ResponseEntity<Object> getTraces(@PathVariable("userId") long userId) {
         try {
             List<Trace> tracesList = tracesDAO.getAll(userId);
             return ResponseEntity.ok(tracesList);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            LOGGER.error("Error during get all traces of a user: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving data from db!");
         }
     }
 
     // Get the count of all traces of a product
     // by how many people is this product is visited
     @GetMapping("/traces/count/{productId}")
-    public ResponseEntity<Long> getCountOfaTrace(@PathVariable("productId") long id) {
+    public ResponseEntity<Object> getCountOfaTrace(@PathVariable("productId") long id) {
         try {
             long count = tracesDAO.getCountOfProduct(id);
             return ResponseEntity.ok(count);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            LOGGER.error("Error during trace count: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving data from db!");
         }
     }
 }
