@@ -1,9 +1,12 @@
 package com.utopia.api.controllers;
 
+import com.utopia.api.dao.*;
 import com.utopia.api.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,213 +14,340 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
 @RestController
 @CrossOrigin
 public class MainController {
-    private final UserController users;
-    private final ProductController products;
-    private final PurchasedProductsController purchasedProducts;
-
-    private final FavouritesController favouritesController;
-    private final VisitedController visitedController;
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
+    private final UsersDAO usersDAO;
+    private final ProductsDAO productsDAO;
+    private final TransactionsDAO transactionsDAO;
+    private final FavouritesDAO favouritesDAO;
+    private final TracesDAO tracesDAO;
+
     public MainController(DataSource dataSource) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        this.users = new UserController(jdbcTemplate);
-        this.products = new ProductController(jdbcTemplate);
-        this.purchasedProducts = new PurchasedProductsController(jdbcTemplate);
-        this.favouritesController = new FavouritesController(jdbcTemplate);
-        this.visitedController = new VisitedController(jdbcTemplate);
+        this.usersDAO = new UsersDAO(jdbcTemplate);
+        this.productsDAO = new ProductsDAO(jdbcTemplate);
+        this.transactionsDAO = new TransactionsDAO(jdbcTemplate);
+        this.favouritesDAO = new FavouritesDAO(jdbcTemplate);
+        this.tracesDAO = new TracesDAO(jdbcTemplate);
     }
 
-    private User userResponse(User user){
-        if (user == null) {
-            throw new IllegalArgumentException();
-        }
-        return user;
-    }
-    //Login
+    //Users Controller
+
+    // Authentication endpoint
     @PostMapping("/auth")
-    public User authenticate (@RequestBody User user) {
-        return userResponse(users.exists(user.getContact(), user.getPassword()));
+    public ResponseEntity<User> authenticate(@RequestBody User user) {
+        try {
+            boolean userExists = usersDAO.exists(user.getContact(), user.getPassword());
+            if (userExists) {
+                long id = usersDAO.getUserId(user.getContact(), user.getPassword());
+                User authenticatedUser = usersDAO.get(id);
+                return ResponseEntity.ok(authenticatedUser);
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error during authentication", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-    //Registration
+    // User registration endpoint
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
-    public User register(@RequestBody User newUser) {
-        return userResponse(users.addUser(newUser));
+    public ResponseEntity<User> addUser(@RequestBody User user) {
+        try {
+            usersDAO.add(user);
+
+            //get the new added user
+            long id = usersDAO.getUserId(user.getContact(), user.getPassword());
+            User authenticatedUser = usersDAO.get(id);
+            return ResponseEntity.status(HttpStatus.CREATED).body(authenticatedUser);
+        } catch (Exception e) {
+            LOGGER.error("Error during user registration", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-    //Updating a user
+    // Update user endpoint
     @PutMapping("/users")
-    public User editUser(@RequestBody User user) {
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+        try {
+            if (usersDAO.exists(user.getContact(), user.getPassword())) {
+                usersDAO.update(user);
 
-        return userResponse(users.updateUser(user));
-    }
-
-
-    //Controlling Products
-    private Product productResponse(Product product){
-        if (product == null) {
-            throw new IllegalArgumentException();
+                //get the updated user
+                long id = usersDAO.getUserId(user.getContact(), user.getPassword());
+                User authenticatedUser = usersDAO.get(id);
+                return ResponseEntity.ok(authenticatedUser);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error during user update", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return product;
     }
 
+
+    //Products Controller
+
+    // Get all products endpoint
     @GetMapping("/products")
-    public List<Product> getProducts() {
-        List<Product> productList = products.getProducts();
-
-        // Shuffle the productList
-        Collections.shuffle(productList);
-
-        if (!productList.isEmpty()) {
-            return productList;
+    public ResponseEntity<List<Product>> getProductsDAO() {
+        try {
+            List<Product> productList = productsDAO.getProducts();
+            Collections.shuffle(productList);
+            return ResponseEntity.ok(productList);
+        } catch (Exception e) {
+            LOGGER.error("Error getting products", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-        return Collections.emptyList();
     }
 
+    // Get a specific product endpoint
     @GetMapping("/products/{productId}")
-    public Product getProduct(@PathVariable("productId") long id) {
-        return products.getProduct(id);
+    public ResponseEntity<Product> getProduct(@PathVariable("productId") long id) {
+        try {
+            Product product = productsDAO.getProduct(id);
+            return ResponseEntity.ok(product);
+        } catch (EmptyResultDataAccessException e) {
+            // Handle the case when the product is not found
+            LOGGER.error("Product not found with ID: " + id, e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            // Handle other exceptions with a 500 response
+            LOGGER.error("Error getting product with ID: " + id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
+    // Add a new product endpoint
     @PostMapping("/products")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Product addNewProduct(@ModelAttribute Product newProduct,
-                                 @RequestParam("file") MultipartFile file) {
-        if (file != null) {
-            String originalFilename = file.getOriginalFilename();
-            String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
-            String fileName = "p" + (products.getSize() + 1) + "." + fileExtension;
-            String filePath = System.getProperty("user.dir") + "/public/images/products/" + fileName;
-            newProduct.setImage(fileName);
+    public ResponseEntity<Product> addProduct(@ModelAttribute Product product,
+                                                 @RequestParam("file") MultipartFile file) {
+        try {
+            if (file != null && !file.isEmpty()) {
+                String originalFilename = file.getOriginalFilename();
+                assert originalFilename != null;
+                String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
 
-            try {
-                file.transferTo(new File(filePath));
-            } catch (IOException e) {
-                throw new IllegalArgumentException("Error while transferring the file.");
+                if (fileExtension.isEmpty()) {
+                    throw new IllegalArgumentException("Invalid file extension.");
+                }
+
+                String fileName = "p" + (productsDAO.getSize() + 1) + "." + fileExtension;
+                product.setImageName(fileName);
+
+                try {
+                    String path = System.getProperty("user.dir") + "/public/images/products/";
+                    Path directoryPath = Paths.get(path);
+
+                    if (Files.notExists(directoryPath)) {
+                        try {
+                            Files.createDirectories(directoryPath);
+                        } catch (IOException e) {
+                            throw new IllegalStateException("Error while creating the directory.", e);
+                        }
+                    }
+
+                    String filePath = path + fileName;
+                    file.transferTo(new File(filePath));
+                } catch (IOException e) {
+                    throw new IllegalStateException("Error while transferring the file.", e);
+                }
+            } else {
+                throw new IllegalArgumentException("No file uploaded.");
             }
 
-            return productResponse(products.addProduct(newProduct));
-        } else {
-            throw new IllegalArgumentException("No file uploaded.");
+            ProductsDAO.validateProduct(product);
+
+            Product addedProduct = productsDAO.add(product);
+            return ResponseEntity.status(HttpStatus.CREATED).body(addedProduct);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
-    //Controlling Purchased Products
 
-    //Get purchasedProducts of a user
-    @PostMapping("/products/purchased/all")
-    public List<PurchasedProduct> getUserPurchasedProducts(@RequestBody User user) {
-        List<PurchasedProduct> p = purchasedProducts.getProducts(user.getId());
-        if(!p.isEmpty()) {
-            return p;
+    //Transactions Controller
+
+    @GetMapping("/transactions/{userId}")
+    public ResponseEntity<List<Transaction>> getTransactions(@PathVariable("userId") long userId) {
+        try {
+            List<Transaction> transactions = transactionsDAO.getTransactions(userId);
+            return ResponseEntity.ok(transactions);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return null;
     }
 
-
-    @PostMapping("/products/purchased/new")
-    @ResponseStatus(HttpStatus.CREATED)
-    public boolean addNewPurchasedProducts(@RequestBody List<PurchasedProduct> pProducts) {
-
-        if (pProducts.isEmpty()){
-            return false;
+    @PostMapping("/transactions")
+    public ResponseEntity<String> addTransactions(@RequestBody List<Transaction> transactions) {
+        if(transactions.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Transactions cannot be empty!");
         }
 
-        //Check up;
-        long sum = 0;
-        for (PurchasedProduct p : pProducts) {
-            if(p != null) {
-                User user = users.getUser(p.getUser());
-                Product product = products.getProduct(p.getProduct());
-                sum += Integer.parseInt(product.getPrice()) * p.getQuantity();
-                if(sum > Integer.parseInt(user.getBalance())){
-                    return false;
+        if(transactions.get(0) == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Transactions cannot be null!");
+        }
+
+
+        User user = usersDAO.get(transactions.get(0).getUserId());
+
+        try {
+            //Check up;
+            BigDecimal sum = BigDecimal.ZERO;
+            for (Transaction transaction : transactions) {
+                if(transaction == null) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Transactions cannot be null!");
+                }
+
+                User u = usersDAO.get(transaction.getUserId());
+                if(!user.getId().equals(u.getId())) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("All transactions should belong to one person at the time!");
+                }
+
+                Product product = productsDAO.getProduct(transaction.getProductId());
+                BigDecimal totalPrice = product.getPrice().multiply(BigDecimal.valueOf(transaction.getQuantity()));
+                sum = sum.add(totalPrice);
+                if (sum.compareTo(user.getBalance()) > 0) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("Your Balance is not enough!");
                 }
             }
 
-        }
-
-        //Operations.
-        for (PurchasedProduct p : pProducts) {
-            if(p != null) {
-                purchasedProducts.addNewProduct(p);
-
-                //Updating the user balance
-                User user = users.getUser(p.getUser());
-                Product product = products.getProduct(p.getProduct());
-                long price = Integer.parseInt(product.getPrice()) * p.getQuantity();
-                long balance = Integer.parseInt(user.getBalance());
-                user.setBalance((balance - price) + "");
-
-                User response = users.updateUser(user);
-                if(response == null) {
-                    return false;
-                }
+            //If passes checkup, continue.
+            //Add transactions to the database
+            for (Transaction transaction : transactions) {
+                this.transactionsDAO.add(transaction);
             }
+            //Update the user balance
+            BigDecimal balance = user.getBalance();
+            balance = balance.subtract(sum);
+            user.setBalance(balance);
+            usersDAO.update(user);
 
+            return ResponseEntity.status(HttpStatus.CREATED).body("Transactions added successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding transactions");
         }
-
-        return true;
     }
 
-    //Controlling favourites
+
+
+
+    //Favourites Controller
+
     @PostMapping("/favourites")
-    @ResponseStatus(HttpStatus.CREATED)
-    public boolean add(@RequestBody FavouriteProduct favouriteProduct) {
-        favouritesController.add(favouriteProduct);
-        return true;
+    public ResponseEntity<String> addFavourite(@RequestBody Favourite f) {
+        if (favouritesDAO.exists(f)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Data already exists");
+        }
+
+        favouritesDAO.add(f);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Data added successfully");
+    }
+
+    @PutMapping("/favourites")
+    public ResponseEntity<String> updateFavourite(@RequestBody Favourite f) {
+        if (!favouritesDAO.exists(f)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
+        }
+
+        favouritesDAO.update(f);
+        return ResponseEntity.status(HttpStatus.OK).body("Data updated successfully");
     }
 
     @DeleteMapping("/favourites")
-    public boolean remove(@RequestBody FavouriteProduct favouriteProduct) {
-        favouritesController.remove(favouriteProduct);
-        return true;
+    public ResponseEntity<String> removeFavourite(@RequestBody Favourite f) {
+        if (!favouritesDAO.exists(f)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
+        }
+
+        favouritesDAO.remove(f);
+        return ResponseEntity.status(HttpStatus.OK).body("Data removed successfully");
     }
 
     @GetMapping("/favourites/{userId}")
-    public List<FavouriteProduct> getFavouriteProducts(@PathVariable("userId") int userId) {
-        return favouritesController.getAll(userId);
+    public ResponseEntity<List<Favourite>> getFavourites(@PathVariable("userId") int userId) {
+        List<Favourite> favourites = this.favouritesDAO.getAll(userId);
+
+//        if (favourites.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+//        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(favourites);
     }
 
     @GetMapping("/favourites/count/{productId}")
-    public long getProductFavCount(@PathVariable("productId") long id) {
-        return favouritesController.getCountOfProduct(id);
+    public ResponseEntity<Long> getCountOfaFavourite(@PathVariable("productId") long id) {
+        long count = favouritesDAO.getCountOfProduct(id);
+        return ResponseEntity.status(HttpStatus.OK).body(count);
     }
 
 
 
-    //Controlling visitedProducts
-    @PostMapping("/visited")
-    @ResponseStatus(HttpStatus.CREATED)
-    public boolean add(@RequestBody VisitedProduct visitedProduct) {
-        if(visitedController.isExists(visitedProduct)){
-            visitedController.remove(visitedProduct);
+    //Traces Controller
+
+    @PostMapping("/traces")
+    public ResponseEntity<String> add(@RequestBody Trace trace) {
+        if (tracesDAO.exists(trace)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Data already exists");
         }
-        visitedController.add(visitedProduct);
-        return true;
+
+        tracesDAO.add(trace);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Data added/updated successfully");
     }
 
-    @DeleteMapping("/visited")
-    public boolean remove(@RequestBody VisitedProduct visitedProduct) {
-        visitedController.remove(visitedProduct);
-        return true;
+    @PutMapping("/traces")
+    public ResponseEntity<String> updateTrace(@RequestBody Trace trace) {
+        if (tracesDAO.exists(trace)) {
+            tracesDAO.update(trace);
+            return ResponseEntity.status(HttpStatus.OK).body("Data updated successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
+        }
     }
 
-    @GetMapping("/visited/{userId}")
-    public List<VisitedProduct> getVisitedProducts(@PathVariable("userId") long userId) {
-        return visitedController.getAll(userId);
+    @DeleteMapping("/traces")
+    public ResponseEntity<String> removeTrace(@RequestBody Trace trace) {
+        if (tracesDAO.exists(trace)) {
+            tracesDAO.remove(trace);
+            return ResponseEntity.status(HttpStatus.OK).body("Data removed successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
+        }
     }
 
-    @GetMapping("/visited/count/{productId}")
-    public long getProductVisitedCount(@PathVariable("productId") long id) {
-        return visitedController.getCountOfProduct(id);
+    @GetMapping("/traces/{userId}")
+    public ResponseEntity<List<Trace>> getTraces(@PathVariable("userId") long userId) {
+        try {
+            List<Trace> tracesList = tracesDAO.getAll(userId);
+            return ResponseEntity.ok(tracesList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/traces/count/{productId}")
+    public ResponseEntity<Long> getCountOfaTrace(@PathVariable("productId") long id) {
+        try {
+            long count = tracesDAO.getCountOfProduct(id);
+            return ResponseEntity.ok(count);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

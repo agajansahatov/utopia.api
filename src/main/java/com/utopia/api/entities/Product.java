@@ -1,44 +1,31 @@
 package com.utopia.api.entities;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+
 public class Product {
-    private long id;
-    private String image;
+    private Long id;
+    private String imageName;
     private String name;
-    private String price;
-    private String description;
+    private BigDecimal price;
     private String category;
-    private String popularity;
-    private String date;
+    private String description;
+    private Timestamp date;
 
-    public Product(){
-
-    }
-
-    public Product(long id, String image, String name, String price, String description, String category, String popularity, String date) {
-        this.id = id;
-        this.image = image;
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.category = category;
-        this.popularity = popularity;
-        this.date = date;
-    }
-
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getImage() {
-        return image;
+    public String getImageName() {
+        return imageName;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 
     public String getName() {
@@ -49,20 +36,12 @@ public class Product {
         this.name = name;
     }
 
-    public String getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getCategory() {
@@ -73,19 +52,19 @@ public class Product {
         this.category = category;
     }
 
-    public String getPopularity() {
-        return popularity;
+    public String getDescription() {
+        return description;
     }
 
-    public void setPopularity(String popularity) {
-        this.popularity = popularity;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 }

@@ -1,32 +1,21 @@
 package com.utopia.api.entities;
 
+import java.math.BigDecimal;
+
 public class User {
-    private long id;
+    private Long id;
     private String name;
     private String contact;
     private String image;
     private String password;
     private String address;
-    private String balance;
+    private BigDecimal balance;
 
-    public User() {
-    }
-
-    public User(long id, String name, String contact, String image, String password, String address, String balance) {
-        this.id = id;
-        this.name = name;
-        this.contact = contact;
-        this.image = image;
-        this.password = password;
-        this.address = address;
-        this.balance = balance;
-    }
-
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -70,11 +59,11 @@ public class User {
         this.address = address;
     }
 
-    public String getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(String balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 }

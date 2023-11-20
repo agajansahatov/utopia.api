@@ -1,0 +1,12 @@
+//Index Controller
+@GetMapping("/")
+String index() {
+    try {
+        Resource resource = new PathResource(System.getProperty("user.dir") + "/public/index.html");
+        InputStream inputStream = resource.getInputStream();
+        Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
+        return scanner.hasNext() ? scanner.next() : "";
+    } catch (IOException e) {
+        return "404!";
+    }
+}
