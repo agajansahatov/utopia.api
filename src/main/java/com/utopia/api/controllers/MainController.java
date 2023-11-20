@@ -116,37 +116,35 @@ public class MainController {
 
     // Get all products endpoint
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProductsDAO() {
+    public ResponseEntity<Object> getProductsDAO() {
         try {
             List<Product> productList = productsDAO.getProducts();
             Collections.shuffle(productList);
             return ResponseEntity.ok(productList);
         } catch (Exception e) {
-            LOGGER.error("Error getting products", e);
+            //LOGGER.error("Error getting products", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     // Get a specific product endpoint
     @GetMapping("/products/{productId}")
-    public ResponseEntity<Product> getProduct(@PathVariable("productId") long id) {
+    public ResponseEntity<Object> getProduct(@PathVariable("productId") long id) {
         try {
             Product product = productsDAO.getProduct(id);
             return ResponseEntity.ok(product);
         } catch (EmptyResultDataAccessException e) {
-            // Handle the case when the product is not found
-            LOGGER.error("Product not found with ID: " + id, e);
+            //LOGGER.error("Product not found with ID: " + id, e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
-            // Handle other exceptions with a 500 response
-            LOGGER.error("Error getting product with ID: " + id, e);
+            //LOGGER.error("Error getting product with ID: " + id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     // Add a new product endpoint
     @PostMapping("/products")
-    public ResponseEntity<Product> addProduct(@ModelAttribute Product product,
+    public ResponseEntity<Object> addProduct(@ModelAttribute Product product,
                                                  @RequestParam("file") MultipartFile file) {
         try {
             if (file != null && !file.isEmpty()) {
@@ -197,7 +195,7 @@ public class MainController {
     //Transactions Controller
 
     @GetMapping("/transactions/{userId}")
-    public ResponseEntity<List<Transaction>> getTransactions(@PathVariable("userId") long userId) {
+    public ResponseEntity<Object> getTransactions(@PathVariable("userId") long userId) {
         try {
             List<Transaction> transactions = transactionsDAO.getTransactions(userId);
             return ResponseEntity.ok(transactions);
@@ -208,7 +206,7 @@ public class MainController {
 
     //Shuna tazeden seretmeli
     @PostMapping("/transactions")
-    public ResponseEntity<String> addTransactions(@RequestBody List<Transaction> transactions) {
+    public ResponseEntity<Object> addTransactions(@RequestBody List<Transaction> transactions) {
         if(transactions.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Transactions cannot be empty!");
         }
