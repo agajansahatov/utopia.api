@@ -40,8 +40,7 @@ public class MainController {
         this.tracesDAO = new TracesDAO(jdbcTemplate);
     }
 
-    //Users Controller
-
+    // USERS CONTROLLER
     // Authentication endpoint
     @PostMapping("/auth")
     public ResponseEntity<Object> authenticate(@RequestBody User user) {
@@ -63,7 +62,6 @@ public class MainController {
         }
     }
 
-
     // User registration endpoint
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
@@ -74,8 +72,6 @@ public class MainController {
             }
 
             usersDAO.add(user);
-
-            // Get the new added user
             User addedUser = usersDAO.get(user.getContact(), user.getPassword());
 
             if (addedUser != null) {
@@ -89,10 +85,9 @@ public class MainController {
         }
     }
 
-
     // Update user endpoint
-    //Update password ishlanok, hem kone useri almaly, hem updated useri almaly.
-    //Authentication ucin kone useri hem almaly
+    // Update password ishlanok, hem kone useri almaly, hem updated useri almaly.
+    // Authentication ucin kone useri hem almaly
     @PutMapping("/users")
     public ResponseEntity<User> updateUser(@RequestBody User user) {
         try {
@@ -112,8 +107,7 @@ public class MainController {
     }
 
 
-    //Products Controller
-
+    // PRODUCTS CONTROLLER
     // Get all products endpoint
     @GetMapping("/products")
     public ResponseEntity<Object> getProductsDAO() {
@@ -192,8 +186,9 @@ public class MainController {
     }
 
 
-    //Transactions Controller
-
+    // TRANSACTIONS CONTROLLER
+    // Get all transactions of a user endpoint
+    // returns all the order transacstion of a user
     @GetMapping("/transactions/{userId}")
     public ResponseEntity<Object> getTransactions(@PathVariable("userId") long userId) {
         try {
@@ -204,7 +199,9 @@ public class MainController {
         }
     }
 
-    //Shuna tazeden seretmeli
+    // Add all transactions of a user endpoint
+    // this is used for purchasing items
+    // Shuna tazeden seretmeli
     @PostMapping("/transactions")
     public ResponseEntity<Object> addTransactions(@RequestBody List<Transaction> transactions) {
         if(transactions.isEmpty()) {
@@ -214,7 +211,6 @@ public class MainController {
         if(transactions.get(0) == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Transactions cannot be null!");
         }
-
 
         User user = usersDAO.getById(transactions.get(0).getUserId());
 
@@ -261,8 +257,9 @@ public class MainController {
 
 
 
-    //Favourites Controller
-
+    // FAVOURITES CONTROLLER
+    // Add a new favourite object endpoint
+    // when a user likes a product, then it will be added to the favourites table
     @PostMapping("/favourites")
     public ResponseEntity<Object> addFavourite(@RequestBody Favourite f) {
         try {
@@ -281,6 +278,9 @@ public class MainController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
         }
     }
+
+    // Update a favourite object endpoint
+    // it only updates the date column
     @PutMapping("/favourites")
     public ResponseEntity<Object> updateFavourite(@RequestBody Favourite f) {
         try {
@@ -300,6 +300,9 @@ public class MainController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
         }
     }
+
+    // Delete a favourite object endpoint
+    // this can be used when a user dislikes a product
     @DeleteMapping("/favourites")
     public ResponseEntity<Object> removeFavourite(@RequestBody Favourite f) {
         try {
@@ -316,6 +319,8 @@ public class MainController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
         }
     }
+
+    // Get all favourites of a user endpoint
     @GetMapping("/favourites/{userId}")
     public ResponseEntity<Object> getFavourites(@PathVariable("userId") int userId) {
         try {
@@ -325,6 +330,9 @@ public class MainController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
         }
     }
+
+    // Get the count of likes of a product endpoint
+    // how many people like this product
     @GetMapping("/favourites/count/{productId}")
     public ResponseEntity<Object> getCountOfaFavourite(@PathVariable("productId") long id) {
         try {
@@ -338,8 +346,8 @@ public class MainController {
 
 
 
-    //Traces Controller
-
+    // TRACES CONTROLLER
+    // Add new trace of a user endpoint
     @PostMapping("/traces")
     public ResponseEntity<Object> addTrace(@RequestBody Trace trace) {
         try {
@@ -360,7 +368,7 @@ public class MainController {
         }
     }
 
-
+    // Update the date of a trace of a user endpoint
     @PutMapping("/traces")
     public ResponseEntity<Object> updateTrace(@RequestBody Trace trace) {
         try {
@@ -381,6 +389,7 @@ public class MainController {
         }
     }
 
+    // Delete a trace of a user endpoint
     @DeleteMapping("/traces")
     public ResponseEntity<Object> removeTrace(@RequestBody Trace trace) {
         try {
@@ -398,7 +407,7 @@ public class MainController {
         }
     }
 
-
+    // Get all traces of a user endpoint
     @GetMapping("/traces/{userId}")
     public ResponseEntity<List<Trace>> getTraces(@PathVariable("userId") long userId) {
         try {
@@ -409,6 +418,8 @@ public class MainController {
         }
     }
 
+    // Get the count of all traces of a product
+    // by how many people is this product is visited
     @GetMapping("/traces/count/{productId}")
     public ResponseEntity<Long> getCountOfaTrace(@PathVariable("productId") long id) {
         try {
