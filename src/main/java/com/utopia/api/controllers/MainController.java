@@ -192,6 +192,7 @@ public class MainController {
         }
     }
 
+    //Shuna tazeden seretmeli
     @PostMapping("/transactions")
     public ResponseEntity<String> addTransactions(@RequestBody List<Transaction> transactions) {
         if(transactions.isEmpty()) {
@@ -251,51 +252,77 @@ public class MainController {
     //Favourites Controller
 
     @PostMapping("/favourites")
-    public ResponseEntity<String> addFavourite(@RequestBody Favourite f) {
-        if (favouritesDAO.exists(f)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Data already exists");
+    public ResponseEntity<Object> addFavourite(@RequestBody Favourite f) {
+        try {
+            if (favouritesDAO.exists(f)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Data already exists");
+            }
+            favouritesDAO.add(f);
+            Favourite favourite = favouritesDAO.get(f.getUserId(), f.getProductId());
+
+            if (favourite != null) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(favourite);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve the added data");
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
         }
-
-        favouritesDAO.add(f);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Data added successfully");
     }
-
     @PutMapping("/favourites")
-    public ResponseEntity<String> updateFavourite(@RequestBody Favourite f) {
-        if (!favouritesDAO.exists(f)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
+    public ResponseEntity<Object> updateFavourite(@RequestBody Favourite f) {
+        try {
+            if (!favouritesDAO.exists(f)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
+            }
+
+            favouritesDAO.update(f);
+            Favourite updatedFavourite = favouritesDAO.get(f.getUserId(), f.getProductId());
+
+            if (updatedFavourite != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(updatedFavourite);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve the updated data");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
         }
-
-        favouritesDAO.update(f);
-        return ResponseEntity.status(HttpStatus.OK).body("Data updated successfully");
     }
-
     @DeleteMapping("/favourites")
-    public ResponseEntity<String> removeFavourite(@RequestBody Favourite f) {
-        if (!favouritesDAO.exists(f)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
+    public ResponseEntity<Object> removeFavourite(@RequestBody Favourite f) {
+        try {
+            if (!favouritesDAO.exists(f)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
+            }
+
+            favouritesDAO.remove(f);
+
+            // In a DELETE operation, you may choose not to retrieve the deleted object.
+            // Here, I'm returning a generic success message.
+            return ResponseEntity.status(HttpStatus.OK).body("Data removed successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
         }
-
-        favouritesDAO.remove(f);
-        return ResponseEntity.status(HttpStatus.OK).body("Data removed successfully");
     }
-
     @GetMapping("/favourites/{userId}")
-    public ResponseEntity<List<Favourite>> getFavourites(@PathVariable("userId") int userId) {
-        List<Favourite> favourites = this.favouritesDAO.getAll(userId);
-
-//        if (favourites.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
-//        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(favourites);
+    public ResponseEntity<Object> getFavourites(@PathVariable("userId") int userId) {
+        try {
+            List<Favourite> favourites = this.favouritesDAO.getAll(userId);
+            return ResponseEntity.status(HttpStatus.OK).body(favourites);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
+        }
     }
-
     @GetMapping("/favourites/count/{productId}")
-    public ResponseEntity<Long> getCountOfaFavourite(@PathVariable("productId") long id) {
-        long count = favouritesDAO.getCountOfProduct(id);
-        return ResponseEntity.status(HttpStatus.OK).body(count);
+    public ResponseEntity<Object> getCountOfaFavourite(@PathVariable("productId") long id) {
+        try {
+            long count = favouritesDAO.getCountOfProduct(id);
+            return ResponseEntity.status(HttpStatus.OK).body(count);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
+        }
     }
+
 
 
 

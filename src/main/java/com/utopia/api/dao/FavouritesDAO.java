@@ -2,8 +2,10 @@ package com.utopia.api.dao;
 
 import com.utopia.api.entities.Favourite;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +28,16 @@ public class FavouritesDAO {
         };
 
         return jdbcTemplate.query(sql, rowMapper, userId);
+    }
+
+    public Favourite get(Long userId, Long productId) throws DataAccessException {
+        String sql = "SELECT * FROM favourites WHERE user_id = ? AND product_id = ?";
+        return jdbcTemplate.queryForObject(
+                sql,
+                new BeanPropertyRowMapper<>(Favourite.class),
+                userId,
+                productId
+        );
     }
 
     public void add(Favourite favourite) throws DataAccessException {
