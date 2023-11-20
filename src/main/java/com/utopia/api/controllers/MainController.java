@@ -44,49 +44,63 @@ public class MainController {
 
     // Authentication endpoint
     @PostMapping("/auth")
-    public ResponseEntity<User> authenticate(@RequestBody User user) {
+    public ResponseEntity<Object> authenticate(@RequestBody User user) {
         try {
-            boolean userExists = usersDAO.exists(user.getContact(), user.getPassword());
-            if (userExists) {
-                long id = usersDAO.getUserId(user.getContact(), user.getPassword());
-                User authenticatedUser = usersDAO.get(id);
-                return ResponseEntity.ok(authenticatedUser);
+            if (usersDAO.isAuthenticated(user.getContact(), user.getPassword())) {
+                User authenticatedUser = usersDAO.get(user.getContact(), user.getPassword());
+
+                if (authenticatedUser != null) {
+                    return ResponseEntity.ok(authenticatedUser);
+                } else {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve authenticated user data");
+                }
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
         } catch (Exception e) {
-            LOGGER.error("Error during authentication", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            //LOGGER.error("Error during authentication", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
         }
     }
+
 
     // User registration endpoint
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<User> addUser(@RequestBody User user) {
+    public ResponseEntity<Object> addUser(@RequestBody User user) {
         try {
+            if (usersDAO.exists(user.getContact())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User with this contact already exists");
+            }
+
             usersDAO.add(user);
 
-            //get the new added user
-            long id = usersDAO.getUserId(user.getContact(), user.getPassword());
-            User authenticatedUser = usersDAO.get(id);
-            return ResponseEntity.status(HttpStatus.CREATED).body(authenticatedUser);
+            // Get the new added user
+            User addedUser = usersDAO.get(user.getContact(), user.getPassword());
+
+            if (addedUser != null) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(addedUser);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve the added user data");
+            }
         } catch (Exception e) {
             LOGGER.error("Error during user registration", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
         }
     }
 
+
     // Update user endpoint
+    //Update password ishlanok, hem kone useri almaly, hem updated useri almaly.
+    //Authentication ucin kone useri hem almaly
     @PutMapping("/users")
     public ResponseEntity<User> updateUser(@RequestBody User user) {
         try {
-            if (usersDAO.exists(user.getContact(), user.getPassword())) {
+            if (usersDAO.isAuthenticated(user.getContact(), user.getPassword())) {
                 usersDAO.update(user);
 
                 //get the updated user
-                long id = usersDAO.getUserId(user.getContact(), user.getPassword());
-                User authenticatedUser = usersDAO.get(id);
+                User authenticatedUser = usersDAO.get(user.getContact(), user.getPassword());;
                 return ResponseEntity.ok(authenticatedUser);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -204,7 +218,7 @@ public class MainController {
         }
 
 
-        User user = usersDAO.get(transactions.get(0).getUserId());
+        User user = usersDAO.getById(transactions.get(0).getUserId());
 
         try {
             //Check up;
@@ -214,7 +228,7 @@ public class MainController {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Transactions cannot be null!");
                 }
 
-                User u = usersDAO.get(transaction.getUserId());
+                User u = usersDAO.getById(transaction.getUserId());
                 if(!user.getId().equals(u.getId())) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body("All transactions should belong to one person at the time!");
@@ -258,10 +272,10 @@ public class MainController {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Data already exists");
             }
             favouritesDAO.add(f);
-            Favourite favourite = favouritesDAO.get(f.getUserId(), f.getProductId());
+            Favourite addedFavourite = favouritesDAO.get(f.getUserId(), f.getProductId());
 
-            if (favourite != null) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(favourite);
+            if (addedFavourite != null) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(addedFavourite);
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve the added data");
             }
@@ -329,34 +343,63 @@ public class MainController {
     //Traces Controller
 
     @PostMapping("/traces")
-    public ResponseEntity<String> add(@RequestBody Trace trace) {
-        if (tracesDAO.exists(trace)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Data already exists");
-        }
+    public ResponseEntity<Object> addTrace(@RequestBody Trace trace) {
+        try {
+            if (tracesDAO.exists(trace)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Data already exists");
+            }
 
-        tracesDAO.add(trace);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Data added/updated successfully");
+            tracesDAO.add(trace);
+            Trace addedTrace = tracesDAO.get(trace.getUserId(), trace.getProductId());
+
+            if (addedTrace != null) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(addedTrace);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve the added data");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
+        }
     }
 
+
     @PutMapping("/traces")
-    public ResponseEntity<String> updateTrace(@RequestBody Trace trace) {
-        if (tracesDAO.exists(trace)) {
-            tracesDAO.update(trace);
-            return ResponseEntity.status(HttpStatus.OK).body("Data updated successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
+    public ResponseEntity<Object> updateTrace(@RequestBody Trace trace) {
+        try {
+            if (tracesDAO.exists(trace)) {
+                tracesDAO.update(trace);
+                Trace updatedTrace = tracesDAO.get(trace.getUserId(), trace.getProductId());
+
+                if (updatedTrace != null) {
+                    return ResponseEntity.status(HttpStatus.OK).body(updatedTrace);
+                } else {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve the updated data");
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
         }
     }
 
     @DeleteMapping("/traces")
-    public ResponseEntity<String> removeTrace(@RequestBody Trace trace) {
-        if (tracesDAO.exists(trace)) {
-            tracesDAO.remove(trace);
-            return ResponseEntity.status(HttpStatus.OK).body("Data removed successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
+    public ResponseEntity<Object> removeTrace(@RequestBody Trace trace) {
+        try {
+            if (tracesDAO.exists(trace)) {
+                tracesDAO.remove(trace);
+
+                // In a DELETE operation, you may choose not to retrieve the deleted object.
+                // Here, I'm returning a generic success message.
+                return ResponseEntity.status(HttpStatus.OK).body("Data removed successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error in the server");
         }
     }
+
 
     @GetMapping("/traces/{userId}")
     public ResponseEntity<List<Trace>> getTraces(@PathVariable("userId") long userId) {

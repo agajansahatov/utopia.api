@@ -2,8 +2,10 @@ package com.utopia.api.dao;
 
 import com.utopia.api.entities.Trace;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -27,9 +29,19 @@ public class TracesDAO {
         return jdbcTemplate.query(sql, rowMapper, userId);
     }
 
+    public Trace get(Long userId, Long productId) throws DataAccessException {
+        String sql = "SELECT * FROM traces WHERE user_id = ? AND product_id = ?";
+        return jdbcTemplate.queryForObject(
+                sql,
+                new BeanPropertyRowMapper<>(Trace.class),
+                userId,
+                productId
+        );
+    }
+
     public void add(Trace trace) throws DataAccessException {
-        String sql = "INSERT INTO traces (user_id, product_id, date) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, trace.getUserId(), trace.getProductId(), trace.getDate());
+        String sql = "INSERT INTO traces (user_id, product_id) VALUES (?, ?)";
+        jdbcTemplate.update(sql, trace.getUserId(), trace.getProductId());
     }
 
     public void update(Trace trace) throws DataAccessException {
