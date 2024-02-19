@@ -20,3 +20,6 @@ RETURN THE DELETED OBJECT
  - Delete a favourite object endpoint
 
 CREATE NEW ENDPOINT FOR DELETING A USER
+
+SOLVE THIS EXCEPTION
+ - Caused by: java.sql.SQLIntegrityConstraintViolationException: Duplicate entry '5-13' for key 'favourites.PRIMARY'

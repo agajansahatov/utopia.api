@@ -100,7 +100,7 @@ public class MainController {
             }
         } catch (Exception e) {
             LOGGER.error("Error during user update", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }
 
@@ -115,7 +115,7 @@ public class MainController {
             return ResponseEntity.ok(productList);
         } catch (Exception e) {
             LOGGER.error("Error getting products", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }
 
