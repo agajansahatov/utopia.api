@@ -1,5 +1,4 @@
 AUTHENTICATION NEEDS TO BE DONE FOR:
- - Update user endpoint
  - Add a new product endpoint (Allow for only admins)
  - Get all transactions of a user endpoint
  - Add all transactions of a user endpoint

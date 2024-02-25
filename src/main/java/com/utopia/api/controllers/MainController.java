@@ -1,6 +1,7 @@
 package com.utopia.api.controllers;
 
 import com.utopia.api.dao.*;
+import com.utopia.api.dto.UpdateUserRequestDTO;
 import com.utopia.api.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,22 +88,28 @@ public class MainController {
 
     // Update user endpoint
     @PutMapping("/users")
-    public ResponseEntity<Object> updateUser(@RequestBody User user) {
-        try {
-            if (usersDAO.isAuthenticated(user.getContact(), user.getPassword())) {
-                usersDAO.update(user);
+    public ResponseEntity<Object> updateUser(@RequestBody UpdateUserRequestDTO request) {
+        User oldUser = request.getOldUser();
+        User updatedUser = request.getUpdatedUser();
 
-                //get the updated user
-                User authenticatedUser = usersDAO.get(user.getContact(), user.getPassword());;
-                return ResponseEntity.ok(authenticatedUser);
+        try {
+            if (usersDAO.isAuthenticated(oldUser.getContact(), oldUser.getPassword())) {
+                usersDAO.update(updatedUser);
+
+                User newUpdatedUser = usersDAO.get(updatedUser.getContact(), updatedUser.getPassword());
+                return ResponseEntity.ok(newUpdatedUser);
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("You are not authenticated!");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed!");
             }
         } catch (Exception e) {
             LOGGER.error("Error during user update", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with the database: " + e.getMessage());
         }
     }
+
+
+
+
 
 
     // PRODUCTS CONTROLLER

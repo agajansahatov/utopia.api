@@ -27,6 +27,11 @@
 * Entities - I have put all the entities inside the package "com.utopia.api.entities". Entities are the data
     types which can be used to store the data retrieved from the database. We also need to use them to get and send the data
     at endpoint requests.
+* DTO - Data Transfer Object. Java Spring Boot @RequestBody annotation only allows one object per request. But sometimes
+    we need to transfer two objects on one request. So, we need to create a DTO class separately and put our two objects
+    as the properties of this new DTO class. And when we accept a request from front-end app, we can accept
+    only one object - DTO. So, there might be multiple DTO classes through entire project. That's why I created
+    a new package for all DTO classes.
 
 * Public folder - When we run our application, if someone sends a request to the root endpoint, this folder
     will be returned. What did I mean by that? It means that the index.html inside that folder will be returned by default.
