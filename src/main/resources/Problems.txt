@@ -1,6 +1,4 @@
 AUTHENTICATION NEEDS TO BE DONE FOR:
- - Add a new product endpoint (Allow for only admins)
- - Get all transactions of a user endpoint
  - Add all transactions of a user endpoint
  - Add a new favourite object endpoint
  - Update a favourite object endpoint
@@ -10,6 +8,8 @@ AUTHENTICATION NEEDS TO BE DONE FOR:
  - Update the date of a trace of a user endpoint
  - Delete a trace of a user endpoint
  - Get all traces of a user endpoint
+ - Add a new product endpoint (Allow for only admins)
+ - Get all transactions of a user endpoint
 
 UPLOAD IMAGE BUG
  - Fix upload image bug in "Add a new product endpoint". Bug happened in the cloud server.
