@@ -1,90 +1,143 @@
 package com.utopia.api.controllers;
 
 import com.utopia.api.dao.UsersDAO;
-import com.utopia.api.dto.UpdateUserRequestDTO;
 import com.utopia.api.entities.User;
+import com.utopia.api.utilities.JwtUtil;
+import com.utopia.api.utilities.Validator;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.slf4j.Logger;
+
+import java.math.BigDecimal;
 
 @RestController
 @CrossOrigin
 public class UsersController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TracesController.class);
     private final UsersDAO usersDAO;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public UsersController(JdbcTemplate jdbcTemplate) {
+    public UsersController(JdbcTemplate jdbcTemplate, JwtUtil jwtUtil) {
         this.usersDAO = new UsersDAO(jdbcTemplate);
-    }
-
-    // Authentication endpoint
-    @PostMapping("/auth")
-    public ResponseEntity<Object> authenticate(@RequestBody User user) {
-        try {
-            if (usersDAO.isAuthenticated(user.getContact(), user.getPassword())) {
-                User authenticatedUser = usersDAO.get(user.getContact(), user.getPassword());
-
-                if (authenticatedUser != null) {
-                    return ResponseEntity.ok(authenticatedUser);
-                } else {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve authenticated user data");
-                }
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong Credentials!");
-            }
-        } catch (Exception e) {
-            LOGGER.error("Error during authentication", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
-        }
+        this.jwtUtil = jwtUtil;
     }
 
     // User registration endpoint
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> addUser(@RequestBody User user) {
+    public ResponseEntity<Object> addUser(@RequestBody User req) {
+        System.out.println("Users Request: " + req);
+
+        if(!User.isValid(req))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You should send a valid user object");
+
+        String hashedPassword = passwordEncoder.encode(req.getPassword());
+        req.setPassword(hashedPassword);
+
+        req.setBalance(BigDecimal.valueOf(10000));
+
         try {
-            if (usersDAO.exists(user.getContact())) {
+            if (usersDAO.exists(req.getContact())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User with this contact already exists");
             }
+            usersDAO.add(req);
 
-            usersDAO.add(user);
-            User addedUser = usersDAO.get(user.getContact(), user.getPassword());
+            User newUser = usersDAO.getByContact(req.getContact());
+            String jwtToken = jwtUtil.generateToken(newUser);
 
-            if (addedUser != null) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(addedUser);
-            } else {
-                throw new Exception("Failed to retrieve the added user data!");
-            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(jwtToken);
         } catch (Exception e) {
             LOGGER.error("Error during user registration: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("ERROR: " + e.getMessage());
         }
     }
 
-    // Update user endpoint
-    @PutMapping("/users")
-    public ResponseEntity<Object> updateUser(@RequestBody UpdateUserRequestDTO request) {
-        User oldUser = request.getOldUser();
-        User updatedUser = request.getUpdatedUser();
-
+    // Authentication endpoint
+    @PostMapping("/auth")
+    public ResponseEntity<Object> authenticate(@RequestBody User req) {
         try {
-            if (usersDAO.isAuthenticated(oldUser.getContact(), oldUser.getPassword())) {
-                usersDAO.update(updatedUser);
-
-                User newUpdatedUser = usersDAO.get(updatedUser.getContact(), updatedUser.getPassword());
-                return ResponseEntity.ok(newUpdatedUser);
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed!");
+            if(!User.isValid(req)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong Credentials");
             }
+
+            User authUser = usersDAO.getByContact(req.getContact());
+            if(authUser == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid contact");
+            }
+
+            if(!passwordEncoder.matches(req.getPassword(), authUser.getPassword())){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid password");
+            }
+
+            String jwtToken = jwtUtil.generateToken(authUser);
+
+            return ResponseEntity.ok(jwtToken);
         } catch (Exception e) {
-            LOGGER.error("Error during user update", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with the database: " + e.getMessage());
+            LOGGER.error("Error during authentication", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("ERROR: " + e.getMessage());
         }
     }
 
+    @PutMapping("/users")
+    public ResponseEntity<Object> updateUser(@RequestBody User req, @RequestHeader("x-auth-token") String token) {
+        try {
+            if (req.getContact() != null && !Validator.isValidContact(req.getContact())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid contact");
+            }
+            if(req.getPassword() != null && req.getPassword().length() < 5 ) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password length should be greater than 5");
+            }
+
+            if (!jwtUtil.isValidToken(token)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+            }
+
+            long userId = jwtUtil.extractUserId(token);
+
+            User existingUser = usersDAO.getById(userId);
+            if (existingUser == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+
+            if(req.getName() != null) {
+                existingUser.setName(req.getName());
+            }
+
+            //In the future you will need to do additional security to update the contact
+            if(req.getContact() != null) {
+                existingUser.setContact(req.getContact());
+            }
+            if(req.getAddress() != null) {
+                existingUser.setAddress(req.getAddress());
+            }
+
+            //In the future you will need to do additional security to update the password
+            if(req.getPassword() != null) {
+                String hashedPassword = passwordEncoder.encode(req.getPassword());
+                existingUser.setPassword(hashedPassword);
+            }
+
+            //In the future there might be image upload service
+            if(req.getImage() != null) {
+                existingUser.setImage(req.getImage());
+            }
+
+            //Currently, balance cannot be updated. In the future, you might want to update the balance here.
+
+            usersDAO.update(existingUser);
+
+            return ResponseEntity.ok("User updated successfully");
+        } catch (Exception e) {
+            LOGGER.error("Error updating user", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("ERROR: " + e.getMessage());
+        }
+    }
 }

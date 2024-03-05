@@ -1,17 +1,25 @@
-package com.utopia.api.entities;
+package com.utopia.api.dto;
 
-import com.utopia.api.utilities.Validator;
+import com.utopia.api.entities.User;
 
 import java.math.BigDecimal;
 
-public class User {
+public class UserResponseDTO {
     private Long id;
     private String name;
     private String contact;
     private String image;
-    private String password;
     private String address;
     private BigDecimal balance;
+
+    public UserResponseDTO(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.contact = user.getContact();
+        this.image = user.getImage();
+        this.address = user.getAddress();
+        this.balance = user.getBalance();
+    }
 
     public Long getId() {
         return id;
@@ -45,14 +53,6 @@ public class User {
         this.image = image;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getAddress() {
         return address;
     }
@@ -65,26 +65,5 @@ public class User {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
-    public static boolean isValid(User user) {
-        if(user == null) {
-            return false;
-        }
-        if(user.getContact() == null) {
-            return false;
-        }
-        if(user.getPassword() == null) {
-            return false;
-        }
-        if(!Validator.isValidContact(user.getContact())){
-            return false;
-        }
-        if(user.getPassword().length() < 5){
-            return false;
-        }
-        return true;
-    }
+    public void setBalance(BigDecimal balance) { this.balance = balance; }
 }

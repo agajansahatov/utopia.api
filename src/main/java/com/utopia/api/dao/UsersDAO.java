@@ -6,7 +6,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
 public class UsersDAO {
@@ -17,13 +16,8 @@ public class UsersDAO {
     }
 
     public void add(User user) throws DataAccessException {
-        if(user.getBalance() == null) {
-            user.setBalance(BigDecimal.valueOf(10000));
-        }
-
         String sql = "INSERT INTO users (name, contact, image, password, address, balance) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
-
         jdbcTemplate.update(sql,
                 user.getName(),
                 user.getContact(),
@@ -47,60 +41,63 @@ public class UsersDAO {
     }
 
     public User getById(long id) throws DataAccessException {
-        String sql = "SELECT * FROM users WHERE id = ?";
-
-        RowMapper<User> rowMapper = (rs, rowNum) -> {
-            User user = new User();
-            user.setId(rs.getLong("id"));
-            user.setName(rs.getString("name"));
-            user.setContact(rs.getString("contact"));
-            user.setImage(rs.getString("image"));
-            user.setPassword(rs.getString("password"));
-            user.setAddress(rs.getString("address"));
-            user.setBalance(rs.getBigDecimal("balance"));
-            return user;
-        };
-
         try {
+            String sql = "SELECT * FROM users WHERE id = ?";
+
+            RowMapper<User> rowMapper = (rs, rowNum) -> {
+                User user = new User();
+                user.setId(rs.getLong("id"));
+                user.setName(rs.getString("name"));
+                user.setContact(rs.getString("contact"));
+                user.setImage(rs.getString("image"));
+                user.setPassword(rs.getString("password"));
+                user.setAddress(rs.getString("address"));
+                user.setBalance(rs.getBigDecimal("balance"));
+                return user;
+            };
+
             return jdbcTemplate.queryForObject(sql, rowMapper, id);
         } catch (EmptyResultDataAccessException e) {
-            // Handle the case where no user is found for the given id
-            return null; // or throw a custom exception, return a default user, etc.
+            return null;
         } catch (DataAccessException e) {
-            // Handle other data access exceptions
-            throw e; // Propagate the exception to the calling code
+            throw e;
         }
     }
 
 
-    public User get(String contact, String password) throws EmptyResultDataAccessException, DataAccessException {
-        String sql = "SELECT * FROM users WHERE contact = ? AND password = ?";
+    public User getByContact(String contact) throws DataAccessException {
+        try {
+            String sql = "SELECT * FROM users WHERE contact = ?";
 
-        RowMapper<User> rowMapper = (rs, rowNum) -> {
-            User user = new User();
-            user.setId(rs.getLong("id"));
-            user.setName(rs.getString("name"));
-            user.setContact(rs.getString("contact"));
-            user.setImage(rs.getString("image"));
-            user.setPassword(rs.getString("password"));
-            user.setAddress(rs.getString("address"));
-            user.setBalance(rs.getBigDecimal("balance"));
-            return user;
-        };
+            RowMapper<User> rowMapper = (rs, rowNum) -> {
+                User user = new User();
+                user.setId(rs.getLong("id"));
+                user.setName(rs.getString("name"));
+                user.setContact(rs.getString("contact"));
+                user.setImage(rs.getString("image"));
+                user.setPassword(rs.getString("password"));
+                user.setAddress(rs.getString("address"));
+                user.setBalance(rs.getBigDecimal("balance"));
+                return user;
+            };
 
-        return jdbcTemplate.queryForObject(sql, rowMapper, contact, password);
-    }
-
-
-    public boolean isAuthenticated(String contact, String password) throws DataAccessException {
-        String sql = "SELECT COUNT(*) FROM users WHERE contact = ? AND password = ?";
-        Long count = jdbcTemplate.queryForObject(sql, Long.class, contact, password);
-        return Optional.ofNullable(count).orElse(0L) > 0;
+            return jdbcTemplate.queryForObject(sql, rowMapper, contact);
+        } catch (EmptyResultDataAccessException e) {
+            return null; // Return null when user with the given contact is not found
+        } catch (DataAccessException e) {
+            throw e;
+        }
     }
 
     public boolean exists(String contact) throws DataAccessException {
         String sql = "SELECT COUNT(*) FROM users WHERE contact = ?";
         Long count = jdbcTemplate.queryForObject(sql, Long.class, contact);
         return Optional.ofNullable(count).orElse(0L) > 0;
+    }
+
+    public boolean exists(long id) throws DataAccessException {
+        String sql = "SELECT COUNT(*) FROM users WHERE id = ?";
+        Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
+        return count != null && count > 0;
     }
 }
