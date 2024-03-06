@@ -52,7 +52,6 @@ public class JwtUtil {
         try {
             Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
 
-
             if (!claims.containsKey("userId")) {
                 System.err.println("Error validating JWT: Missing userId claim");
                 return jwtChecked;
@@ -69,14 +68,16 @@ public class JwtUtil {
             }
 
             String userRole = claims.get("userRole").toString();
-            String existingUserRole = usersDAO.getRole(userId);
-            if(existingUserRole == null) {
-                System.err.println("'role' field is null in the database!!!");
-                return jwtChecked;
-            }
-            if (!userRole.equals("user") && !existingUserRole.equals(userRole)) {
-                System.err.println("Error validating JWT: User role mismatch!");
-                return jwtChecked;
+            if (!userRole.equals("user")){
+                String existingUserRole = usersDAO.getRole(userId);
+                if(existingUserRole == null) {
+                    System.err.println("'role' field is null in the database!!!");
+                    return jwtChecked;
+                }
+                if(!existingUserRole.equals(userRole)) {
+                    System.err.println("Error validating JWT: User role mismatch!");
+                    return jwtChecked;
+                }
             }
 
             jwtChecked.isValid = true;

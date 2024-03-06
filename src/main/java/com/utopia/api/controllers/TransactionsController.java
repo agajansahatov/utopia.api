@@ -2,16 +2,16 @@ package com.utopia.api.controllers;
 
 import com.utopia.api.dao.TransactionsDAO;
 import com.utopia.api.entities.Transaction;
+import com.utopia.api.utilities.JwtChecked;
+import com.utopia.api.utilities.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -19,24 +19,37 @@ import java.util.List;
 public class TransactionsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TracesController.class);
     private final TransactionsDAO transactionsDAO;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public TransactionsController(JdbcTemplate jdbcTemplate) {
+    public TransactionsController(JdbcTemplate jdbcTemplate, JwtUtil jwtUtil) {
         this.transactionsDAO = new TransactionsDAO(jdbcTemplate);
+        this.jwtUtil = jwtUtil;
     }
 
     // Get all transactions of a user endpoint
     // returns all the order transactions of a user
-    @GetMapping("/transactions/{userId}")
-    public ResponseEntity<Object> getTransactions(@PathVariable("userId") long userId) {
+    @GetMapping("/transactions")
+    public ResponseEntity<Object> getTransactions(@RequestHeader("x-auth-token") String token) {
         try {
+            if (token == null || token.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token is required");
+            }
+
+            JwtChecked jwtChecked = jwtUtil.validate(token);
+            if (!jwtChecked.isValid) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
+            }
+
+            long userId = jwtChecked.userId;
             List<Transaction> transactions = transactionsDAO.getTransactions(userId);
             return ResponseEntity.ok(transactions);
         } catch (Exception e) {
             LOGGER.error("Error during get transactions: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error in retrieving data from db!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing request");
         }
     }
+
 
     // Add all transactions of a user endpoint
     // this is used for purchasing items
