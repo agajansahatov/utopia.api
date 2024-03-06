@@ -1,11 +1,11 @@
 package com.utopia.api.utilities;
 
-public class JwtVerified {
+public class JwtChecked {
     public boolean isValid;
     public long userId;
     public String userRole;
 
-    public JwtVerified() {
+    public JwtChecked() {
         this.isValid = false;
         this.userId = -1;
         this.userRole = null;

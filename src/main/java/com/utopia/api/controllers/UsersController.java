@@ -3,6 +3,7 @@ package com.utopia.api.controllers;
 import com.utopia.api.dao.UsersDAO;
 import com.utopia.api.entities.User;
 import com.utopia.api.utilities.JwtUtil;
+import com.utopia.api.utilities.JwtChecked;
 import com.utopia.api.utilities.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,13 @@ public class UsersController {
             if (usersDAO.exists(req.getContact())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User with this contact already exists");
             }
+
+            if(usersDAO.getUserCount() == 0) {
+                req.setRole("owner");
+            } else {
+              req.setRole("user");
+            }
+
             usersDAO.add(req);
 
             User newUser = usersDAO.getByContact(req.getContact());
@@ -96,11 +104,12 @@ public class UsersController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password length should be greater than 5");
             }
 
-            if (!jwtUtil.isValidToken(token)) {
+            JwtChecked jwtChecked = jwtUtil.validate(token);
+            if (!jwtChecked.isValid) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
             }
 
-            long userId = jwtUtil.extractUserId(token);
+            long userId = jwtChecked.userId;
 
             User existingUser = usersDAO.getById(userId);
             if (existingUser == null) {
@@ -131,7 +140,7 @@ public class UsersController {
             }
 
             //Currently, balance cannot be updated. In the future, you might want to update the balance here.
-
+            //Currently, role can't be updated. In the future, you need to create a new endpoint to update it.
             usersDAO.update(existingUser);
 
             return ResponseEntity.ok("User updated successfully");

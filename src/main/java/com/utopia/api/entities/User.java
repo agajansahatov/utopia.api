@@ -8,6 +8,7 @@ public class User {
     private Long id;
     private String name;
     private String contact;
+    private String role;
     private String image;
     private String password;
     private String address;
@@ -35,6 +36,17 @@ public class User {
 
     public void setContact(String contact) {
         this.contact = contact;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        if (!role.matches("owner|admin|user")) {
+            throw new IllegalArgumentException("Invalid role: " + role);
+        }
+        this.role = role;
     }
 
     public String getImage() {

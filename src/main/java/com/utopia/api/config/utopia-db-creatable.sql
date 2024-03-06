@@ -7,12 +7,13 @@ USE utopia;
 -- Users table
 CREATE TABLE users (
   id BIGINT NOT NULL AUTO_INCREMENT,
+  contact VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  role VARCHAR(255) NOT NULL,
   name VARCHAR(255),
-  contact VARCHAR(255),
-  image VARCHAR(255),
-  password CHAR(64),  -- Assuming you'll store hashed passwords
-  address VARCHAR(500),
   balance DECIMAL(15, 2),
+  address VARCHAR(500),
+  image VARCHAR(255),
   PRIMARY KEY (id)
 );
 

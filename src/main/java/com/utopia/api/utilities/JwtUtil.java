@@ -17,17 +17,20 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
-    private String secret;
-
     private final SecretKey key;
     private final UsersDAO usersDAO;
 
-    public JwtUtil(JdbcTemplate jdbcTemplate) {
+    public JwtUtil(JdbcTemplate jdbcTemplate, @Value("${jwt.secret}") String secretKey) {
         this.usersDAO = new UsersDAO(jdbcTemplate);
-        // Generate a secure key with sufficient length for HS256
-        this.key = Keys.secretKeyFor(io.jsonwebtoken.SignatureAlgorithm.HS256);
+
+        //The secretKey parameter should be removed in the production mode.
+        //This line should be commented out in the production mode.
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+
+        // This line should be enabled in the production mode. Because it generates more secure key.
+        // this.key = Keys.secretKeyFor(io.jsonwebtoken.SignatureAlgorithm.HS256);
     }
+
 
     public String generateToken(User user) {
         Date now = new Date();
@@ -36,32 +39,70 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .claim("userId", user.getId())
-                .claim("userName", user.getName())
+                .claim("userRole", user.getRole())
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
                 .signWith(key)
                 .compact();
     }
 
-    public boolean isValidToken(String token) {
+    public JwtChecked validate(String token) {
+        JwtChecked jwtChecked = new JwtChecked();
+
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            long userId = extractUserId(token);
-            return usersDAO.exists(userId);
+            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+
+
+            if (!claims.containsKey("userId")) {
+                System.err.println("Error validating JWT: Missing userId claim");
+                return jwtChecked;
+            }
+            if (!claims.containsKey("userRole")) {
+                System.err.println("Error validating JWT: Missing userRole claim");
+                return jwtChecked;
+            }
+
+            long userId = Long.parseLong(claims.get("userId").toString());
+            if (!usersDAO.exists(userId)) {
+                System.err.println("Error validating JWT: User doesn't exist or might be deleted!");
+                return jwtChecked;
+            }
+
+            String userRole = claims.get("userRole").toString();
+            String existingUserRole = usersDAO.getRole(userId);
+            if(existingUserRole == null) {
+                System.err.println("'role' field is null in the database!!!");
+                return jwtChecked;
+            }
+            if (!userRole.equals("user") && !existingUserRole.equals(userRole)) {
+                System.err.println("Error validating JWT: User role mismatch!");
+                return jwtChecked;
+            }
+
+            jwtChecked.isValid = true;
+            jwtChecked.userId = userId;
+            jwtChecked.userRole = userRole;
+            return jwtChecked;
         } catch (ExpiredJwtException e) {
             System.err.println("JWT token expired: " + e.getMessage());
-            return false;
+            return jwtChecked;
         } catch (MalformedJwtException e) {
             System.err.println("Malformed JWT token: " + e.getMessage());
-            return false;
+            return jwtChecked;
         } catch (Exception e) {
             System.err.println("Error validating JWT token: " + e.getMessage());
-            return false;
+            return jwtChecked;
         }
     }
 
-    public long extractUserId(String token) {
-        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-        return Long.parseLong(claims.get("userId").toString());
-    }
+//    public long extractUserId(String token) {
+//        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+//        return Long.parseLong(claims.get("userId").toString());
+//    }
+//
+//    public String extractUserRole(String token) {
+//        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+//        return claims.get("userRole").toString();
+//    }
+
 }

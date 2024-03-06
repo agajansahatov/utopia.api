@@ -16,20 +16,8 @@ public class UsersDAO {
     }
 
     public void add(User user) throws DataAccessException {
-        String sql = "INSERT INTO users (name, contact, image, password, address, balance) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql,
-                user.getName(),
-                user.getContact(),
-                user.getImage(),
-                user.getPassword(),
-                user.getAddress(),
-                user.getBalance());
-    }
-
-    public void update(User user) throws DataAccessException {
-        String sql = "UPDATE users SET name = ?, contact = ?, image = ?, " +
-                "password = ?, address = ?, balance = ? WHERE id = ?";
+        String sql = "INSERT INTO users (name, contact, image, password, address, balance, role) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
                 user.getName(),
                 user.getContact(),
@@ -37,6 +25,20 @@ public class UsersDAO {
                 user.getPassword(),
                 user.getAddress(),
                 user.getBalance(),
+                user.getRole());
+    }
+
+    public void update(User user) throws DataAccessException {
+        String sql = "UPDATE users SET name = ?, contact = ?, image = ?, " +
+                "password = ?, address = ?, balance = ?, role = ? WHERE id = ?";
+        jdbcTemplate.update(sql,
+                user.getName(),
+                user.getContact(),
+                user.getImage(),
+                user.getPassword(),
+                user.getAddress(),
+                user.getBalance(),
+                user.getRole(),
                 user.getId());
     }
 
@@ -53,6 +55,7 @@ public class UsersDAO {
                 user.setPassword(rs.getString("password"));
                 user.setAddress(rs.getString("address"));
                 user.setBalance(rs.getBigDecimal("balance"));
+                user.setRole(rs.getString("role"));
                 return user;
             };
 
@@ -63,7 +66,6 @@ public class UsersDAO {
             throw e;
         }
     }
-
 
     public User getByContact(String contact) throws DataAccessException {
         try {
@@ -78,6 +80,7 @@ public class UsersDAO {
                 user.setPassword(rs.getString("password"));
                 user.setAddress(rs.getString("address"));
                 user.setBalance(rs.getBigDecimal("balance"));
+                user.setRole(rs.getString("role"));
                 return user;
             };
 
@@ -90,14 +93,44 @@ public class UsersDAO {
     }
 
     public boolean exists(String contact) throws DataAccessException {
-        String sql = "SELECT COUNT(*) FROM users WHERE contact = ?";
-        Long count = jdbcTemplate.queryForObject(sql, Long.class, contact);
-        return Optional.ofNullable(count).orElse(0L) > 0;
+        try {
+            String sql = "SELECT COUNT(*) FROM users WHERE contact = ?";
+            Long count = jdbcTemplate.queryForObject(sql, Long.class, contact);
+            return Optional.ofNullable(count).orElse(0L) > 0;
+        } catch (DataAccessException e) {
+            throw e;
+        }
     }
 
     public boolean exists(long id) throws DataAccessException {
-        String sql = "SELECT COUNT(*) FROM users WHERE id = ?";
-        Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
-        return count != null && count > 0;
+        try {
+            String sql = "SELECT COUNT(*) FROM users WHERE id = ?";
+            Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
+            return count != null && count > 0;
+        } catch (DataAccessException e) {
+            throw e;
+        }
     }
+
+    public long getUserCount() throws DataAccessException {
+        try {
+            String sql = "SELECT COUNT(*) FROM users";
+            Long count = jdbcTemplate.queryForObject(sql, Long.class);
+            return Optional.ofNullable(count).orElse(0L);
+        } catch (DataAccessException e) {
+            throw e;
+        }
+    }
+
+    public String getRole(long userId) throws DataAccessException {
+        try {
+            String sql = "SELECT role FROM users WHERE id = ?";
+            return jdbcTemplate.queryForObject(sql, String.class, userId);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        } catch (DataAccessException e) {
+            throw e;
+        }
+    }
+
 }
