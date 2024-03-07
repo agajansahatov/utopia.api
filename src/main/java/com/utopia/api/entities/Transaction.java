@@ -7,6 +7,7 @@ public class Transaction {
     private Long userId;
     private Long productId;
     private String destination;
+    //In the future status should be selected from a list
     private String status;
     private int quantity;
     private Timestamp date;

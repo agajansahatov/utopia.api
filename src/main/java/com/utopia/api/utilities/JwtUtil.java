@@ -47,7 +47,13 @@ public class JwtUtil {
     }
 
     public JwtChecked validate(String token) {
+        // Here jwtChecked.isValid = false;
         JwtChecked jwtChecked = new JwtChecked();
+
+        if (token == null || token.isEmpty()) {
+            System.err.println("Error validating JWT: Token is required!");
+            return jwtChecked;
+        }
 
         try {
             Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();

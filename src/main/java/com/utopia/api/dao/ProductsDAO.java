@@ -1,6 +1,8 @@
 package com.utopia.api.dao;
 
 import com.utopia.api.entities.Product;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -80,15 +82,27 @@ public class ProductsDAO {
     }
 
     public List<Product> getProducts() {
-        String sql = "SELECT * FROM products";
-        RowMapper<Product> rowMapper = (rs, rowNum) -> mapProduct(rs);
-        return jdbcTemplate.query(sql, rowMapper);
+        try {
+            String sql = "SELECT * FROM products";
+            RowMapper<Product> rowMapper = (rs, rowNum) -> mapProduct(rs);
+            return jdbcTemplate.query(sql, rowMapper);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        } catch (DataAccessException e) {
+            throw e;
+        }
     }
 
-    public Product getProduct(long id) {
-        String sql = "SELECT * FROM products WHERE id = ?";
-        RowMapper<Product> rowMapper = (rs, rowNum) -> mapProduct(rs);
-        return jdbcTemplate.queryForObject(sql, rowMapper, id);
+    public Product getProduct(long id) throws DataAccessException {
+        try {
+            String sql = "SELECT * FROM products WHERE id = ?";
+            RowMapper<Product> rowMapper = (rs, rowNum) -> mapProduct(rs);
+            return jdbcTemplate.queryForObject(sql, rowMapper, id);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        } catch (DataAccessException e) {
+            throw e;
+        }
     }
 
     private Product mapProduct(ResultSet rs) throws SQLException {

@@ -1,6 +1,5 @@
 AUTHENTICATION and AUTHORIZATION NEEDS TO BE DONE FOR:
  - Add a new product endpoint (Allow for only admins)
- - Add all transactions of a user endpoint
  - Add a new favourite object endpoint
  - Update a favourite object endpoint
  - Delete a favourite object endpoint
