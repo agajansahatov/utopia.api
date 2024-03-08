@@ -96,21 +96,28 @@ public class TracesController {
     }
 
     // Delete a trace of a user endpoint
-    @DeleteMapping("/traces")
-    public ResponseEntity<Object> removeTrace(@RequestBody Trace trace) {
-        try {
-            if (tracesDAO.exists(trace)) {
-                tracesDAO.remove(trace);
+    @DeleteMapping("/traces/{userId}")
+    public ResponseEntity<Object> removeTrace(@RequestHeader("x-auth-token") String token,
+                                              @PathVariable("userId") long userId,
+                                              @RequestBody Trace trace) {
+        JwtChecked jwtChecked = jwtUtil.validate(token);
+        if (!jwtChecked.isValid || userId != jwtChecked.userId || userId != trace.getUserId()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Invalid token or userId");
+        }
 
-                // In a DELETE operation, you may choose not to retrieve the deleted object.
-                // Here, I'm returning a generic success message.
-                return ResponseEntity.status(HttpStatus.OK).body("Data removed successfully");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
+        try {
+            if (!tracesDAO.exists(trace)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Trace is not found");
             }
+
+            tracesDAO.remove(trace);
+
+            // In a DELETE operation, you may choose not to retrieve the deleted object.
+            // Here, I'm returning a generic success message.
+            return ResponseEntity.status(HttpStatus.OK).body("Data removed successfully");
         } catch (Exception e) {
             LOGGER.error("Error during delete trace: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting the trace!");
         }
     }
 

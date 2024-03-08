@@ -102,8 +102,6 @@ public class JwtUtil {
             Date authTime = new Date(authTimeFromDB.getTime());
             Date issuedAt = claims.getIssuedAt();
             if (authTime.compareTo(issuedAt) != 0) {
-                System.out.println("AuthTime: " + authTime);
-                System.out.println("TokenTime: " + issuedAt);
                 System.err.println("Error validating JWT: Token generation time does not match auth time!");
                 return jwtChecked;
             }
@@ -123,15 +121,4 @@ public class JwtUtil {
             return jwtChecked;
         }
     }
-
-//    public long extractUserId(String token) {
-//        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-//        return Long.parseLong(claims.get("userId").toString());
-//    }
-//
-//    public String extractUserRole(String token) {
-//        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-//        return claims.get("userRole").toString();
-//    }
-
 }
