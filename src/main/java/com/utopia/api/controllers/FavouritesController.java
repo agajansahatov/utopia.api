@@ -29,7 +29,7 @@ public class FavouritesController {
         this.jwtUtil = jwtUtil;
     }
 
-    // Add a new favourite endpoint
+    // Add favourite endpoint
     // when a user likes a product, then it will be added to the favourites table
     @PostMapping("/favourites/{userId}")
     public ResponseEntity<Object> addFavourite(@RequestHeader("x-auth-token") String token,
@@ -65,15 +65,27 @@ public class FavouritesController {
         }
     }
 
-    // Update a favourite object endpoint
-    // it only updates the date column
-    @PutMapping("/favourites")
-    public ResponseEntity<Object> updateFavourite(@RequestBody Favourite f) {
+    // Update favourite endpoint
+    @PutMapping("/favourites/{userId}")
+    public ResponseEntity<Object> updateFavourite(@RequestHeader("x-auth-token") String token,
+                                                  @PathVariable("userId") long userId,
+                                                  @RequestBody Favourite f) {
+        JwtChecked jwtChecked = jwtUtil.validate(token);
+        if (!jwtChecked.isValid || userId != jwtChecked.userId || userId != f.getUserId()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Invalid token or userId");
+        }
+
         try {
-            if (!favouritesDAO.exists(f)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
+            if(!productsDAO.exists(f.getProductId())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product " + f.getProductId() + " not found");
             }
 
+            if (!favouritesDAO.exists(f)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This favourite object is not found");
+            }
+
+            // Only userId and productId is included in "f", the date is null
+            // The date will be updated by database
             favouritesDAO.update(f);
             Favourite updatedFavourite = favouritesDAO.get(f.getUserId(), f.getProductId());
 
