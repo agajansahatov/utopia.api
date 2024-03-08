@@ -2,6 +2,8 @@ package com.utopia.api.controllers;
 
 import com.utopia.api.dao.ProductsDAO;
 import com.utopia.api.entities.Product;
+import com.utopia.api.utilities.JwtChecked;
+import com.utopia.api.utilities.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +26,12 @@ import java.util.List;
 public class ProductsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TracesController.class);
     private final ProductsDAO productsDAO;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public ProductsController(JdbcTemplate jdbcTemplate) {
+    public ProductsController(JdbcTemplate jdbcTemplate, JwtUtil jwtUtil) {
         this.productsDAO = new ProductsDAO(jdbcTemplate);
+        this.jwtUtil = jwtUtil;
     }
 
     // Get all products endpoint
@@ -60,8 +64,14 @@ public class ProductsController {
 
     // Add a new product endpoint
     @PostMapping("/products")
-    public ResponseEntity<Object> addProduct(@ModelAttribute Product product,
+    public ResponseEntity<Object> addProduct(@RequestHeader("x-auth-token") String token,
+                                             @ModelAttribute Product product,
                                              @RequestParam("file") MultipartFile file) {
+        JwtChecked jwtChecked = jwtUtil.validate(token);
+        if (!jwtChecked.isValid || (!jwtChecked.userRole.equals("owner") && !jwtChecked.userRole.equals("admin"))) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+
         try {
             if (file != null && !file.isEmpty()) {
                 String originalFilename = file.getOriginalFilename();

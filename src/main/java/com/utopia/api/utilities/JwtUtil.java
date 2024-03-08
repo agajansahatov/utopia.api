@@ -10,9 +10,10 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-
 import javax.crypto.SecretKey;
+import java.sql.Timestamp;
 import java.util.Date;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 public class JwtUtil {
@@ -34,13 +35,22 @@ public class JwtUtil {
 
     public String generateToken(User user) {
         Date now = new Date();
+
+        Timestamp authTime = new Timestamp(now.getTime());
+        CompletableFuture<Void> setAuthTimeFuture = CompletableFuture.runAsync(() -> {
+            usersDAO.setAuthTime(user.getId(), authTime);
+        });
+        setAuthTimeFuture.join();
+
+        Timestamp authTimeFromDb = usersDAO.getAuthTime(user.getId());
+
         long expirationTimeMillis = 24 * (60 * 60 * 1000); // 24 hours in milliseconds
-        Date expirationDate = new Date(now.getTime() + expirationTimeMillis);
+        Date expirationDate = new Date(authTimeFromDb.getTime() + expirationTimeMillis);
 
         return Jwts.builder()
                 .claim("userId", user.getId())
                 .claim("userRole", user.getRole())
-                .setIssuedAt(now)
+                .setIssuedAt(authTimeFromDb)
                 .setExpiration(expirationDate)
                 .signWith(key)
                 .compact();
@@ -80,10 +90,22 @@ public class JwtUtil {
                     System.err.println("'role' field is null in the database!!!");
                     return jwtChecked;
                 }
-                if(!existingUserRole.equals(userRole)) {
+                if(!existingUserRole.equals(userRole) || (!userRole.equals("owner") && !userRole.equals("admin"))) {
                     System.err.println("Error validating JWT: User role mismatch!");
                     return jwtChecked;
                 }
+            }
+
+            // Check if auth time from the database matches with the issued time of the token
+            // If they don't match, it means that the user changed password
+            Timestamp authTimeFromDB = usersDAO.getAuthTime(userId);
+            Date authTime = new Date(authTimeFromDB.getTime());
+            Date issuedAt = claims.getIssuedAt();
+            if (authTime.compareTo(issuedAt) != 0) {
+                System.out.println("AuthTime: " + authTime);
+                System.out.println("TokenTime: " + issuedAt);
+                System.err.println("Error validating JWT: Token generation time does not match auth time!");
+                return jwtChecked;
             }
 
             jwtChecked.isValid = true;

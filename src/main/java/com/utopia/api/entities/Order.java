@@ -2,7 +2,7 @@ package com.utopia.api.entities;
 
 import java.sql.Timestamp;
 
-public class Transaction {
+public class Order {
     private Long id;
     private Long userId;
     private Long productId;

@@ -5,8 +5,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-
 import java.util.Optional;
+import java.sql.Timestamp;
 
 public class UsersDAO {
     private final JdbcTemplate jdbcTemplate;
@@ -133,4 +133,23 @@ public class UsersDAO {
         }
     }
 
+    public void setAuthTime(long userId, Timestamp authTime) throws DataAccessException {
+        try {
+            String sql = "UPDATE users SET auth_time = ? WHERE id = ?";
+            jdbcTemplate.update(sql, authTime, userId);
+        } catch (DataAccessException e) {
+            throw e;
+        }
+    }
+
+    public Timestamp getAuthTime(long userId) throws DataAccessException {
+        try {
+            String sql = "SELECT auth_time FROM users WHERE id = ?";
+            return jdbcTemplate.queryForObject(sql, Timestamp.class, userId);
+        } catch (EmptyResultDataAccessException e) {
+            return null; // Return null when user with the given id is not found
+        } catch (DataAccessException e) {
+            throw e;
+        }
+    }
 }

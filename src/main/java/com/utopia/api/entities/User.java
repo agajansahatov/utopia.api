@@ -3,6 +3,7 @@ package com.utopia.api.entities;
 import com.utopia.api.utilities.Validator;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 public class User {
     private Long id;
@@ -13,6 +14,7 @@ public class User {
     private String password;
     private String address;
     private BigDecimal balance;
+    private Timestamp authTime;
 
     public Long getId() {
         return id;
@@ -81,22 +83,18 @@ public class User {
         this.balance = balance;
     }
 
+    public Timestamp getAuthTime() {
+        return authTime;
+    }
+
+    public void setAuthTime(Timestamp authTime) {
+        this.authTime = authTime;
+    }
+
     public static boolean isValid(User user) {
         if(user == null) {
             return false;
         }
-        if(user.getContact() == null) {
-            return false;
-        }
-        if(user.getPassword() == null) {
-            return false;
-        }
-        if(!Validator.isValidContact(user.getContact())){
-            return false;
-        }
-        if(user.getPassword().length() < 5){
-            return false;
-        }
-        return true;
+        return Validator.isValidPassword(user.getPassword()) && Validator.isValidContact(user.getContact());
     }
 }

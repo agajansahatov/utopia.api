@@ -8,16 +8,29 @@ public class Validator {
         return str != null && PHONE_NUMBER_PATTERN.matcher(str).matches();
     }
 
-    public static boolean isValidEmail(String str) {
+    public static boolean isValidEmail(String email) {
+        if(email == null) {
+            return false;
+        }
+
         Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
-        return str != null && EMAIL_PATTERN.matcher(str).matches();
+        return EMAIL_PATTERN.matcher(email).matches();
+    }
+    public static boolean isValidPassword(String password) {
+        if(password == null) {
+            return false;
+        }
+        return password.length() >= 5;
     }
 
     public static boolean isValidContact(String contact) {
         if(contact == null) {
             return false;
-        } else if (isValidPhoneNumber(contact)){
+        }
+
+        if (isValidPhoneNumber(contact)){
             return contact.length() >= 7;
-        } else return isValidEmail(contact);
+        }
+        return isValidEmail(contact);
     }
 }

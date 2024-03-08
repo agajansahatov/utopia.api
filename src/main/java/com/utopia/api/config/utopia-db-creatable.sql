@@ -14,6 +14,7 @@ CREATE TABLE users (
   balance DECIMAL(15, 2),
   address VARCHAR(500),
   image VARCHAR(255),
+  auth_time DATETIME,
   PRIMARY KEY (id)
 );
 
@@ -29,8 +30,8 @@ CREATE TABLE products (
   PRIMARY KEY (id)
 );
 
--- Transactions table
-CREATE TABLE transactions (
+-- Orders table
+CREATE TABLE orders (
   id BIGINT NOT NULL AUTO_INCREMENT,
   user_id BIGINT,
   product_id BIGINT,
