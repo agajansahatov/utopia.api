@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 @RestController
 @CrossOrigin
 public class UsersController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TracesController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UsersController.class);
     private final UsersDAO usersDAO;
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -200,6 +200,34 @@ public class UsersController {
         } catch (Exception e) {
             LOGGER.error("Error during get user: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing request");
+        }
+    }
+
+    //Delete user endpoint
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<Object> removeTrace(@RequestHeader("x-auth-token") String token,
+                                              @PathVariable("userId") long userId) {
+        try {
+            User res = usersDAO.getById(userId);
+            if(res == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User is not found");
+            }
+
+            JwtChecked jwtChecked = jwtUtil.validate(token);
+            if (!jwtChecked.isValid || userId != jwtChecked.userId) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Invalid token or userId");
+            }
+
+            if(userId == 1) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This user is not allowed to be deleted!");
+            }
+
+            usersDAO.delete(res);
+
+            return ResponseEntity.status(HttpStatus.OK).body(res);
+        } catch (Exception e) {
+            LOGGER.error("Error during delete user: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting the user!");
         }
     }
 }

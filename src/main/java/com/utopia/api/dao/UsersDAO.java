@@ -5,8 +5,9 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import java.util.Optional;
+
 import java.sql.Timestamp;
+import java.util.Optional;
 
 public class UsersDAO {
     private final JdbcTemplate jdbcTemplate;
@@ -26,6 +27,11 @@ public class UsersDAO {
                 user.getAddress(),
                 user.getBalance(),
                 user.getRole());
+    }
+
+    public void delete(User user) throws DataAccessException {
+        String sql = "DELETE FROM users WHERE id = ?";
+        jdbcTemplate.update(sql, user.getId());
     }
 
     public void update(User user) throws DataAccessException {
