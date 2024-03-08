@@ -2,6 +2,7 @@ package com.utopia.api.dao;
 
 import com.utopia.api.entities.Trace;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -17,26 +18,37 @@ public class TracesDAO {
     }
 
     public List<Trace> getAll(long userId) throws DataAccessException {
-        String sql = "SELECT * FROM traces WHERE user_id=?";
-        RowMapper<Trace> rowMapper = (rs, rowNum) -> {
-            Trace trace = new Trace();
-            trace.setUserId(rs.getLong("user_id"));
-            trace.setProductId(rs.getLong("product_id"));
-            trace.setDate(rs.getTimestamp("date"));
-            return trace;
-        };
-
-        return jdbcTemplate.query(sql, rowMapper, userId);
+        try {
+            String sql = "SELECT * FROM traces WHERE user_id=?";
+            RowMapper<Trace> rowMapper = (rs, rowNum) -> {
+                Trace trace = new Trace();
+                trace.setUserId(rs.getLong("user_id"));
+                trace.setProductId(rs.getLong("product_id"));
+                trace.setDate(rs.getTimestamp("date"));
+                return trace;
+            };
+            return jdbcTemplate.query(sql, rowMapper, userId);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        } catch (DataAccessException e) {
+            throw e;
+        }
     }
 
-    public Trace get(Long userId, Long productId) throws DataAccessException {
+    public Trace get(Long userId, Long productId) {
         String sql = "SELECT * FROM traces WHERE user_id = ? AND product_id = ?";
-        return jdbcTemplate.queryForObject(
-                sql,
-                new BeanPropertyRowMapper<>(Trace.class),
-                userId,
-                productId
-        );
+        try {
+            return jdbcTemplate.queryForObject(
+                    sql,
+                    new BeanPropertyRowMapper<>(Trace.class),
+                    userId,
+                    productId
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        } catch (DataAccessException e) {
+            throw e;
+        }
     }
 
     public void add(Trace trace) throws DataAccessException {

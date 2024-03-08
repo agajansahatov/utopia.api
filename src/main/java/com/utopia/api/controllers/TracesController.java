@@ -106,15 +106,15 @@ public class TracesController {
         }
 
         try {
-            if (!tracesDAO.exists(trace)) {
+            Trace deletedTrace = tracesDAO.get(trace.getUserId(), trace.getProductId());
+
+            if (deletedTrace == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Trace is not found");
             }
 
             tracesDAO.remove(trace);
 
-            // In a DELETE operation, you may choose not to retrieve the deleted object.
-            // Here, I'm returning a generic success message.
-            return ResponseEntity.status(HttpStatus.OK).body("Data removed successfully");
+            return ResponseEntity.status(HttpStatus.OK).body(deletedTrace);
         } catch (Exception e) {
             LOGGER.error("Error during delete trace: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting the trace!");

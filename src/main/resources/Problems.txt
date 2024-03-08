@@ -1,5 +1,4 @@
 RETURN THE DELETED OBJECT
- - Delete a trace of a user endpoint
  - Delete a favourite object endpoint
 
 CREATE NEW ENDPOINT FOR DELETING A USER Itself
