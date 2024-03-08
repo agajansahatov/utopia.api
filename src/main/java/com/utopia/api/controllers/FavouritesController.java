@@ -129,13 +129,19 @@ public class FavouritesController {
 
     // Get all favourites of a user endpoint
     @GetMapping("/favourites/{userId}")
-    public ResponseEntity<Object> getFavourites(@PathVariable("userId") int userId) {
+    public ResponseEntity<Object> getFavourites(@RequestHeader("x-auth-token") String token,
+                                                @PathVariable("userId") long userId) {
+        JwtChecked jwtChecked = jwtUtil.validate(token);
+        if (!jwtChecked.isValid || userId != jwtChecked.userId) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Invalid token or userId");
+        }
+
         try {
             List<Favourite> favourites = this.favouritesDAO.getAll(userId);
             return ResponseEntity.status(HttpStatus.OK).body(favourites);
         } catch (Exception e) {
             LOGGER.error("Error during get all favourites of a user: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error getting all favourites");
         }
     }
 
@@ -148,7 +154,8 @@ public class FavouritesController {
             return ResponseEntity.status(HttpStatus.OK).body(count);
         } catch (Exception e) {
             LOGGER.error("Error during favourite count: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error getting count of likes of this product!");
         }
     }
 }
