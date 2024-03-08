@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
@@ -147,4 +149,34 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("ERROR: " + e.getMessage());
         }
     }
+
+    // Endpoint to get the list of users
+    @GetMapping("/admin/users")
+    public ResponseEntity<Object> getProductsDAO(@RequestHeader("x-auth-token") String token) {
+        JwtChecked jwtChecked = jwtUtil.validate(token);
+        if (!jwtChecked.isValid || (!jwtChecked.userRole.equals("owner") && !jwtChecked.userRole.equals("admin"))) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Invalid token or role");
+        }
+
+        try {
+            List<User> userList = usersDAO.getUsers();
+
+            List<UserResponseDTO> resList = new ArrayList<>();
+            for (User user : userList) {
+                resList.add(new UserResponseDTO(user));
+            }
+
+            return ResponseEntity.ok(resList);
+        } catch (Exception e) {
+            System.err.println("Error getting products from db: (" + e.getCause() + ") " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error getting users!");
+        }
+    }
+    // Endpoint to upload products
+    // Endpoint to update a product
+    // Endpoint to delete a product
+    // Endpoint to delete a user
+    // Endpoint to get orders of all users
+    // Endpoint to get orders of a user
+    // Endpoint to delete an order of a user (Maybe automatically) (This one also need to build for user itself)
 }

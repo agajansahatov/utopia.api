@@ -6,8 +6,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public class UsersDAO {
@@ -100,6 +103,32 @@ public class UsersDAO {
         } catch (DataAccessException e) {
             throw e;
         }
+    }
+
+    public List<User> getUsers() {
+        try {
+            String sql = "SELECT * FROM users";
+            RowMapper<User> rowMapper = (rs, rowNum) -> mapUser(rs);
+            return jdbcTemplate.query(sql, rowMapper);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        } catch (DataAccessException e) {
+            throw e;
+        }
+    }
+
+    private User mapUser(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setId(rs.getLong("id"));
+        user.setName(rs.getString("name"));
+        user.setContact(rs.getString("contact"));
+        user.setRole(rs.getString("role"));
+        user.setImage(rs.getString("image"));
+        user.setPassword(rs.getString("password"));
+        user.setAddress(rs.getString("address"));
+        user.setBalance(rs.getBigDecimal("balance"));
+        user.setAuthTime(rs.getTimestamp("auth_time"));
+        return user;
     }
 
     public boolean exists(String contact) throws DataAccessException {
