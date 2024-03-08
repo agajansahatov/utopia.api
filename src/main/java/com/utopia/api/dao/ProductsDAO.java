@@ -34,6 +34,7 @@ public class ProductsDAO {
             throw new IllegalArgumentException("Product cannot be null.");
         }
         if (isNullOrEmpty(product.getName())) {
+            System.out.println(product.getName());
             throw new IllegalArgumentException("Product name cannot be null or empty.");
         }
         if (product.getPrice() == null || product.getPrice().compareTo(BigDecimal.ZERO) < 0) {

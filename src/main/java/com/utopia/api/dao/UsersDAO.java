@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Optional;
 
 public class UsersDAO {
@@ -17,8 +18,8 @@ public class UsersDAO {
     }
 
     public void add(User user) throws DataAccessException {
-        String sql = "INSERT INTO users (name, contact, image, password, address, balance, role) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (name, contact, image, password, address, balance, role, auth_time) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
                 user.getName(),
                 user.getContact(),
@@ -26,7 +27,8 @@ public class UsersDAO {
                 user.getPassword(),
                 user.getAddress(),
                 user.getBalance(),
-                user.getRole());
+                user.getRole(),
+                new Timestamp((new Date()).getTime()));
     }
 
     public void delete(User user) throws DataAccessException {
@@ -62,6 +64,7 @@ public class UsersDAO {
                 user.setAddress(rs.getString("address"));
                 user.setBalance(rs.getBigDecimal("balance"));
                 user.setRole(rs.getString("role"));
+                user.setAuthTime(rs.getTimestamp("auth_time"));
                 return user;
             };
 
@@ -87,6 +90,7 @@ public class UsersDAO {
                 user.setAddress(rs.getString("address"));
                 user.setBalance(rs.getBigDecimal("balance"));
                 user.setRole(rs.getString("role"));
+                user.setAuthTime(rs.getTimestamp("auth_time"));
                 return user;
             };
 

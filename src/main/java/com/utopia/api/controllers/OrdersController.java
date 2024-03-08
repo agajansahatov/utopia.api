@@ -21,7 +21,7 @@ import java.util.List;
 @RestController
 @CrossOrigin
 public class OrdersController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TracesController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrdersController.class);
     private final OrdersDAO ordersDAO;
     private final JwtUtil jwtUtil;
     private final UsersDAO usersDAO;

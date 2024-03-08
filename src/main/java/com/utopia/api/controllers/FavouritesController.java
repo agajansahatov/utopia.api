@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @CrossOrigin
 public class FavouritesController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TracesController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FavouritesController.class);
     private final FavouritesDAO favouritesDAO;
     private final ProductsDAO productsDAO;
     private final JwtUtil jwtUtil;

@@ -12,7 +12,6 @@ public class Validator {
         if(email == null) {
             return false;
         }
-
         Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
         return EMAIL_PATTERN.matcher(email).matches();
     }

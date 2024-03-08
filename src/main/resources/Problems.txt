@@ -1,4 +1,0 @@
-CREATE NEW ENDPOINT FOR DELETING A USER Itself
-
-CREATE "ADMIN" (Ex: "/admin/users") ENDPOINT
-- Add a new product endpoint (Allow for only admins)

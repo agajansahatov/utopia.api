@@ -37,9 +37,8 @@ public class UsersController {
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> addUser(@RequestBody User req) {
-        System.out.println("Users Request: " + req);
 
-        if(User.isValid(req))
+        if(!User.isValid(req))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid properties!");
 
         String hashedPassword = passwordEncoder.encode(req.getPassword());
@@ -66,7 +65,7 @@ public class UsersController {
             return ResponseEntity.status(HttpStatus.CREATED).body(jwtToken);
         } catch (Exception e) {
             LOGGER.error("Error during user registration: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("ERROR: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during user registration");
         }
     }
 

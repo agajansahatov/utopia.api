@@ -38,7 +38,6 @@ public class JwtUtil {
 
     public String generateToken(User user) {
         Date now = new Date();
-
         Timestamp authTime = new Timestamp(now.getTime());
         CompletableFuture<Void> setAuthTimeFuture = CompletableFuture.runAsync(() -> {
             usersDAO.setAuthTime(user.getId(), authTime);
