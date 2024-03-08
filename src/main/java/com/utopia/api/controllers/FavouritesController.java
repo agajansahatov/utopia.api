@@ -112,15 +112,15 @@ public class FavouritesController {
         }
 
         try {
-            if (!favouritesDAO.exists(f)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This favourite object is not found");
+            Favourite res = favouritesDAO.get(f.getUserId(), f.getProductId());
+
+            if (res == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Favourite is not found");
             }
 
             favouritesDAO.remove(f);
 
-            // In a DELETE operation, you may choose not to retrieve the deleted object.
-            // Here, I'm returning a generic success message.
-            return ResponseEntity.status(HttpStatus.OK).body("This favourite object is removed successfully");
+            return ResponseEntity.status(HttpStatus.OK).body(res);
         } catch (Exception e) {
             LOGGER.error("Error during delete favourite: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");

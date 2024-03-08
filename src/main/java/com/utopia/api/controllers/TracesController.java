@@ -106,15 +106,15 @@ public class TracesController {
         }
 
         try {
-            Trace deletedTrace = tracesDAO.get(trace.getUserId(), trace.getProductId());
+            Trace res = tracesDAO.get(trace.getUserId(), trace.getProductId());
 
-            if (deletedTrace == null) {
+            if (res == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Trace is not found");
             }
 
             tracesDAO.remove(trace);
 
-            return ResponseEntity.status(HttpStatus.OK).body(deletedTrace);
+            return ResponseEntity.status(HttpStatus.OK).body(res);
         } catch (Exception e) {
             LOGGER.error("Error during delete trace: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting the trace!");

@@ -36,8 +36,8 @@ public class TracesDAO {
     }
 
     public Trace get(Long userId, Long productId) {
-        String sql = "SELECT * FROM traces WHERE user_id = ? AND product_id = ?";
         try {
+            String sql = "SELECT * FROM traces WHERE user_id = ? AND product_id = ?";
             return jdbcTemplate.queryForObject(
                     sql,
                     new BeanPropertyRowMapper<>(Trace.class),
