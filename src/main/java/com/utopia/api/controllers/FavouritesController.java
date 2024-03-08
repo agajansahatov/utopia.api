@@ -150,6 +150,9 @@ public class FavouritesController {
     @GetMapping("/favourites/count/{productId}")
     public ResponseEntity<Object> getCountOfaFavourite(@PathVariable("productId") long id) {
         try {
+            if(!productsDAO.exists(id)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product " + id + " not found");
+            }
             long count = favouritesDAO.getCountOfProduct(id);
             return ResponseEntity.status(HttpStatus.OK).body(count);
         } catch (Exception e) {

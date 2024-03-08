@@ -123,13 +123,19 @@ public class TracesController {
 
     // Get all traces of a user endpoint
     @GetMapping("/traces/{userId}")
-    public ResponseEntity<Object> getTraces(@PathVariable("userId") long userId) {
+    public ResponseEntity<Object> getTraces(@RequestHeader("x-auth-token") String token,
+                                            @PathVariable("userId") long userId) {
+        JwtChecked jwtChecked = jwtUtil.validate(token);
+        if (!jwtChecked.isValid || userId != jwtChecked.userId) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Invalid token or userId");
+        }
+
         try {
             List<Trace> tracesList = tracesDAO.getAll(userId);
             return ResponseEntity.ok(tracesList);
         } catch (Exception e) {
             LOGGER.error("Error during get all traces of a user: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving data from db!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error getting traces!");
         }
     }
 
@@ -138,11 +144,14 @@ public class TracesController {
     @GetMapping("/traces/count/{productId}")
     public ResponseEntity<Object> getCountOfaTrace(@PathVariable("productId") long id) {
         try {
+            if(!productsDAO.exists(id)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product " + id + " not found");
+            }
             long count = tracesDAO.getCountOfProduct(id);
             return ResponseEntity.ok(count);
         } catch (Exception e) {
             LOGGER.error("Error during trace count: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving data from db!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error getting count of traces of this product!");
         }
     }
 }

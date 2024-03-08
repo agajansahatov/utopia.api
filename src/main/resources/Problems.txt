@@ -1,9 +1,3 @@
-AUTHENTICATION and AUTHORIZATION NEEDS TO BE DONE FOR:
- - Add new trace of a user endpoint
- - Update the date of a trace of a user endpoint
- - Delete a trace of a user endpoint
- - Get all traces of a user endpoint
-
 RETURN THE DELETED OBJECT
  - Delete a trace of a user endpoint
  - Delete a favourite object endpoint

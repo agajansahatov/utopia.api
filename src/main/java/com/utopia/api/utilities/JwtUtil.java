@@ -7,6 +7,8 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,7 @@ public class JwtUtil {
 
     private final SecretKey key;
     private final UsersDAO usersDAO;
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtUtil.class);
 
     public JwtUtil(JdbcTemplate jdbcTemplate, @Value("${jwt.secret}") String secretKey) {
         this.usersDAO = new UsersDAO(jdbcTemplate);
@@ -61,7 +64,6 @@ public class JwtUtil {
         JwtChecked jwtChecked = new JwtChecked();
 
         if (token == null || token.isEmpty()) {
-            System.err.println("Error validating JWT: Token is required!");
             return jwtChecked;
         }
 
@@ -69,17 +71,14 @@ public class JwtUtil {
             Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
 
             if (!claims.containsKey("userId")) {
-                System.err.println("Error validating JWT: Missing userId claim");
                 return jwtChecked;
             }
             if (!claims.containsKey("userRole")) {
-                System.err.println("Error validating JWT: Missing userRole claim");
                 return jwtChecked;
             }
 
             long userId = Long.parseLong(claims.get("userId").toString());
             if (!usersDAO.exists(userId)) {
-                System.err.println("Error validating JWT: User doesn't exist or might be deleted!");
                 return jwtChecked;
             }
 
@@ -87,11 +86,9 @@ public class JwtUtil {
             if (!userRole.equals("user")){
                 String existingUserRole = usersDAO.getRole(userId);
                 if(existingUserRole == null) {
-                    System.err.println("'role' field is null in the database!!!");
                     return jwtChecked;
                 }
                 if(!existingUserRole.equals(userRole) || (!userRole.equals("owner") && !userRole.equals("admin"))) {
-                    System.err.println("Error validating JWT: User role mismatch!");
                     return jwtChecked;
                 }
             }
@@ -102,7 +99,6 @@ public class JwtUtil {
             Date authTime = new Date(authTimeFromDB.getTime());
             Date issuedAt = claims.getIssuedAt();
             if (authTime.compareTo(issuedAt) != 0) {
-                System.err.println("Error validating JWT: Token generation time does not match auth time!");
                 return jwtChecked;
             }
 
@@ -111,13 +107,13 @@ public class JwtUtil {
             jwtChecked.userRole = userRole;
             return jwtChecked;
         } catch (ExpiredJwtException e) {
-            System.err.println("JWT token expired: " + e.getMessage());
+            // LOGGER.error("JWT token expired: ", e);
             return jwtChecked;
         } catch (MalformedJwtException e) {
-            System.err.println("Malformed JWT token: " + e.getMessage());
+           // LOGGER.error("Malformed JWT token: ", e);
             return jwtChecked;
         } catch (Exception e) {
-            System.err.println("Error validating JWT token: " + e.getMessage());
+           // LOGGER.error("Error validating JWT token: ", e);
             return jwtChecked;
         }
     }
