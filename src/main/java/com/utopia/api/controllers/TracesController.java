@@ -62,25 +62,36 @@ public class TracesController {
         }
     }
 
-    // Update the date of a trace of a user endpoint
-    @PutMapping("/traces")
-    public ResponseEntity<Object> updateTrace(@RequestBody Trace trace) {
-        try {
-            if (tracesDAO.exists(trace)) {
-                tracesDAO.update(trace);
-                Trace updatedTrace = tracesDAO.get(trace.getUserId(), trace.getProductId());
+    // Update the date of a trace endpoint
+    @PutMapping("/traces/{userId}")
+    public ResponseEntity<Object> updateTrace(@RequestHeader("x-auth-token") String token,
+                                              @PathVariable("userId") long userId,
+                                              @RequestBody Trace trace) {
+        JwtChecked jwtChecked = jwtUtil.validate(token);
+        if (!jwtChecked.isValid || userId != jwtChecked.userId || userId != trace.getUserId()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Invalid token or userId");
+        }
 
-                if (updatedTrace != null) {
-                    return ResponseEntity.status(HttpStatus.OK).body(updatedTrace);
-                } else {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve the updated data");
-                }
+        try {
+            if(!productsDAO.exists(trace.getProductId())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product " + trace.getProductId() + " not found");
+            }
+
+            if (!tracesDAO.exists(trace)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Trace is not found");
+            }
+
+            tracesDAO.update(trace);
+            Trace updatedTrace = tracesDAO.get(trace.getUserId(), trace.getProductId());
+
+            if (updatedTrace != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(updatedTrace);
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve the updated trace");
             }
         } catch (Exception e) {
             LOGGER.error("Error during update trace", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating trace!");
         }
     }
 

@@ -65,7 +65,7 @@ public class FavouritesController {
         }
     }
 
-    // Update favourite endpoint
+    // Update the date of a favourite endpoint
     @PutMapping("/favourites/{userId}")
     public ResponseEntity<Object> updateFavourite(@RequestHeader("x-auth-token") String token,
                                                   @PathVariable("userId") long userId,
