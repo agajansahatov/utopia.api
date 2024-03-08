@@ -100,20 +100,27 @@ public class FavouritesController {
         }
     }
 
-    // Delete a favourite object endpoint
-    // this can be used when a user dislikes a product
-    @DeleteMapping("/favourites")
-    public ResponseEntity<Object> removeFavourite(@RequestBody Favourite f) {
+    // Delete favourite endpoint
+    // This can be used when a user dislikes a product
+    @DeleteMapping("/favourites/{userId}")
+    public ResponseEntity<Object> removeFavourite(@RequestHeader("x-auth-token") String token,
+                                                  @PathVariable("userId") long userId,
+                                                  @RequestBody Favourite f) {
+        JwtChecked jwtChecked = jwtUtil.validate(token);
+        if (!jwtChecked.isValid || userId != jwtChecked.userId || userId != f.getUserId()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Invalid token or userId");
+        }
+
         try {
             if (!favouritesDAO.exists(f)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This favourite object is not found");
             }
 
             favouritesDAO.remove(f);
 
             // In a DELETE operation, you may choose not to retrieve the deleted object.
             // Here, I'm returning a generic success message.
-            return ResponseEntity.status(HttpStatus.OK).body("Data removed successfully");
+            return ResponseEntity.status(HttpStatus.OK).body("This favourite object is removed successfully");
         } catch (Exception e) {
             LOGGER.error("Error during delete favourite: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
