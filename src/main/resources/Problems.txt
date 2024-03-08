@@ -4,17 +4,11 @@ AUTHENTICATION and AUTHORIZATION NEEDS TO BE DONE FOR:
  - Delete a trace of a user endpoint
  - Get all traces of a user endpoint
 
-CREATE "ADMIN" (Ex: "/admin/users") ENDPOINT
-- Add a new product endpoint (Allow for only admins)
-
-UPLOAD IMAGE BUG
- - Fix upload image bug in "Add a new product endpoint". Bug happened in the cloud server.
-
 RETURN THE DELETED OBJECT
  - Delete a trace of a user endpoint
  - Delete a favourite object endpoint
 
-CREATE NEW ENDPOINT FOR DELETING A USER
+CREATE NEW ENDPOINT FOR DELETING A USER Itself
 
-SOLVE THIS EXCEPTION
- - Caused by: java.sql.SQLIntegrityConstraintViolationException: Duplicate entry '5-13' for key 'favourites.PRIMARY'
+CREATE "ADMIN" (Ex: "/admin/users") ENDPOINT
+- Add a new product endpoint (Allow for only admins)

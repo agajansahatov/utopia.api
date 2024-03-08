@@ -46,7 +46,7 @@ public class FavouritesController {
             }
 
             if (favouritesDAO.exists(f)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Data already exists");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Favourite already exists");
             }
 
             // Only userId and productId is included in "f", the date is null
@@ -57,11 +57,11 @@ public class FavouritesController {
             if (addedFavourite != null) {
                 return ResponseEntity.status(HttpStatus.CREATED).body(addedFavourite);
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve the added data");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve the added favourite");
             }
         }catch (Exception e){
             LOGGER.error("Error during add favourite: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding favourite!");
         }
     }
 

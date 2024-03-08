@@ -1,7 +1,10 @@
 package com.utopia.api.controllers;
 
+import com.utopia.api.dao.ProductsDAO;
 import com.utopia.api.dao.TracesDAO;
 import com.utopia.api.entities.Trace;
+import com.utopia.api.utilities.JwtChecked;
+import com.utopia.api.utilities.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,18 +19,33 @@ import java.util.List;
 public class TracesController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TracesController.class);
     private final TracesDAO tracesDAO;
+    private final ProductsDAO productsDAO;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public TracesController(JdbcTemplate jdbcTemplate) {
+    public TracesController(JdbcTemplate jdbcTemplate, JwtUtil jwtUtil) {
         this.tracesDAO = new TracesDAO(jdbcTemplate);
+        this.productsDAO = new ProductsDAO(jdbcTemplate);
+        this.jwtUtil = jwtUtil;
     }
 
-    // Add new trace of a user endpoint
-    @PostMapping("/traces")
-    public ResponseEntity<Object> addTrace(@RequestBody Trace trace) {
+    // Add trace endpoint
+    @PostMapping("/traces/{userId}")
+    public ResponseEntity<Object> addTrace(@RequestHeader("x-auth-token") String token,
+                                           @PathVariable("userId") long userId,
+                                           @RequestBody Trace trace) {
+        JwtChecked jwtChecked = jwtUtil.validate(token);
+        if (!jwtChecked.isValid || userId != jwtChecked.userId || userId != trace.getUserId()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Invalid token or userId");
+        }
+
         try {
+            if(!productsDAO.exists(trace.getProductId())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product " + trace.getProductId() + " not found");
+            }
+
             if (tracesDAO.exists(trace)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Data already exists");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Trace already exists");
             }
 
             tracesDAO.add(trace);
@@ -36,11 +54,11 @@ public class TracesController {
             if (addedTrace != null) {
                 return ResponseEntity.status(HttpStatus.CREATED).body(addedTrace);
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve the added data");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve the added trace");
             }
         } catch (Exception e) {
             LOGGER.error("Error during add trace: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding trace!");
         }
     }
 
