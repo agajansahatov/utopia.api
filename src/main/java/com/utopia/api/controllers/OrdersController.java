@@ -30,21 +30,21 @@ public class OrdersController {
     @Autowired
     public OrdersController(JdbcTemplate jdbcTemplate, JwtUtil jwtUtil) {
         this.ordersDAO = new OrdersDAO(jdbcTemplate);
-        this.jwtUtil = jwtUtil;
         this.usersDAO = new UsersDAO(jdbcTemplate);
         this.productsDAO = new ProductsDAO(jdbcTemplate);
+        this.jwtUtil = jwtUtil;
     }
 
     // Get all orders of a user endpoint
     @GetMapping("/orders/{userId}")
     public ResponseEntity<Object> getOrders(@RequestHeader("x-auth-token") String token,
                                             @PathVariable("userId") long userId) {
-        try {
-            JwtChecked jwtChecked = jwtUtil.validate(token);
-            if (!jwtChecked.isValid || userId != jwtChecked.userId) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Invalid token or userId");
-            }
+        JwtChecked jwtChecked = jwtUtil.validate(token);
+        if (!jwtChecked.isValid || userId != jwtChecked.userId) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Invalid token or userId");
+        }
 
+        try {
             List<Order> orders = ordersDAO.getOrders(userId);
             return ResponseEntity.ok(orders);
         } catch (Exception e) {

@@ -117,4 +117,13 @@ public class ProductsDAO {
         return product;
     }
 
+    public boolean exists(long id) throws DataAccessException {
+        try {
+            String sql = "SELECT COUNT(*) FROM products WHERE id = ?";
+            Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
+            return count != null && count > 0;
+        } catch (DataAccessException e) {
+            throw e;
+        }
+    }
 }

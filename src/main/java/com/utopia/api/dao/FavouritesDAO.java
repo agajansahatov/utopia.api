@@ -63,9 +63,13 @@ public class FavouritesDAO {
     }
 
     public boolean exists(Favourite favourite) throws DataAccessException {
-        String sql = "SELECT COUNT(*) FROM favourites WHERE user_id = ? AND product_id = ?";
-        Long count = jdbcTemplate.queryForObject(sql, Long.class,
-                favourite.getUserId(), favourite.getProductId());
-        return Optional.ofNullable(count).orElse(0L) > 0;
+        try {
+            String sql = "SELECT COUNT(*) FROM favourites WHERE user_id = ? AND product_id = ?";
+            Long count = jdbcTemplate.queryForObject(sql, Long.class,
+                    favourite.getUserId(), favourite.getProductId());
+            return count != null && count > 0;
+        } catch (DataAccessException e) {
+            throw e;
+        }
     }
 }

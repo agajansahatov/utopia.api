@@ -55,9 +55,13 @@ public class TracesDAO {
     }
 
     public boolean exists(Trace trace) throws DataAccessException {
-        String countByUserProductSql = "SELECT COUNT(*) FROM traces WHERE user_id = ? AND product_id = ?";
-        Long count = jdbcTemplate.queryForObject(countByUserProductSql, Long.class, trace.getUserId(), trace.getProductId());
-        return Optional.ofNullable(count).orElse(0L) != 0;
+        try {
+            String countByUserProductSql = "SELECT COUNT(*) FROM traces WHERE user_id = ? AND product_id = ?";
+            Long count = jdbcTemplate.queryForObject(countByUserProductSql, Long.class, trace.getUserId(), trace.getProductId());
+            return count != null && count > 0;
+        } catch (DataAccessException e) {
+            throw e;
+        }
     }
 
     public long getCountOfProduct(long productId) throws DataAccessException {

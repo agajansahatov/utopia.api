@@ -1,15 +1,11 @@
 AUTHENTICATION and AUTHORIZATION NEEDS TO BE DONE FOR:
- - Add a new product endpoint (Allow for only admins)
- - Add a new favourite object endpoint
- - Update a favourite object endpoint
- - Delete a favourite object endpoint
- - Get all favourites of a user endpoint
  - Add new trace of a user endpoint
  - Update the date of a trace of a user endpoint
  - Delete a trace of a user endpoint
  - Get all traces of a user endpoint
 
 CREATE "ADMIN" (Ex: "/admin/users") ENDPOINT
+- Add a new product endpoint (Allow for only admins)
 
 UPLOAD IMAGE BUG
  - Fix upload image bug in "Add a new product endpoint". Bug happened in the cloud server.
