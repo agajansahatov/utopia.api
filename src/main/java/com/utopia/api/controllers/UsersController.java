@@ -2,9 +2,10 @@ package com.utopia.api.controllers;
 
 import com.utopia.api.dao.UsersDAO;
 import com.utopia.api.dto.PasswordRequestDTO;
+import com.utopia.api.dto.UserResponseDTO;
 import com.utopia.api.entities.User;
-import com.utopia.api.utilities.JwtUtil;
 import com.utopia.api.utilities.JwtChecked;
+import com.utopia.api.utilities.JwtUtil;
 import com.utopia.api.utilities.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
 import java.math.BigDecimal;
 
 @RestController
@@ -68,7 +70,7 @@ public class UsersController {
         }
     }
 
-    // Authentication endpoint
+    // User Login (Authentication) endpoint
     @PostMapping("/auth")
     public ResponseEntity<Object> authenticate(@RequestBody User req) {
         try {
@@ -94,6 +96,7 @@ public class UsersController {
         }
     }
 
+    // Update user endpoint
     @PutMapping("/users/{userId}")
     public ResponseEntity<Object> updateUser(@PathVariable("userId") long userId,
                                              @RequestHeader("x-auth-token") String token,
@@ -147,6 +150,7 @@ public class UsersController {
         }
     }
 
+    //Update password endpoint
     @PutMapping("/users/password/{userId}")
     public ResponseEntity<Object> updatePassword(@PathVariable("userId") long userId,
                                              @RequestHeader("x-auth-token") String token,
@@ -178,7 +182,24 @@ public class UsersController {
             LOGGER.error("Error updating password", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("ERROR: " + e.getMessage());
         }
-
     }
 
+    //Get user endpoint
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<Object> getOrders(@RequestHeader("x-auth-token") String token,
+                                            @PathVariable("userId") long userId) {
+        JwtChecked jwtChecked = jwtUtil.validate(token);
+        if (!jwtChecked.isValid || userId != jwtChecked.userId) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Invalid token or userId");
+        }
+
+        try {
+            User user = usersDAO.getById(userId);
+            UserResponseDTO res = new UserResponseDTO(user);
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            LOGGER.error("Error during get user: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing request");
+        }
+    }
 }

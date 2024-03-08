@@ -9,6 +9,8 @@ AUTHENTICATION and AUTHORIZATION NEEDS TO BE DONE FOR:
  - Delete a trace of a user endpoint
  - Get all traces of a user endpoint
 
+CREATE "ADMIN" (Ex: "/admin/users") ENDPOINT
+
 UPLOAD IMAGE BUG
  - Fix upload image bug in "Add a new product endpoint". Bug happened in the cloud server.
 
