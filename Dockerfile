@@ -1,13 +1,12 @@
-FROM openjdk:17-slim
-
-WORKDIR /app
-
+FROM ubuntu:latest AS build
+RUN apt-get update
+RUN apt-get install openjdk-19-jdk -y
 COPY . .
+RUN ./gradlew bootJar --no-daemon
 
-RUN gradlew build
-
-COPY build/libs/*.jar app.jar
-
+FROM openjdk:19-jdk-slim
 EXPOSE 8080
 
-CMD ["java", "-jar", "app.jar"]
+COPY --from=build /build/libs/utopia.api-1.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
