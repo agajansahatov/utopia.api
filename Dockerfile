@@ -1,18 +1,12 @@
-# Stage 1: Build the application
-FROM adoptopenjdk:21-jdk-hotspot AS builder
+FROM openjdk:17-slim
 
 WORKDIR /app
 
 COPY . .
 
-RUN ./gradlew clean build -x test
+RUN gradlew build
 
-# Stage 2: Create the final image
-FROM adoptopenjdk:21-jre-hotspot
-
-WORKDIR /app
-
-COPY --from=builder /app/build/libs/utopia.api.jar app.jar
+COPY build/libs/*.jar app.jar
 
 EXPOSE 8080
 
