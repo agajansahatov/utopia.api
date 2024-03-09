@@ -1,6 +1,7 @@
 package com.utopia.api.dao;
 
 import com.utopia.api.entities.Product;
+import com.utopia.api.utilities.Validator;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,23 +30,23 @@ public class ProductsDAO {
         return value == null || value.trim().isEmpty();
     }
 
-    public static void validateProduct(Product product) throws IllegalArgumentException {
+    public static Validator validateProduct(Product product) throws IllegalArgumentException {
         if (product == null) {
-            throw new IllegalArgumentException("Product cannot be null.");
+            return new Validator(false, "Product cannot be null.");
         }
         if (isNullOrEmpty(product.getName())) {
-            System.out.println(product.getName());
-            throw new IllegalArgumentException("Product name cannot be null or empty.");
+            return new Validator(false, "Product name cannot be null or empty.");
         }
         if (product.getPrice() == null || product.getPrice().compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Product price must be a positive value.");
+            return new Validator(false, "Product price must be a positive value.");
         }
         if (isNullOrEmpty(product.getCategory())) {
-            throw new IllegalArgumentException("Product category cannot be null or empty.");
+            return new Validator(false, "Product category cannot be null or empty.");
         }
         if (product.getDate() != null && product.getDate().after(new Date())) {
-            throw new IllegalArgumentException("Product date cannot be in the future.");
+            return new Validator(false, "Product date cannot be in the future.");
         }
+        return new Validator(true, "Valid Product");
     }
 
     public long getSize() {
@@ -119,12 +120,8 @@ public class ProductsDAO {
     }
 
     public boolean exists(long id) throws DataAccessException {
-        try {
-            String sql = "SELECT COUNT(*) FROM products WHERE id = ?";
-            Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
-            return count != null && count > 0;
-        } catch (DataAccessException e) {
-            throw e;
-        }
+        String sql = "SELECT COUNT(*) FROM products WHERE id = ?";
+        Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
+        return count != null && count > 0;
     }
 }

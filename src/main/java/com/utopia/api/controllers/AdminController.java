@@ -1,8 +1,11 @@
 package com.utopia.api.controllers;
 
+import com.utopia.api.dao.ProductsDAO;
 import com.utopia.api.dao.UsersDAO;
 import com.utopia.api.dto.UserResponseDTO;
+import com.utopia.api.entities.Product;
 import com.utopia.api.entities.User;
+import com.utopia.api.utilities.ImageNameGenerator;
 import com.utopia.api.utilities.JwtChecked;
 import com.utopia.api.utilities.JwtUtil;
 import com.utopia.api.utilities.Validator;
@@ -12,8 +15,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,14 +32,17 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @CrossOrigin
 public class AdminController {
-    private final UsersDAO usersDAO;
     private final JwtUtil jwtUtil;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    private final UsersDAO usersDAO;
+    private final ProductsDAO productsDAO;
+
     @Autowired
     public AdminController(JdbcTemplate jdbcTemplate, JwtUtil jwtUtil) {
-        this.usersDAO = new UsersDAO(jdbcTemplate);
         this.jwtUtil = jwtUtil;
+        this.usersDAO = new UsersDAO(jdbcTemplate);
+        this.productsDAO = new ProductsDAO(jdbcTemplate);
     }
 
     // Endpoint to update a user by an admin or owner
@@ -172,7 +184,71 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error getting users!");
         }
     }
-    // Endpoint to upload products
+
+    // Add a new product endpoint
+    @PostMapping("/admin/products")
+    public ResponseEntity<Object> addProduct(@RequestHeader("x-auth-token") String token,
+                                             @ModelAttribute Product product,
+                                             @RequestParam("file") MultipartFile file) {
+        //Token validation
+        JwtChecked jwtChecked = jwtUtil.validate(token);
+        if (!jwtChecked.isValid || (!jwtChecked.userRole.equals("owner") && !jwtChecked.userRole.equals("admin"))) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+
+        //File validation
+        String[] allowedExtensions = {"jpg", "jpeg", "png", "gif", "webp", "bmp", "tiff", "tif", "svg", "svgz", "heif", "heic", "ico"};
+        Validator fileValidator = Validator.validateFile(file, "image", allowedExtensions);
+        if(!fileValidator.isValid()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(fileValidator.getMessage());
+        }
+
+        //Product Validation
+        Validator productValidator = ProductsDAO.validateProduct(product);
+        if (!productValidator.isValid()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(productValidator.getMessage());
+        }
+
+        //Set ImageName and Directory
+        String originalFilename = file.getOriginalFilename();
+        assert originalFilename != null;
+        String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+        String fileName = "p" + ImageNameGenerator.generateUniqueName(jwtChecked.userId) + "." + fileExtension;
+        String path = System.getProperty("user.dir") + "/public/images/products/";
+        Path directoryPath = Paths.get(path);
+        if (Files.notExists(directoryPath)) {
+            try {
+                Files.createDirectories(directoryPath);
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while creating the directory");
+            }
+        }
+        String filePath = path + fileName;
+
+        //Transfer the image to the server directory
+        try {
+            file.transferTo(new File(filePath));
+        } catch (IOException e) {
+            System.err.println("Error while transferring the file ("+ e.getCause() + "): " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while transferring the file");
+        }
+
+        //Save product to the database
+        product.setImageName(fileName);
+        try {
+            Product addedProduct = productsDAO.add(product);
+            return ResponseEntity.status(HttpStatus.CREATED).body(addedProduct);
+        } catch (Exception e) {
+            System.err.println("Error during add product ("+ e.getCause() + "): " + e.getMessage());
+            try {
+                Files.deleteIfExists(Paths.get(filePath));
+            } catch (IOException ex) {
+                System.err.println("Product has not added to the db and the transferred image is cannot be deleted ("+ e.getCause() + "): " + e.getMessage());
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding product to database");
+        }
+    }
+
     // Endpoint to update a product
     // Endpoint to delete a product
     // Endpoint to delete a user
