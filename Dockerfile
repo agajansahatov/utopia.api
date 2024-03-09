@@ -1,23 +1,15 @@
-# Stage 1: Build the application
 FROM ubuntu:latest AS build
-
-RUN apt-get update && \
-    apt-get install -y openjdk-11-jdk && \
-    apt-get clean;
-
-WORKDIR /app
-
+RUN apt-get update
+RUN apt-get install openjdk-19-jdk -y
 COPY . .
-
 RUN ./gradlew bootJar --no-daemon
 
-# Stage 2: Create the final image
-FROM openjdk:11-jdk-slim
-
-WORKDIR /app
-
+FROM openjdk:19-jdk-slim
 EXPOSE 8080
 
-COPY --from=build /app/build/libs/utopia.api-1.jar app.jar
+COPY ./public /public
+COPY ./public/images/products/p1.jpg /public/images/products/p1.jpg
+COPY ./application.properties /application.properties
+COPY --from=build /build/libs/utopia.api-1.jar app.jar
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

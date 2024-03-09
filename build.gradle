@@ -1,14 +1,14 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.2.3'
-	id 'io.spring.dependency-management' version '1.1.4'
+	id 'org.springframework.boot' version '3.1.5'
+	id 'io.spring.dependency-management' version '1.1.3'
 }
 
 group = 'com'
-version = '1.0.0'
+version = '1'
 
 java {
-	sourceCompatibility = '21'
+	sourceCompatibility = '19'
 }
 
 repositories {
@@ -30,7 +30,7 @@ dependencies {
 }
 
 tasks.named('bootBuildImage') {
-	builder = 'paketobuildpacks/builder-jammy-base'
+	builder = 'paketobuildpacks/builder-jammy-base:latest'
 }
 
 tasks.named('test') {
