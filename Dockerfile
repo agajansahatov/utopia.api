@@ -1,21 +1,13 @@
-FROM ubuntu:latest AS build
-
-RUN apt-get update && \
-    apt-get install -y openjdk-21-jdk && \
-    apt-get clean;
+FROM openjdk:19-slim
 
 WORKDIR /app
 
 COPY . .
 
-RUN ./gradlew bootJar --no-daemon
+RUN gradlew build
 
-FROM openjdk:21-jdk-slim
-
-WORKDIR /app
+COPY build/libs/*.jar app.jar
 
 EXPOSE 8080
 
-COPY --from=build /app/build/libs/*.jar app.jar
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "app.jar"]
