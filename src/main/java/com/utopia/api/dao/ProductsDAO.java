@@ -34,7 +34,7 @@ public class ProductsDAO {
         if (product == null) {
             return new Validator(false, "Product cannot be null.");
         }
-        if (isNullOrEmpty(product.getName())) {
+        if (isNullOrEmpty(product.getTitle())) {
             return new Validator(false, "Product name cannot be null or empty.");
         }
         if (product.getPrice() == null || product.getPrice().compareTo(BigDecimal.ZERO) < 0) {
@@ -67,7 +67,7 @@ public class ProductsDAO {
                     public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                         PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                         ps.setString(1, product.getImageName());
-                        ps.setString(2, product.getName());
+                        ps.setString(2, product.getTitle());
                         ps.setBigDecimal(3, product.getPrice());
                         ps.setString(4, product.getCategory());
                         ps.setString(5, product.getDescription());
@@ -111,7 +111,7 @@ public class ProductsDAO {
         Product product = new Product();
         product.setId(rs.getLong("id"));
         product.setImageName(rs.getString("image_name"));
-        product.setName(rs.getString("name"));
+        product.setTitle(rs.getString("name"));
         product.setPrice(rs.getBigDecimal("price"));
         product.setCategory(rs.getString("category"));
         product.setDescription(rs.getString("description"));

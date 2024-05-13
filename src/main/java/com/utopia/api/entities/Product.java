@@ -1,16 +1,14 @@
 package com.utopia.api.entities;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 
 public class Product {
     private Long id;
     private String imageName;
-    private String name;
+    private String title;
     private BigDecimal price;
     private String category;
     private String description;
-    private Timestamp date;
 
     public Long getId() {
         return id;
@@ -28,12 +26,12 @@ public class Product {
         this.imageName = imageName;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public BigDecimal getPrice() {
@@ -60,11 +58,4 @@ public class Product {
         this.description = description;
     }
 
-    public Timestamp getDate() {
-        return date;
-    }
-
-    public void setDate(Timestamp date) {
-        this.date = date;
-    }
 }
