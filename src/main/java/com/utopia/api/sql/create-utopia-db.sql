@@ -7,6 +7,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema utopia
 -- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `utopia` ;
 
 -- -----------------------------------------------------
 -- Schema utopia
@@ -21,9 +22,10 @@ DROP TABLE IF EXISTS `utopia`.`categories` ;
 
 CREATE TABLE IF NOT EXISTS `utopia`.`categories` (
   `id` TINYINT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(50) NULL DEFAULT NULL,
+  `name` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
@@ -35,9 +37,10 @@ DROP TABLE IF EXISTS `utopia`.`user_roles` ;
 
 CREATE TABLE IF NOT EXISTS `utopia`.`user_roles` (
   `id` TINYINT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(50) NULL DEFAULT NULL,
+  `name` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
@@ -54,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `utopia`.`users` (
   `role_id` TINYINT NOT NULL,
   `firstname` VARCHAR(50) NOT NULL,
   `lastname` VARCHAR(50) NULL DEFAULT NULL,
-  `balance` DECIMAL(15,2) NULL DEFAULT NULL,
+  `balance` DECIMAL(15,2) UNSIGNED NULL DEFAULT NULL,
   `country` VARCHAR(50) NOT NULL,
   `province` VARCHAR(50) NOT NULL,
   `city` VARCHAR(50) NOT NULL,
@@ -63,6 +66,7 @@ CREATE TABLE IF NOT EXISTS `utopia`.`users` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
   INDEX `fk_users_user_roles1_idx` (`role_id` ASC) VISIBLE,
+  UNIQUE INDEX `contact_UNIQUE` (`contact` ASC) VISIBLE,
   CONSTRAINT `fk_users_user_roles`
     FOREIGN KEY (`role_id`)
     REFERENCES `utopia`.`user_roles` (`id`)
@@ -86,6 +90,7 @@ CREATE TABLE IF NOT EXISTS `utopia`.`products` (
   `sales_price` DECIMAL(15,2) NOT NULL,
   `description` TEXT NULL DEFAULT NULL,
   `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `properties` JSON NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 41
@@ -101,7 +106,7 @@ DROP TABLE IF EXISTS `utopia`.`favourites` ;
 CREATE TABLE IF NOT EXISTS `utopia`.`favourites` (
   `user_id` BIGINT NOT NULL,
   `product_id` BIGINT NOT NULL,
-  `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`, `product_id`),
   INDEX `idx_user_id` (`user_id` ASC) VISIBLE,
   INDEX `idx_product_id` (`product_id` ASC) VISIBLE,
@@ -127,8 +132,10 @@ DROP TABLE IF EXISTS `utopia`.`order_statuses` ;
 
 CREATE TABLE IF NOT EXISTS `utopia`.`order_statuses` (
   `id` TINYINT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(50) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`))
+  `name` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
@@ -140,8 +147,10 @@ DROP TABLE IF EXISTS `utopia`.`payment_methods` ;
 
 CREATE TABLE IF NOT EXISTS `utopia`.`payment_methods` (
   `id` TINYINT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(50) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`))
+  `name` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
@@ -153,8 +162,10 @@ DROP TABLE IF EXISTS `utopia`.`shippers` ;
 
 CREATE TABLE IF NOT EXISTS `utopia`.`shippers` (
   `id` TINYINT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(50) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`))
+  `name` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
@@ -169,7 +180,7 @@ CREATE TABLE IF NOT EXISTS `utopia`.`orders` (
   `user_id` BIGINT NOT NULL,
   `product_id` BIGINT NOT NULL,
   `quantity` INT NOT NULL,
-  `order_date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  `order_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `shipped_date` DATETIME NULL DEFAULT NULL,
   `shipper_id` TINYINT NULL DEFAULT NULL,
   `payment_method_id` TINYINT NOT NULL,
@@ -244,7 +255,7 @@ DROP TABLE IF EXISTS `utopia`.`product_images` ;
 CREATE TABLE IF NOT EXISTS `utopia`.`product_images` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `product_id` BIGINT NOT NULL,
-  `name` VARCHAR(250) NULL DEFAULT NULL,
+  `name` VARCHAR(250) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
   INDEX `fk_product_images_products1_idx` (`product_id` ASC) VISIBLE,
@@ -265,9 +276,10 @@ DROP TABLE IF EXISTS `utopia`.`product_videos` ;
 CREATE TABLE IF NOT EXISTS `utopia`.`product_videos` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `product_id` BIGINT NOT NULL,
-  `name` VARCHAR(250) NULL DEFAULT NULL,
+  `name` VARCHAR(250) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_product_videos_products1_idx` (`product_id` ASC) VISIBLE,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
   CONSTRAINT `fk_product_videos_products`
     FOREIGN KEY (`product_id`)
     REFERENCES `utopia`.`products` (`id`)
@@ -285,7 +297,7 @@ DROP TABLE IF EXISTS `utopia`.`traces` ;
 CREATE TABLE IF NOT EXISTS `utopia`.`traces` (
   `user_id` BIGINT NOT NULL,
   `product_id` BIGINT NOT NULL,
-  `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`, `product_id`),
   INDEX `idx_user_id` (`user_id` ASC) VISIBLE,
   INDEX `idx_product_id` (`product_id` ASC) VISIBLE,
