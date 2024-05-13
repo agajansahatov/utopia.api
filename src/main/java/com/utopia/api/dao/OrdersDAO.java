@@ -26,10 +26,10 @@ public class OrdersDAO {
             order.setId(rs.getLong("id"));
             order.setUserId(rs.getLong("user_id")); // Corrected column name
             order.setProductId(rs.getLong("product_id"));
-            order.setDestination(rs.getString("destination"));
+            order.setPayment_method(rs.getString("destination"));
             order.setQuantity(rs.getInt("quantity"));
             order.setStatus(rs.getString("status"));
-            order.setDate(rs.getTimestamp("date"));
+            order.setOrder_date(rs.getTimestamp("date"));
             return order;
         };
 
@@ -43,7 +43,7 @@ public class OrdersDAO {
         jdbcTemplate.update(sql,
                 order.getUserId(),
                 order.getProductId(),
-                order.getDestination(),
+                order.getPayment_method(),
                 order.getQuantity(),
                 order.getStatus()
         );

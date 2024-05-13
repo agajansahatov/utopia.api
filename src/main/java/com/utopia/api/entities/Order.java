@@ -6,11 +6,12 @@ public class Order {
     private Long id;
     private Long userId;
     private Long productId;
-    private String destination;
-    //In the future status should be selected from a list
-    private String status;
     private int quantity;
-    private Timestamp date;
+    private Timestamp order_date;
+    private Timestamp shipped_date;
+    private String shipper;
+    private String payment_method;
+    private String status;
 
     public Long getId() {
         return id;
@@ -36,12 +37,12 @@ public class Order {
         this.productId = productId;
     }
 
-    public String getDestination() {
-        return destination;
+    public String getPayment_method() {
+        return payment_method;
     }
 
-    public void setDestination(String destination) {
-        this.destination = destination;
+    public void setPayment_method(String payment_method) {
+        this.payment_method = payment_method;
     }
 
     public String getStatus() {
@@ -60,11 +61,27 @@ public class Order {
         this.quantity = quantity;
     }
 
-    public Timestamp getDate() {
-        return date;
+    public Timestamp getOrder_date() {
+        return order_date;
     }
 
-    public void setDate(Timestamp date) {
-        this.date = date;
+    public void setOrder_date(Timestamp order_date) {
+        this.order_date = order_date;
+    }
+
+    public Timestamp getShipped_date() {
+        return shipped_date;
+    }
+
+    public void setShipped_date(Timestamp shipped_date) {
+        this.shipped_date = shipped_date;
+    }
+
+    public String getShipper() {
+        return shipper;
+    }
+
+    public void setShipper(String shipper) {
+        this.shipper = shipper;
     }
 }
