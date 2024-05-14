@@ -49,7 +49,8 @@ The `public` folder serves static assets, including HTML, images, and videos. Re
 
 ## API ENDPOINTS
    - "/categories": returns list of all categories.
-
+   - "/roles": returns list of all roles
+   - 
 ## Contribution
 
 Contributions to this project are welcome. Feel free to fork the repository, make improvements, and submit pull requests to collaborate with the development efforts.
