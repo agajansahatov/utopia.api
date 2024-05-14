@@ -31,11 +31,11 @@ DEFAULT CHARACTER SET = utf8mb3;
 
 
 -- -----------------------------------------------------
--- Table `utopia`.`user_roles`
+-- Table `utopia`.`roles`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `utopia`.`user_roles` ;
+DROP TABLE IF EXISTS `utopia`.`roles` ;
 
-CREATE TABLE IF NOT EXISTS `utopia`.`user_roles` (
+CREATE TABLE IF NOT EXISTS `utopia`.`roles` (
   `id` TINYINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`id`),
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `utopia`.`users` (
   UNIQUE INDEX `contact_UNIQUE` (`contact` ASC) VISIBLE,
   CONSTRAINT `fk_users_user_roles`
     FOREIGN KEY (`role_id`)
-    REFERENCES `utopia`.`user_roles` (`id`)
+    REFERENCES `utopia`.`roles` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -126,11 +126,11 @@ COLLATE = utf8mb4_unicode_ci;
 
 
 -- -----------------------------------------------------
--- Table `utopia`.`order_statuses`
+-- Table `utopia`.`statuses`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `utopia`.`order_statuses` ;
+DROP TABLE IF EXISTS `utopia`.`statuses` ;
 
-CREATE TABLE IF NOT EXISTS `utopia`.`order_statuses` (
+CREATE TABLE IF NOT EXISTS `utopia`.`statuses` (
   `id` TINYINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`id`),
@@ -194,7 +194,7 @@ CREATE TABLE IF NOT EXISTS `utopia`.`orders` (
   INDEX `fk_orders_shippers1_idx` (`shipper_id` ASC) VISIBLE,
   CONSTRAINT `fk_orders_order_statuses`
     FOREIGN KEY (`status_id`)
-    REFERENCES `utopia`.`order_statuses` (`id`)
+    REFERENCES `utopia`.`statuses` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE,
   CONSTRAINT `fk_orders_payment_methods`

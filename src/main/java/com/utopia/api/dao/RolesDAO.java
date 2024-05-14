@@ -26,7 +26,7 @@ public class RolesDAO {
 
     public List<Role> getAll() throws DataAccessException {
         try {
-            String sql = "SELECT * FROM user_roles";
+            String sql = "SELECT * FROM roles";
             RowMapper<Role> rowMapper = (rs, rowNum) -> mapRole(rs);
             return jdbcTemplate.query(sql, rowMapper);
         } catch (EmptyResultDataAccessException e) {

@@ -36,16 +36,6 @@ INSERT INTO `favourites` VALUES (1,1,'2024-01-01 00:10:02'),(2,2,'2024-05-20 00:
 UNLOCK TABLES;
 
 --
--- Dumping data for table `order_statuses`
---
-
-LOCK TABLES `order_statuses` WRITE;
-/*!40000 ALTER TABLE `order_statuses` DISABLE KEYS */;
-INSERT INTO `order_statuses` VALUES (3,'Delivered'),(1,'Processed'),(2,'Shipped');
-/*!40000 ALTER TABLE `order_statuses` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Dumping data for table `orders`
 --
 
@@ -106,6 +96,16 @@ INSERT INTO `products` VALUES (1,'A high quality turkmen carpet',899.00,999.00,'
 UNLOCK TABLES;
 
 --
+-- Dumping data for table `roles`
+--
+
+LOCK TABLES `roles` WRITE;
+/*!40000 ALTER TABLE `roles` DISABLE KEYS */;
+INSERT INTO `roles` VALUES (2,'admin'),(3,'customer'),(1,'owner');
+/*!40000 ALTER TABLE `roles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Dumping data for table `shippers`
 --
 
@@ -116,6 +116,16 @@ INSERT INTO `shippers` VALUES (2,'Airmail Economy'),(12,'Airmail Priority'),(6,'
 UNLOCK TABLES;
 
 --
+-- Dumping data for table `statuses`
+--
+
+LOCK TABLES `statuses` WRITE;
+/*!40000 ALTER TABLE `statuses` DISABLE KEYS */;
+INSERT INTO `statuses` VALUES (3,'Delivered'),(1,'Processed'),(2,'Shipped');
+/*!40000 ALTER TABLE `statuses` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Dumping data for table `traces`
 --
 
@@ -123,16 +133,6 @@ LOCK TABLES `traces` WRITE;
 /*!40000 ALTER TABLE `traces` DISABLE KEYS */;
 INSERT INTO `traces` VALUES (1,1,'2024-05-07 02:24:15'),(2,2,'2024-03-20 00:37:31'),(3,3,'2024-01-01 00:00:10'),(4,4,'2024-02-24 06:29:33'),(5,5,'2024-05-23 20:07:49'),(6,6,'2024-04-04 21:58:37'),(7,7,'2024-05-19 05:36:21'),(8,8,'2024-02-05 11:19:54'),(9,9,'2024-05-12 20:44:22'),(10,10,'2024-04-19 01:29:55'),(11,11,'2024-01-01 01:01:51'),(12,12,'2024-03-23 01:26:15'),(13,13,'2024-01-01 00:16:27'),(14,14,'2024-03-09 12:46:52'),(15,15,'2024-01-07 22:22:08'),(16,16,'2024-05-23 17:53:07'),(17,17,'2024-01-18 08:25:18'),(18,18,'2024-04-13 20:59:33'),(19,19,'2024-01-01 02:16:18'),(20,20,'2024-01-01 00:38:36'),(21,21,'2024-01-01 16:53:47'),(22,22,'2024-01-01 00:01:16'),(23,23,'2024-05-14 10:55:07'),(24,24,'2024-04-15 20:27:14'),(25,25,'2024-01-01 00:00:08'),(26,26,'2024-05-26 08:12:42'),(27,27,'2024-01-01 00:01:06'),(28,28,'2024-04-29 06:04:59'),(29,29,'2024-01-01 00:11:26'),(30,30,'2024-03-05 06:10:50'),(31,31,'2024-05-02 03:36:42'),(32,32,'2024-03-27 02:54:30'),(33,33,'2024-01-01 00:00:01'),(34,34,'2024-02-24 09:28:05'),(35,35,'2024-01-25 17:59:28'),(36,36,'2024-05-14 11:35:36'),(37,37,'2024-04-28 08:50:20'),(38,38,'2024-01-01 00:00:04'),(39,39,'2024-01-24 10:49:24'),(40,40,'2024-04-01 03:43:49'),(41,41,'2024-03-03 10:59:51'),(42,42,'2024-01-01 00:00:01'),(43,43,'2024-01-01 01:33:25'),(44,44,'2024-02-15 01:16:05'),(45,45,'2024-02-17 18:25:41'),(46,46,'2024-01-01 00:00:09'),(47,47,'2024-04-22 09:40:09'),(48,48,'2024-01-01 00:00:08'),(49,49,'2024-01-01 00:44:54'),(50,50,'2024-05-17 15:55:18');
 /*!40000 ALTER TABLE `traces` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping data for table `user_roles`
---
-
-LOCK TABLES `user_roles` WRITE;
-/*!40000 ALTER TABLE `user_roles` DISABLE KEYS */;
-INSERT INTO `user_roles` VALUES (2,'admin'),(3,'customer'),(1,'owner');
-/*!40000 ALTER TABLE `user_roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -154,4 +154,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-14  8:38:07
+-- Dump completed on 2024-05-15  5:37:11
