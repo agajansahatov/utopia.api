@@ -31,7 +31,7 @@ public class ProductsController {
 
     // Get all products endpoint
     @GetMapping("/products")
-    public ResponseEntity<Object> getProductsDAO() {
+    public ResponseEntity<Object> getProducts() {
         try {
             List<Product> productList = productsDAO.getProducts();
             Collections.shuffle(productList);

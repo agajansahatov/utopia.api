@@ -47,6 +47,9 @@ The DAO pattern abstracts and encapsulates data access operations into separate 
 ### Public Folder
 The `public` folder serves static assets, including HTML, images, and videos. Requests to the root endpoint return the `index.html` by default, while other endpoints are handled by controller classes.
 
+## API ENDPOINTS
+   - "/categories": returns list of all categories.
+
 ## Contribution
 
 Contributions to this project are welcome. Feel free to fork the repository, make improvements, and submit pull requests to collaborate with the development efforts.
