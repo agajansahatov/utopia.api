@@ -1,10 +1,7 @@
 package com.utopia.api.controllers;
 
 import com.utopia.api.dao.CategoriesDAO;
-import com.utopia.api.dao.ProductsDAO;
 import com.utopia.api.entities.Category;
-import com.utopia.api.entities.Product;
-import com.utopia.api.utilities.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +11,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collections;
 import java.util.List;
 
 @RestController
 @CrossOrigin
 public class CategoriesController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductsController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CategoriesController.class);
     private final CategoriesDAO categoriesDAO;
 
     @Autowired
@@ -35,7 +30,7 @@ public class CategoriesController {
             List<Category> categoryList = categoriesDAO.getAll();
             return ResponseEntity.ok(categoryList);
         } catch (Exception e) {
-            LOGGER.error("Error getting products", e);
+            LOGGER.error("Error getting categories", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }
