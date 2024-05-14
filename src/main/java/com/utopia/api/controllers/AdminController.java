@@ -151,7 +151,7 @@ public class AdminController {
                 user.setAddress(req.getAddress());
             }
 
-            usersDAO.update(user);
+            usersDAO.updateByAdmin(user);
 
             if(isPasswordUpdated || isRoleUpdated){
                 //Renew the authentication

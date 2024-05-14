@@ -53,6 +53,23 @@ public class UsersDAO {
                 user.getId());
     }
 
+    public void updateByAdmin(User user) throws DataAccessException {
+        String sql = "UPDATE users SET contact = ?, password = ?, role_id = ?, firstname = ?, lastname = ?, " +
+                "balance = ?, country = ?, province = ?, city = ?, address = ? WHERE id = ?";
+        jdbcTemplate.update(sql,
+                user.getContact(),
+                user.getPassword(),
+                user.getRole(),
+                user.getFirstname(),
+                user.getLastname(),
+                user.getBalance(),
+                user.getCountry(),
+                user.getProvince(),
+                user.getCity(),
+                user.getAddress(),
+                user.getId());
+    }
+
     private User mapUser(ResultSet rs) throws SQLException {
         User user = new User();
         user.setId(rs.getLong("id"));
