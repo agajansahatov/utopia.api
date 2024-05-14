@@ -7,8 +7,8 @@ public class Product {
     private String imageName;
     private String title;
     private BigDecimal price;
-    private String category;
     private String description;
+    private String category;
 
     public Long getId() {
         return id;

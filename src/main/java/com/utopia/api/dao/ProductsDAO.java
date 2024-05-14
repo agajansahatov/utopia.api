@@ -35,7 +35,7 @@ public class ProductsDAO {
             return new Validator(false, "Product cannot be null.");
         }
         if (isNullOrEmpty(product.getTitle())) {
-            return new Validator(false, "Product name cannot be null or empty.");
+            return new Validator(false, "Product title cannot be null or empty.");
         }
         if (product.getPrice() == null || product.getPrice().compareTo(BigDecimal.ZERO) < 0) {
             return new Validator(false, "Product price must be a positive value.");
@@ -43,9 +43,7 @@ public class ProductsDAO {
         if (isNullOrEmpty(product.getCategory())) {
             return new Validator(false, "Product category cannot be null or empty.");
         }
-        if (product.getDate() != null && product.getDate().after(new Date())) {
-            return new Validator(false, "Product date cannot be in the future.");
-        }
+
         return new Validator(true, "Valid Product");
     }
 
@@ -56,7 +54,7 @@ public class ProductsDAO {
     }
 
     public Product add(Product product) {
-        String sql = "INSERT INTO products (image_name, name, price, category, description) " +
+        String sql = "INSERT INTO products (image_name, title, price, category, description) " +
                 "VALUES (?, ?, ?, ?, ?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();

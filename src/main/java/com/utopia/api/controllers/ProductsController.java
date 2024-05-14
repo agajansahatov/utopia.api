@@ -23,12 +23,10 @@ import java.util.List;
 public class ProductsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductsController.class);
     private final ProductsDAO productsDAO;
-    private final JwtUtil jwtUtil;
 
     @Autowired
     public ProductsController(JdbcTemplate jdbcTemplate, JwtUtil jwtUtil) {
         this.productsDAO = new ProductsDAO(jdbcTemplate);
-        this.jwtUtil = jwtUtil;
     }
 
     // Get all products endpoint
@@ -51,10 +49,10 @@ public class ProductsController {
             Product product = productsDAO.getProduct(id);
             return ResponseEntity.ok(product);
         } catch (EmptyResultDataAccessException e) {
-            LOGGER.error("Product not found with ID: " + id, e);
+            LOGGER.error("Product not found with ID: {}", id, e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This product is not found on our server");
         } catch (Exception e) {
-            LOGGER.error("Error getting product with ID: " + id, e);
+            LOGGER.error("Error getting product with ID: {}", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }
