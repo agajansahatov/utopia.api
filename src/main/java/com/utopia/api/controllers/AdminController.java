@@ -51,7 +51,7 @@ public class AdminController {
                                              @RequestHeader("x-auth-token") String token,
                                              @RequestBody User req) {
         JwtChecked jwtChecked = jwtUtil.validate(token);
-        if (!jwtChecked.isValid || (!jwtChecked.userRole.equals("owner") && !jwtChecked.userRole.equals("admin"))) {
+        if (!jwtChecked.isValid || (jwtChecked.userRole != 1 && jwtChecked.userRole != 2)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Invalid token or role");
         }
 
@@ -63,18 +63,12 @@ public class AdminController {
         try {
             User user = usersDAO.getById(userId);
 
-            if(req.getImage() != null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Images should be updated by user themselves");
-            }
-
-            // Auth: owner
+            // Auth: owner (Only owners can update a user's contact)
             if(req.getContact() != null) {
-                if(!jwtChecked.userRole.equals("owner")) {
+                if(jwtChecked.userRole != 1) {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                            .body("Unauthorized: You cannot update the user role");
+                            .body("Unauthorized: You cannot update the user contact");
                 }
-
                 if(!Validator.isValidContact(req.getContact())) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid contact");
                 }
@@ -84,12 +78,12 @@ public class AdminController {
                 user.setContact(req.getContact());
             }
 
-            // Auth: owner
+            // Auth: owner (Only owners can update a user's password)
             boolean isPasswordUpdated = false;
             if(req.getPassword() != null) {
-                if(!jwtChecked.userRole.equals("owner")) {
+                if(jwtChecked.userRole != 1) {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                            .body("Unauthorized: You cannot update the user role");
+                            .body("Unauthorized: You cannot update the user password");
                 }
 
                 String hashedPassword = passwordEncoder.encode(req.getPassword());
@@ -97,15 +91,12 @@ public class AdminController {
                 isPasswordUpdated = true;
             }
 
-            // Auth: owner
+            // Auth: owner (Only owners can update a user's role)
             boolean isRoleUpdated = false;
             if(req.getRole() != null) {
-                if(!jwtChecked.userRole.equals("owner")) {
+                if(jwtChecked.userRole != 1) {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                             .body("Unauthorized: You cannot update the user role");
-                }
-                if (!req.getRole().matches("admin|user")) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid role");
                 }
 
                 user.setRole(req.getRole());
@@ -118,7 +109,7 @@ public class AdminController {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Balance should be greater than 0");
                 }
 
-                if(jwtChecked.userRole.equals("admin")){
+                if(jwtChecked.userRole == 2){
                     if(jwtChecked.userId == userId) {
                         user.setBalance(req.getBalance());
                     } else {
@@ -131,8 +122,28 @@ public class AdminController {
             }
 
             // Auth: owner, admin
-            if(req.getName() != null) {
-                user.setName(req.getName());
+            if(req.getFirstname() != null) {
+                user.setFirstname(req.getFirstname());
+            }
+
+            // Auth: owner, admin
+            if(req.getLastname() != null) {
+                user.setLastname(req.getLastname());
+            }
+
+            // Auth: owner, admin
+            if(req.getCountry() != null) {
+                user.setCountry(req.getCountry());
+            }
+
+            // Auth: owner, admin
+            if(req.getProvince() != null) {
+                user.setProvince(req.getProvince());
+            }
+
+            // Auth: owner, admin
+            if(req.getCity() != null) {
+                user.setCity(req.getCity());
             }
 
             // Auth: owner, admin
@@ -166,7 +177,7 @@ public class AdminController {
     @GetMapping("/admin/users")
     public ResponseEntity<Object> getProductsDAO(@RequestHeader("x-auth-token") String token) {
         JwtChecked jwtChecked = jwtUtil.validate(token);
-        if (!jwtChecked.isValid || (!jwtChecked.userRole.equals("owner") && !jwtChecked.userRole.equals("admin"))) {
+        if (!jwtChecked.isValid || (jwtChecked.userRole != 1 && jwtChecked.userRole != 2)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Invalid token or role");
         }
 
@@ -192,7 +203,7 @@ public class AdminController {
                                              @RequestParam("file") MultipartFile file) {
         //Token validation
         JwtChecked jwtChecked = jwtUtil.validate(token);
-        if (!jwtChecked.isValid || (!jwtChecked.userRole.equals("owner") && !jwtChecked.userRole.equals("admin"))) {
+        if (!jwtChecked.isValid || (jwtChecked.userRole != 1 && jwtChecked.userRole != 2)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
         }
 
