@@ -52,6 +52,7 @@ The `public` folder serves static assets, including HTML, images, and videos. Re
    - "/roles": returns list of all roles (possible for a user)
    - "/statuses": returns list of all statuses (possible for an order)
    - "/shippers": returns list of all shippers (possible for an order)
+   - "/payment_methods": returns list of all payment methods (possible for an order)
 ## Contribution
 
 Contributions to this project are welcome. Feel free to fork the repository, make improvements, and submit pull requests to collaborate with the development efforts.
