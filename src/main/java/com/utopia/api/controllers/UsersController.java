@@ -44,17 +44,11 @@ public class UsersController {
         String hashedPassword = passwordEncoder.encode(req.getPassword());
         req.setPassword(hashedPassword);
 
-        req.setBalance(BigDecimal.valueOf(10000));
+        req.setBalance(BigDecimal.valueOf(100000));
 
         try {
             if (usersDAO.exists(req.getContact())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User with this contact already exists");
-            }
-
-            if(usersDAO.getUserCount() == 0) {
-                req.setRole("owner");
-            } else {
-              req.setRole("user");
             }
 
             usersDAO.add(req);
@@ -118,27 +112,38 @@ public class UsersController {
         try {
             User existingUser = usersDAO.getById(userId);
 
-            if(req.getName() != null) {
-                existingUser.setName(req.getName());
-            }
-
             if(req.getContact() != null && !existingUser.getContact().equals(req.getContact())) {
                 if(!Validator.isValidContact(req.getContact())) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid contact");
                 }
                 if (usersDAO.exists(req.getContact())) {
-                    return ResponseEntity.status(HttpStatus.CONFLICT).body("User with this contact already exists");
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("This contact is not valid");
                 }
                 existingUser.setContact(req.getContact());
             }
 
-            if(req.getAddress() != null) {
-                existingUser.setAddress(req.getAddress());
+            if(req.getFirstname() != null) {
+                existingUser.setFirstname(req.getFirstname());
             }
 
-            if(req.getImage() != null) {
-                //In the future there might be image upload service
-                existingUser.setImage(req.getImage());
+            if(req.getLastname() != null) {
+                existingUser.setLastname(req.getLastname());
+            }
+
+            if(req.getCountry() != null) {
+                existingUser.setCountry(req.getCountry());
+            }
+
+            if(req.getProvince() != null) {
+                existingUser.setProvince(req.getProvince());
+            }
+
+            if(req.getCity() != null) {
+                existingUser.setCity(req.getCity());
+            }
+
+            if(req.getAddress() != null) {
+                existingUser.setAddress(req.getAddress());
             }
 
             usersDAO.update(existingUser);
@@ -221,9 +226,9 @@ public class UsersController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This user is not allowed to be deleted!");
             }
 
-            usersDAO.delete(res);
+            usersDAO.delete(userId);
 
-            return ResponseEntity.status(HttpStatus.OK).body(res);
+            return ResponseEntity.status(HttpStatus.OK).body(new UserResponseDTO(res));
         } catch (Exception e) {
             LOGGER.error("Error during delete user: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting the user!");

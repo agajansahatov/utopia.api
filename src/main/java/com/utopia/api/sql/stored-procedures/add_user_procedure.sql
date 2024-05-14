@@ -30,8 +30,6 @@ BEGIN
 	END IF;
     
     INSERT INTO users VALUES(DEFAULT, contact, password, role, firstname, lastname, balance, country, province, city, address, DEFAULT);
-    
-    SELECT * FROM users WHERE users.contact = contact;
 END $$
 
 DELIMITER ;

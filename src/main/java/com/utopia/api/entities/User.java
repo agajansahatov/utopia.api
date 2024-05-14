@@ -9,7 +9,7 @@ public class User {
     private Long id;
     private String contact;
     private String password;
-    private String role_id;
+    private Short role;
     private String firstname;
     private String lastname;
     private BigDecimal balance;
@@ -29,11 +29,11 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String contact, String password, String role_id, String firstname, String lastname, BigDecimal balance, String country, String province, String city, String address, Timestamp authTime) {
+    public User(Long id, String contact, String password, short role, String firstname, String lastname, BigDecimal balance, String country, String province, String city, String address, Timestamp authTime) {
         this.id = id;
         this.contact = contact;
         this.password = password;
-        this.role_id = role_id;
+        this.role = role;
         this.firstname = firstname;
         this.lastname = lastname;
         this.balance = balance;
@@ -68,12 +68,12 @@ public class User {
         this.password = password;
     }
 
-    public String getRole_id() {
-        return role_id;
+    public Short getRole() {
+        return role;
     }
 
-    public void setRole_id(String role_id) {
-        this.role_id = role_id;
+    public void setRole(Short role) {
+        this.role = role;
     }
 
     public String getFirstname() {

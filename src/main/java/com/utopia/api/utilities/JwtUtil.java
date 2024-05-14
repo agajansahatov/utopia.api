@@ -81,13 +81,13 @@ public class JwtUtil {
                 return jwtChecked;
             }
 
-            String userRole = claims.get("userRole").toString();
-            if (!userRole.equals("user")){
-                String existingUserRole = usersDAO.getRole(userId);
+            short userRole = Short.parseShort(claims.get("userRole").toString());
+            if (userRole != 3){
+                Short existingUserRole = usersDAO.getRole(userId);
                 if(existingUserRole == null) {
                     return jwtChecked;
                 }
-                if(!existingUserRole.equals(userRole) || (!userRole.equals("owner") && !userRole.equals("admin"))) {
+                if(existingUserRole != userRole || (userRole != 1 && userRole != 2)) {
                     return jwtChecked;
                 }
             }

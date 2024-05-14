@@ -8,25 +8,25 @@ import java.sql.Timestamp;
 
 public class UserResponseDTO {
     private final Long id;
-    private final String name;
     private final String contact;
-    private final String image;
-    private final String address;
+    private final String firstname;
+    private final String lastname;
     private final BigDecimal balance;
-    private final String password;
-    private final String role;
-    private final Timestamp authTime;
+    private final String country;
+    private final String province;
+    private final String city;
+    private final String address;
 
     public UserResponseDTO(User user) {
         this.id = user.getId();
-        this.name = user.getName();
-        this.image = user.getImage();
-        this.address = user.getAddress();
-        this.balance = user.getBalance();
-        this.password = "*****";
         this.contact = maskContact(user.getContact());
-        this.role = user.getRole();
-        this.authTime = user.getAuthTime();
+        this.firstname = user.getFirstname();
+        this.lastname = user.getLastname();
+        this.balance = user.getBalance();
+        this.country = user.getCountry();
+        this.province = user.getProvince();
+        this.city = user.getCity();
+        this.address = user.getAddress();
     }
 
     private String maskContact(String contact) {
@@ -76,35 +76,35 @@ public class UserResponseDTO {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public String getContact() {
         return contact;
     }
 
-    public String getImage() {
-        return image;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public String getAddress() {
-        return address;
+    public String getLastname() {
+        return lastname;
     }
 
     public BigDecimal getBalance() {
         return balance;
     }
 
-    public String getPassword() {
-        return password;
+    public String getCountry() {
+        return country;
     }
 
-    public String getRole() {
-        return role;
+    public String getProvince() {
+        return province;
     }
 
-    public Timestamp getAuthTime() {
-        return authTime;
+    public String getCity() {
+        return city;
+    }
+
+    public String getAddress() {
+        return address;
     }
 }
