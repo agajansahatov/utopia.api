@@ -17,7 +17,7 @@ BEGIN
 	FROM categorized_products cp
 	JOIN products_view p
 		ON cp.product_id = p.id
-	WHERE cp.category_id = 1;
+	WHERE cp.category_id = category_id;
     
     RETURN count;
 END $$
