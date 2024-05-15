@@ -113,7 +113,6 @@ public class ProductsDAO {
         product.setPrice(rs.getBigDecimal("price"));
         product.setCategory(rs.getString("category"));
         product.setDescription(rs.getString("description"));
-        product.setDate(rs.getTimestamp("date"));
         return product;
     }
 
@@ -122,4 +121,6 @@ public class ProductsDAO {
         Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
         return count != null && count > 0;
     }
+
+    
 }
