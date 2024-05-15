@@ -61,7 +61,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `medias` WRITE;
 /*!40000 ALTER TABLE `medias` DISABLE KEYS */;
-INSERT INTO `medias` VALUES (1,1,'p1.jpg'),(2,2,'p2.jpg'),(3,3,'p3.jpg'),(4,4,'p4.jpg'),(5,5,'p5.jpg'),(6,6,'p6.jpg'),(7,7,'p7.jpg'),(8,8,'p8.jpg'),(9,9,'p9.webp'),(10,10,'p10.jfif'),(11,11,'p11.jpg'),(12,12,'p12.jpg'),(13,13,'p13.jfif'),(14,14,'p14.jpg'),(15,15,'p15.webp'),(16,16,'p16.jpg'),(17,17,'p17.webp'),(18,18,'p18.jpg'),(19,19,'p19.webp'),(20,20,'p20.webp'),(21,21,'p21.jfif'),(22,22,'p22.jpg'),(23,23,'p23.jfif'),(24,24,'p24.jfif'),(25,25,'p25.jpg'),(26,43,'searverit.gif'),(27,30,'vehadwasal.png'),(28,28,'areinveeve.jpg'),(29,40,'edisesle.png'),(30,30,'mever639.jpg'),(31,28,'never.png'),(33,36,'onmealwa.bmp'),(37,26,'forin231.gif'),(39,31,'henthi813.png'),(40,45,'hethieras.bmp'),(43,49,'tireisar.jpg'),(44,26,'inasthaon599.bmp'),(45,50,'oulleforwit.bmp'),(47,34,'thistihi264.png'),(48,34,'ereheheha.jpg'),(49,45,'tongeraar4.jpg'),(50,42,'orandmehis.bmp');
+INSERT INTO `medias` VALUES (1,1,'p1.jpg',1),(2,2,'p2.jpg',1),(3,3,'p3.jpg',1),(4,4,'p4.jpg',1),(5,5,'p5.jpg',1),(6,6,'p6.jpg',1),(7,7,'p7.jpg',1),(8,8,'p8.jpg',1),(9,9,'p9.webp',1),(10,10,'p10.jfif',1),(11,11,'p11.jpg',1),(12,12,'p12.jpg',1),(13,13,'p13.jfif',1),(14,14,'p14.jpg',1),(15,15,'p15.webp',1),(16,16,'p16.jpg',1),(17,17,'p17.webp',1),(18,18,'p18.jpg',1),(19,19,'p19.webp',1),(20,20,'p20.webp',1),(21,21,'p21.jfif',1),(22,22,'p22.jpg',1),(23,23,'p23.jfif',1),(24,24,'p24.jfif',1),(25,25,'p25.jpg',1),(26,38,'searverit.gif',1),(27,30,'vehadwasal.png',1),(28,28,'areinveeve.jpg',1),(29,36,'edisesle.png',1),(30,31,'mever639.jpg',1),(31,29,'never.png',1),(33,35,'onmealwa.bmp',1),(37,26,'forin231.gif',1),(39,32,'henthi813.png',1),(40,39,'hethieras.bmp',1),(43,41,'tireisar.jpg',1),(44,27,'inasthaon599.bmp',1),(45,42,'oulleforwit.bmp',1),(47,33,'thistihi264.png',1),(48,34,'ereheheha.jpg',1),(49,40,'tongeraar4.jpg',1),(50,37,'orandmehis.bmp',1),(51,43,'aaa.jpg',1),(52,44,'aaa.jpg',1),(53,45,'aaa.jpg',1),(54,46,'aaa.jpg',1),(55,47,'aaa.jpg',1),(56,48,'aaa.jpg',1),(57,49,'aaa.jpg',1),(58,50,'aaa.jpg',1);
 /*!40000 ALTER TABLE `medias` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -152,6 +152,185 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'utopia'
 --
+/*!50003 DROP FUNCTION IF EXISTS `count_products_by_category` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `count_products_by_category`(category_id TINYINT UNSIGNED) RETURNS int
+    READS SQL DATA
+BEGIN
+	DECLARE count INTEGER DEFAULT 0;
+    
+	IF category_id IS NULL OR NOT EXISTS (SELECT 1 FROM categories WHERE id = category_id) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid category_id';
+    END IF;
+	
+	SELECT COUNT(*) INTO count
+	FROM categorized_products cp
+	JOIN products_view p
+		ON cp.product_id = p.id
+	WHERE cp.category_id = category_id;
+    
+    RETURN count;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `add_user` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_user`(
+	contact VARCHAR(255), 
+    password VARCHAR(255),
+    firstname VARCHAR(50),
+    lastname VARCHAR(50),
+    balance DECIMAL(15, 2),
+    country VARCHAR(50),
+    province VARCHAR(50),
+    city VARCHAR(50),
+    address VARCHAR (500)
+)
+BEGIN
+	DECLARE users_count BIGINT;
+    DECLARE role BIGINT default 3;
+    SELECT COUNT(*) INTO users_count FROM users;
+    
+    IF users_count = 0 
+    THEN
+		SELECT 1 INTO role;
+	END IF;
+    
+    IF balance < 0 THEN
+		SIGNAL SQLSTATE '22003' SET MESSAGE_TEXT = 'Invalid balance amount';
+	END IF;
+    
+    INSERT INTO users VALUES(DEFAULT, contact, password, role, firstname, lastname, balance, country, province, city, address, DEFAULT);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_products` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_products`(
+    IN page BIGINT UNSIGNED,
+    IN amount BIGINT UNSIGNED,
+    IN category_id TINYINT UNSIGNED
+)
+BEGIN
+    DECLARE size BIGINT UNSIGNED;
+    DECLARE start_index BIGINT UNSIGNED;
+
+    -- Get total number of products and pass it to size variable accordingly
+    IF category_id IS NOT NULL THEN
+        -- Count products in the specified category
+        SELECT count_products_by_category(category_id) INTO size;
+    ELSE
+        -- Count all products
+        SELECT COUNT(*) INTO size FROM products;
+    END IF;
+
+    -- Validate and set default values for page and amount
+    IF page IS NULL THEN
+        SET page = 1;
+    END IF;
+    
+    IF amount IS NULL THEN
+        SET amount = size;
+    END IF;
+
+    -- Handle cases where page or amount is zero
+    IF page = 0 OR amount = 0 THEN
+        SET amount = 0;
+        SET page = 1;
+    END IF;
+
+    -- Calculate the starting index for the pagination
+    SET start_index = (page - 1) * amount;
+
+    -- Check if the start index exceeds the size of the products
+    IF start_index >= size AND size != 0 THEN
+        SIGNAL SQLSTATE '22003' SET MESSAGE_TEXT = 'Invalid page or amount';
+    END IF;
+
+    -- Fetch the products based on category_id with pagination
+    IF category_id IS NOT NULL THEN
+        SELECT p.*
+        FROM categorized_products cp
+        JOIN products_view p
+            ON cp.product_id = p.id
+        WHERE cp.category_id = category_id
+        LIMIT start_index, amount;
+    ELSE
+        -- Fetch all products with pagination
+        SELECT * 
+        FROM products_view 
+        LIMIT start_index, amount;
+    END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_products_by_category` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_products_by_category`(category_id TINYINT UNSIGNED)
+BEGIN
+    IF category_id IS NULL OR NOT EXISTS (SELECT 1 FROM categories WHERE id = category_id) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid category_id';
+    END IF;
+	
+	SELECT 
+		p.id,
+		p.title,
+		p.original_price,
+		p.sales_price,
+		p.description,
+		p.date,
+		p.media
+	FROM categorized_products cp
+	JOIN products_view p
+		ON cp.product_id = p.id
+	WHERE cp.category_id = category_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -162,4 +341,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-15 12:08:31
+-- Dump completed on 2024-05-15 18:42:08
