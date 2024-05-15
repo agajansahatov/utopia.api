@@ -1,6 +1,7 @@
 package com.utopia.api.controllers;
 
 import com.utopia.api.dao.ProductsDAO;
+import com.utopia.api.entities.CategorizedProduct;
 import com.utopia.api.entities.Product;
 import com.utopia.api.utilities.JwtUtil;
 import org.slf4j.Logger;
@@ -53,6 +54,17 @@ public class ProductsController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This product is not found on our server");
         } catch (Exception e) {
             LOGGER.error("Error getting product with ID: {}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
+        }
+    }
+
+    @GetMapping("/categorized-products")
+    public ResponseEntity<Object> getCategorizedProducts() {
+        try {
+            List<CategorizedProduct> categorizedProducts = productsDAO.getCategorizedProducts();
+            return ResponseEntity.ok(categorizedProducts);
+        } catch (Exception e) {
+            LOGGER.error("Error getting products", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error when interacting with db!");
         }
     }

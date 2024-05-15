@@ -1,5 +1,6 @@
 package com.utopia.api.dao;
 
+import com.utopia.api.entities.CategorizedProduct;
 import com.utopia.api.entities.Product;
 import com.utopia.api.utilities.Validator;
 import org.springframework.dao.DataAccessException;
@@ -12,7 +13,6 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import java.math.BigDecimal;
 import java.sql.*;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -122,5 +122,16 @@ public class ProductsDAO {
         return count != null && count > 0;
     }
 
-    
+    public List<CategorizedProduct> getCategorizedProducts() throws DataAccessException {
+        String sql = "SELECT * from categorized_products";
+
+        RowMapper<CategorizedProduct> rowMapper = (rs, rowNum) -> {
+            CategorizedProduct categorizedProduct = new CategorizedProduct();
+            categorizedProduct.setProductId(rs.getLong("product_id"));
+            categorizedProduct.setCategoryId(rs.getShort("category_id"));
+            return categorizedProduct;
+        };
+
+        return jdbcTemplate.query(sql, rowMapper);
+    }
 }
