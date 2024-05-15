@@ -24,7 +24,7 @@ public class PaymentMethodsController {
         this.paymentMethodsDAO = paymentMethodsDAO;
     }
 
-    @GetMapping("/payment_methods")
+    @GetMapping("/payment-methods")
     public ResponseEntity<Object> getPaymentMethods() {
         try {
             List<PaymentMethod> paymentMethodList = paymentMethodsDAO.getAll();

@@ -224,11 +224,11 @@ COLLATE = utf8mb4_unicode_ci;
 
 
 -- -----------------------------------------------------
--- Table `utopia`.`product_categories`
+-- Table `utopia`.`categorized_products`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `utopia`.`product_categories` ;
+DROP TABLE IF EXISTS `utopia`.`categorized_products` ;
 
-CREATE TABLE IF NOT EXISTS `utopia`.`product_categories` (
+CREATE TABLE IF NOT EXISTS `utopia`.`categorized_products` (
   `product_id` BIGINT NOT NULL,
   `category_id` TINYINT NOT NULL,
   PRIMARY KEY (`product_id`, `category_id`),
@@ -248,11 +248,11 @@ DEFAULT CHARACTER SET = utf8mb3;
 
 
 -- -----------------------------------------------------
--- Table `utopia`.`product_images`
+-- Table `utopia`.`medias`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `utopia`.`product_images` ;
+DROP TABLE IF EXISTS `utopia`.`medias` ;
 
-CREATE TABLE IF NOT EXISTS `utopia`.`product_images` (
+CREATE TABLE IF NOT EXISTS `utopia`.`medias` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `product_id` BIGINT NOT NULL,
   `name` VARCHAR(250) NOT NULL,
@@ -260,27 +260,6 @@ CREATE TABLE IF NOT EXISTS `utopia`.`product_images` (
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
   INDEX `fk_product_images_products1_idx` (`product_id` ASC) VISIBLE,
   CONSTRAINT `fk_product_images_products`
-    FOREIGN KEY (`product_id`)
-    REFERENCES `utopia`.`products` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb3;
-
-
--- -----------------------------------------------------
--- Table `utopia`.`product_videos`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `utopia`.`product_videos` ;
-
-CREATE TABLE IF NOT EXISTS `utopia`.`product_videos` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `product_id` BIGINT NOT NULL,
-  `name` VARCHAR(250) NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_product_videos_products1_idx` (`product_id` ASC) VISIBLE,
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-  CONSTRAINT `fk_product_videos_products`
     FOREIGN KEY (`product_id`)
     REFERENCES `utopia`.`products` (`id`)
     ON DELETE CASCADE
@@ -314,6 +293,34 @@ CREATE TABLE IF NOT EXISTS `utopia`.`traces` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci;
+
+
+-- -----------------------------------------------------
+-- Table `utopia`.`comments`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `utopia`.`comments` ;
+
+CREATE TABLE IF NOT EXISTS `utopia`.`comments` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT NOT NULL,
+  `product_id` BIGINT NOT NULL,
+  `body` VARCHAR(500) NULL DEFAULT NULL,
+  `photo` VARCHAR(250) NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_comments_users1_idx` (`user_id` ASC) VISIBLE,
+  INDEX `fk_comments_products1_idx` (`product_id` ASC) VISIBLE,
+  CONSTRAINT `fk_comments_users1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `utopia`.`users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_comments_products1`
+    FOREIGN KEY (`product_id`)
+    REFERENCES `utopia`.`products` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

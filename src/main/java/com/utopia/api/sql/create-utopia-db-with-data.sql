@@ -42,6 +42,65 @@ INSERT INTO `categories` VALUES (28,'Accessories'),(4,'Audible'),(20,'Automotive
 UNLOCK TABLES;
 
 --
+-- Table structure for table `categorized_products`
+--
+
+DROP TABLE IF EXISTS `categorized_products`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `categorized_products` (
+  `product_id` bigint NOT NULL,
+  `category_id` tinyint NOT NULL,
+  PRIMARY KEY (`product_id`,`category_id`),
+  KEY `fk_product_categories_categories1_idx` (`category_id`),
+  CONSTRAINT `fk_product_categories_categories1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_product_categories_products` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `categorized_products`
+--
+
+LOCK TABLES `categorized_products` WRITE;
+/*!40000 ALTER TABLE `categorized_products` DISABLE KEYS */;
+INSERT INTO `categorized_products` VALUES (3,1),(14,1),(20,1),(17,6),(19,6),(10,8),(11,8),(13,8),(16,8),(21,8),(23,8),(25,8),(2,9),(11,17),(16,17),(12,23),(15,23),(1,26),(4,26),(5,26),(6,26),(7,26),(8,26),(9,26),(12,26),(15,26),(22,26),(24,26),(17,27),(21,28),(18,29);
+/*!40000 ALTER TABLE `categorized_products` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `comments`
+--
+
+DROP TABLE IF EXISTS `comments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `comments` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user_id` bigint NOT NULL,
+  `product_id` bigint NOT NULL,
+  `body` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `photo` varchar(250) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `fk_comments_users1_idx` (`user_id`),
+  KEY `fk_comments_products1_idx` (`product_id`),
+  CONSTRAINT `fk_comments_products1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`),
+  CONSTRAINT `fk_comments_users1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `comments`
+--
+
+LOCK TABLES `comments` WRITE;
+/*!40000 ALTER TABLE `comments` DISABLE KEYS */;
+INSERT INTO `comments` VALUES (1,3,1,'Ea vero eius omnis. Tenetur adipisci dolorem magnam iste officia. Et perspiciatis quisquam placeat voluptas et fugit ea ipsa. Aut sunt omnis et. Est aut qui recusandae maxime magnam corrupti officiis. Numquam harum error atque sed assumenda. Eos commodi aperiam natus saepe pariatur cum tempore porro ut...','edthaerver.gif'),(2,23,2,'Voluptatem eaque error quis aspernatur ut unde. Nesciunt illum voluptas. Ad dolorum placeat? Soluta fugit itaque. Fugit vel exercitationem. Quia et aut.\r\nSit expedita eligendi. Natus minus nobis! Nesciunt unde hic. Animi odit consequatur! Sed cupiditate commodi. Sit dolor aut? Voluptatibus ut eius. Reiciendis et qui! Rerum consequuntur dolorem.\r\nEa alias omnis.','ithtioanoul.gif'),(3,18,2,'Magnam qui iusto. Neque aliquam est aut iure delectus iusto ut facere; excepturi soluta omnis deleniti consequuntur veniam et. Officia sunt nisi aliquam. Sed velit aliquid et! Illo iste nihil? Id laborum ducimus. Voluptatibus voluptatem porro...\r\nFugit quaerat maxime. Asperiores aut fugiat? Et dolorum debitis! Optio nobis voluptas.\r\nVoluptatem impedit eos.','letetedwit.jpg'),(4,42,4,'Corporis similique minus. Ipsa doloribus consequuntur ea ut ex est; sit minus debitis libero reiciendis optio amet aut. Ut eum autem! Distinctio architecto dicta. Sequi possimus explicabo. In exercitationem ut. Delectus qui illum!\r\nFugiat laudantium eligendi. Vero modi libero. Voluptate vitae nihil! Nemo praesentium incidunt. Qui voluptatem error. Nulla et sed. Voluptatem quia minima.','seouentour.png'),(5,20,5,'Quam nulla adipisci rem aut natus ad adipisci amet. Eos dolorem nisi nihil quam reprehenderit! Est iste earum...\r\nUllam sint reprehenderit libero alias omnis. Quia amet pariatur dolores qui aliquam cumque est ut placeat. Minima libero minus provident dignissimos architecto quae non nostrum. At neque vel. Repellat omnis accusantium. Sapiente et aspernatur.','isthaas.jpg'),(6,46,6,'Consequatur laudantium deleniti. Sed tempora sed sit dicta pariatur ut laborum consequatur sunt. Ea corrupti error, modi nihil expedita nam blanditiis cumque temporibus. Et quae cum voluptas maiores unde et ex vitae non; alias consequatur ut aperiam eius veritatis unde accusantium vel quia.','theandfor549.jpg'),(7,30,7,'Est sed minus reprehenderit eum dolores iusto tempora sapiente adipisci.','ngor659.bmp'),(8,18,8,'Distinctio sunt sed temporibus repellendus iste labore dolor enim qui. Iure ea sit hic consectetur harum deleniti similique vel ad? Rem rerum est accusantium fugit ut eos unde commodi ea.\r\nEst ullam non, ut minima adipisci dignissimos vitae nobis sed.','eraheve15.bmp'),(9,19,9,'Dolorum quis quo porro dolore vel. Qui voluptates id qui pariatur explicabo assumenda quod corporis id? Eaque explicabo deserunt; tempore dolores impedit. Illum odio harum nemo sit omnis et in. Repellendus ut cupiditate impedit; aperiam illo sequi quo dolorem, veritatis omnis consequatur et non.','anverome741.png'),(10,47,10,'Sed consequatur sit. Exercitationem minima vel. Dolores voluptatem molestiae; vel qui cupiditate. Minus fuga dolorem? Fugit ut dolorem; dolor distinctio unde. Omnis deserunt magnam.\r\nAnimi fugiat et; sunt voluptatem error? Debitis ipsam suscipit! Error nam magnam. Sequi est omnis; maxime quia saepe. Odit assumenda corrupti. Voluptatem est adipisci. Sit omnis ut!\r\nRepudiandae adipisci;','hener854.jpg'),(11,39,11,'Omnis atque sed qui sed. Deleniti itaque, eum aut voluptatem ullam veritatis odio quia consectetur! Veritatis quis eveniet unde asperiores, voluptate doloribus omnis perspiciatis et; aut fuga et est, et iste ipsam inventore tenetur nostrum. Explicabo ab, debitis et reprehenderit et fugit eligendi reiciendis rerum.','itasionte1.gif'),(12,3,12,'Blanditiis quis ut suscipit alias perspiciatis. Consequuntur eligendi repellendus laboriosam quas maxime qui, sunt tempore error; quod unde vel et culpa ut nihil aspernatur. Et sequi et voluptate pariatur ipsum expedita. Tenetur quasi aliquid sit tenetur et ea dolore accusantium deserunt! In veniam quod. Vitae aperiam natus. Non sed inventore!','enleinwit.bmp'),(13,27,13,'Ut error reprehenderit autem consequatur impedit soluta ex aut ipsam; repellat suscipit officiis molestias iste omnis nisi ad consequatur assumenda.','eawa603.gif'),(14,11,14,NULL,'hethehe.gif'),(15,10,15,'Velit quasi sed. Explicabo aut rem laborum qui dignissimos non dolore voluptate...\r\nEt laboriosam enim facere iste suscipit ut. Autem fugit perferendis vel animi itaque ex et qui! Cumque omnis beatae eius molestiae voluptatem qui. At soluta pariatur. Laboriosam eveniet illo? Harum iste unde! Autem expedita ea? Velit autem nihil.','iteretibut781.bmp'),(16,19,16,'Vero neque placeat. Corporis ut impedit. Adipisci ut id.\r\nSit qui perspiciatis; sed quod corporis; ipsum ut iste. Enim veritatis consequatur? Incidunt voluptatem perspiciatis! Quia enim vel. Sint sequi doloribus; perspiciatis natus nesciunt. Enim nam non! Odit in sed.\r\nSed non sit; et voluptas aut. Omnis reiciendis iusto. Rem error aut. Architecto natus delectus.','edionored.png'),(17,2,17,'Illum numquam excepturi consectetur ab vitae totam harum nemo aut.','nebutuldat647.bmp'),(18,34,18,'Error necessitatibus aut illum. Quia ut quasi iusto omnis; natus dignissimos explicabo excepturi et voluptatem at quia. Asperiores officia aut ea. Natus aperiam fuga eveniet. Voluptatem est architecto possimus reprehenderit eum doloremque! Omnis sint sapiente qui numquam eius voluptate magni fugit. Iste rerum quasi ratione inventore iste. In repudiandae consequuntur?','youenousho.png'),(19,29,19,'Omnis nesciunt est voluptas ut natus corrupti autem veritatis placeat. Sunt et ratione sunt non quia minus a sit eos? Iure nisi voluptatem quisquam quo, ut quia provident velit voluptatem. Ipsa deserunt quia ab quia et, est voluptas maxime aliquam!','shotethal.bmp'),(20,24,20,'Ipsa a et nostrum nam facere voluptatem saepe. Sed ea odit suscipit facilis deleniti. Eaque beatae doloremque facere perferendis quibusdam. Perspiciatis voluptatem deleniti natus! Aut fugit voluptate minima nemo deleniti aut similique. Perspiciatis sit sed voluptas dolores sit.\r\nQuae cupiditate odio. Iste alias provident ipsum quam eligendi quibusdam aliquid! Omnis quia dolor? Incidunt fugit et.','itnthaal41.gif'),(21,14,21,'Unde perspiciatis omnis. Quae odit et. Laudantium unde eveniet! Ex ut illum. Similique dolores cumque? Et sunt consectetur. Fuga dolor sit? Dolorum voluptas aut. Harum a quia. Rerum qui ratione.\r\nOdit expedita eligendi. Est officiis odio! Numquam voluptatem fuga. Iste porro sunt. Placeat eum autem! Rerum et corporis. Excepturi sunt consequatur!\r\nDignissimos perspiciatis omnis. Ratione placeat;','arhadandes319.bmp'),(22,10,22,'Ipsa reiciendis cumque. Sed dolor enim. Ipsa aut illum. Ut sunt odit. Quae aperiam ipsum! Ut voluptatem assumenda. Omnis possimus magnam. Numquam aliquid non; laboriosam voluptas modi. Ut officiis distinctio.\r\nRepellat voluptatem eligendi. Debitis iste velit. Est mollitia nobis. Sit numquam molestiae. Assumenda possimus natus; ut et laboriosam. Minima quae voluptatem.\r\nIpsam qui et.','ndourheat.jpg'),(23,33,23,'Iusto at est harum voluptatem fugit praesentium voluptatem magni. Fugiat rerum sit maiores fugiat ut? Consequatur aperiam accusantium sit dignissimos perferendis numquam. Soluta adipisci excepturi culpa laborum et ut amet omnis. Suscipit vel omnis corrupti architecto adipisci ab dicta? Voluptate quam aut ad. Provident incidunt rerum fugit? Voluptas facere vel porro blanditiis et nemo eligendi!','ouhastne.png'),(24,12,24,'Similique quo eveniet ipsam pariatur aliquid. Totam veritatis voluptatibus unde necessitatibus ut nobis. Non eius aliquam. Quos accusantium omnis ex iste veniam reiciendis. Eligendi aliquam error molestiae aut aliquam reiciendis voluptate. Vel nemo error aut eaque et laboriosam! Animi obcaecati consequuntur laboriosam qui laborum sit. Soluta pariatur quam.\r\nConsequatur nihil voluptas.','ndveandre.bmp'),(25,15,25,'Soluta omnis dolorem neque natus cupiditate explicabo velit; sed unde dicta iusto voluptatem. Ad et laborum expedita, quaerat maiores voluptatibus magnam porro qui.\r\nOdit necessitatibus ex. Et autem nisi. Aut porro cum. Et eius ut! Omnis eaque totam; accusantium id sed. Ullam aspernatur fuga; esse eum et? Et aut et.\r\n',NULL),(26,34,1,'Voluptatem deleniti et. Libero temporibus quo; perspiciatis nam amet. Illo perferendis architecto.\r\nNatus voluptatem ipsa. Eos dolorem unde? Voluptatem atque nostrum. Id tempore doloribus. Ab similique voluptatem? Laudantium animi et...\r\nObcaecati natus quidem. Dignissimos impedit qui. Facilis officia a! Laborum quia tempora; quibusdam aliquid magni. Rerum et qui. Ullam voluptatem a!','orhen278.gif'),(27,32,2,'Numquam vero tempore porro sapiente; neque tempore officia dolor rerum culpa. Sint eum dolorem vitae fugit ut perferendis voluptates. Voluptatem nihil temporibus rerum molestiae rerum incidunt non voluptas. Corporis blanditiis sint reprehenderit omnis quasi est. Enim totam sapiente non possimus ullam quo iure similique et; hic cum quia. Aut et aut? Praesentium voluptas distinctio.','entiit.gif'),(28,20,3,'Qui molestias neque obcaecati rem sequi. Autem ad temporibus pariatur! Ad quo culpa; et ipsam cumque doloribus esse sequi eos illum nemo. Ut iste officiis soluta. Laboriosam unde molestias iure vitae velit. Autem rem error beatae excepturi voluptatem. Eum alias dolores nobis in eaque quo quia nemo itaque.','orter.png'),(29,34,4,'Cupiditate voluptatem quidem ut et eum aut vel. Veritatis ut possimus!\r\nNeque culpa qui. Excepturi nobis quae! Illum maiores veritatis? Odit voluptatem debitis; eum et fugiat. Quaerat doloremque ut; maxime sit quia. Iusto nemo voluptatem. Ea beatae delectus. Ipsa aut labore!\r\nUllam alias totam. Sit quo facilis; qui perspiciatis aut.','ntyouse9.bmp'),(30,36,5,'Et non magni sed quia hic. Assumenda nostrum quia sit distinctio numquam eligendi nam reprehenderit vero? Laborum nisi molestiae! Eaque sed architecto error aliquam veritatis adipisci dolores pariatur; ut autem veritatis odit. Nihil eligendi aut a et aut. Aperiam nemo ducimus tempore sint esse iure sed. Nulla unde voluptatem. Voluptate sed est.','nghaterahad.gif'),(31,5,6,'Est cupiditate dolorum quia dolores facere. Odio repellat deserunt. Enim quas iste. Et asperiores et? Dolorem porro sunt. Sed voluptas ex. Ab quae omnis. Mollitia ut aliquid...\r\nVoluptatem fugiat dignissimos. Ut animi quo! Voluptatum voluptatem sequi. Officia omnis maxime! Provident ullam possimus. Non natus pariatur; nisi accusamus architecto. Corrupti eos doloremque.','tioasithin.png'),(32,16,7,'Ut nemo consequatur et voluptatibus voluptatem quae dicta voluptate corrupti.','aten.bmp'),(33,8,8,'Minus facere et; autem non suscipit quisquam, ut nam nemo odit aliquid nihil.\r\nUt est voluptatem sunt corrupti tenetur, sit accusamus sed consequuntur. In molestias et maxime quos odio, ut dignissimos optio similique. Impedit accusantium soluta reprehenderit vitae aut culpa ad voluptatem rem.','atomeareit.jpg'),(34,44,9,NULL,'hisvethiion.png'),(35,10,10,'Iusto et incidunt alias. Nisi eum omnis? Consequatur architecto voluptas ex qui; laudantium placeat sed dolor explicabo; rem delectus assumenda eos exercitationem; sapiente unde incidunt? Eum sed vel enim quod cum consequuntur dignissimos. Unde ea neque sit sed ut distinctio. Minima est recusandae quo rerum.\r\nQuia atque id. Deserunt rem iste!','waeatist.jpg'),(36,22,11,'Corporis molestiae perspiciatis ex ea et quisquam magnam blanditiis tempora. Delectus culpa ut consequuntur! Aliquid debitis voluptates omnis, natus laudantium distinctio fuga rerum rem. Aspernatur non omnis iste minima amet et atque. Libero non itaque ut. Eveniet et doloremque. Officia hic ducimus. Numquam voluptate ratione. Accusamus rerum aperiam. Nemo voluptatem rerum.','orhen.bmp'),(37,1,12,'Nesciunt ut aut. Repellat doloremque voluptas! Ut magnam non. Sed velit provident!\r\nSaepe quas velit. Voluptatibus labore illum. Est tenetur porro! Incidunt officia in.\r\nQui iste unde. Voluptatem et quasi! Voluptatem est minus? Rerum aperiam aut. Debitis minima modi. Laboriosam voluptatem delectus. Error aut odio. Magnam maxime corrupti. Id consequuntur velit.','eraalltone.jpg'),(38,41,13,'Saepe sit quis molestias dolorem. Fugit voluptas perferendis quidem ut!\r\nIpsa perspiciatis harum, impedit rem sunt et incidunt earum exercitationem. Impedit et eos quia nihil nobis eum vitae exercitationem? Omnis quae iste numquam! Doloribus quia nisi. Esse quia dolores. Ut minima placeat? Doloremque est voluptas! Unde vel rerum. Nihil vel velit...','hatandentat014.png'),(39,13,14,'Dolor omnis doloremque perspiciatis et, ut aperiam ut eius debitis; voluptatem enim voluptas, saepe est eos voluptatem voluptate aut natus. Eos corporis facere illo, a quibusdam iste ut quasi numquam.','tioanorit.png'),(40,41,15,'Sit quae atque amet et labore rerum voluptate error necessitatibus. Voluptatem perspiciatis ut, tenetur cum deserunt ut repudiandae sunt odit; deserunt dolorem saepe unde autem, cumque veritatis perferendis consequatur repellendus. Dolor accusamus amet alias voluptas commodi praesentium quia dolore ab.','ithterallor555.bmp'),(41,5,16,'Et nobis fugit labore optio quia consequatur laudantium omnis laudantium. Laborum voluptatibus qui repellendus earum. Ad inventore autem! Deserunt fugit iste sed. Ut eveniet repellendus nam ratione. Similique odio est rem qui et maiores. Cupiditate maiores tempore aut ut rerum porro cum fugit! Dolores id dignissimos; odio iure laboriosam. Mollitia et nulla.\r\nDolorum cum eum.','eresethi3.png'),(42,30,17,'Vel a odio labore iusto. Non ea aut sequi velit dolore delectus dolor aut et. Tempore labore error! Error quod aut.\r\nVoluptatem sunt repellendus. Aut eum facilis. Dolore dicta numquam. Sed et eos. Odit est provident. Natus et aut!\r\nEa et fugit. Quibusdam corporis et; aperiam doloremque ad. Tempore error sint. Totam error eaque.',NULL),(43,3,18,'Fuga esse et ipsam ex ut. Reiciendis delectus dolore omnis natus expedita. Eligendi ratione quo unde voluptas at error; dolores repellat libero id soluta et cupiditate non itaque. Aliquam deleniti unde itaque? Error quis modi et atque suscipit velit quibusdam sed distinctio; velit aperiam vel. Et commodi sit. Ab tenetur veniam? Corrupti quia tempore.','uldedereted6.jpg'),(44,44,19,'Iusto ut qui reprehenderit porro doloremque est eligendi reiciendis laudantium. Quaerat ut pariatur, iure vel quasi eum illo quaerat iure.','ndverfor337.jpg'),(45,4,20,'Exercitationem iste praesentium veritatis aliquid quia. Odit inventore maxime culpa odit quia incidunt.\r\nVoluptatem ipsum omnis voluptas iure quam. Ipsa ea, ipsum nisi incidunt eveniet recusandae quis ipsa voluptatem. Non libero sed? Et ullam non! Atque sed ipsum.\r\nIste aliquid qui. Eaque et ut! Ut molestiae quo. Ab id necessitatibus;','eveuldeveter.gif'),(46,25,21,'Libero et eius. Numquam reprehenderit natus! Quia maiores illum. Quae enim delectus. Voluptatem at laudantium. Expedita et aspernatur...\r\nRatione sit et. Et velit mollitia. Sed eius et.\r\nVoluptate reiciendis ducimus. Aut rerum ut. Voluptas ut error. Dignissimos aliquam nesciunt! Magnam aut veritatis. Itaque voluptas dolorum; consequatur est dolorem. Minus est rerum. Temporibus esse veniam. Saepe.','allwitwaeve8.jpg'),(47,34,22,'Architecto expedita unde. Aut qui rerum. Blanditiis ut omnis. Laborum dolor et. Et laboriosam neque. Laudantium aspernatur doloribus. Sed tempora libero? Delectus necessitatibus qui.\r\nQuia reprehenderit architecto. Eum dolorum ullam. Odit ipsam repudiandae! Aut accusantium consequuntur. Autem velit dicta. Perspiciatis dolores sit. Voluptas non unde. Delectus architecto veniam.\r\nOfficiis cumque.','theoulith.jpg'),(48,36,23,NULL,'hisvethiion.png'),(49,43,24,NULL,'hisvethiion.png'),(50,24,25,NULL,'hisvethiion.png');
+/*!40000 ALTER TABLE `comments` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `favourites`
 --
 
@@ -68,6 +127,34 @@ LOCK TABLES `favourites` WRITE;
 /*!40000 ALTER TABLE `favourites` DISABLE KEYS */;
 INSERT INTO `favourites` VALUES (1,1,'2024-01-01 00:10:02'),(2,2,'2024-05-20 00:58:15'),(3,3,'2024-01-15 13:09:47'),(4,4,'2024-04-27 13:03:40'),(5,5,'2024-01-01 00:00:10'),(6,6,'2024-04-27 18:50:10'),(7,7,'2024-05-22 16:07:58'),(8,8,'2024-01-01 00:07:20'),(9,9,'2024-01-10 17:31:09'),(10,10,'2024-01-01 02:25:46'),(11,11,'2024-03-11 03:19:32'),(12,12,'2024-03-09 13:41:15'),(13,13,'2024-01-01 00:10:39'),(14,14,'2024-01-01 00:01:06'),(15,15,'2024-01-01 00:00:25'),(16,16,'2024-05-01 02:47:09'),(17,17,'2024-01-12 11:22:43'),(18,18,'2024-01-01 00:00:08'),(19,19,'2024-01-01 00:56:40'),(20,20,'2024-01-01 00:06:55'),(21,21,'2024-01-01 00:57:34'),(22,22,'2024-03-07 11:34:37'),(23,23,'2024-01-02 03:19:07'),(24,24,'2024-04-01 07:27:42'),(25,25,'2024-03-29 21:02:18'),(26,26,'2024-05-08 13:59:35'),(27,27,'2024-01-01 00:00:38'),(28,28,'2024-03-08 05:12:31'),(29,29,'2024-01-01 02:09:09'),(30,30,'2024-01-14 12:56:01'),(31,31,'2024-01-01 00:16:31'),(32,32,'2024-05-25 20:18:53'),(33,33,'2024-01-01 00:00:13'),(34,34,'2024-01-01 01:59:55'),(35,35,'2024-05-09 06:57:07'),(36,36,'2024-01-01 00:05:07'),(37,37,'2024-02-29 07:28:26'),(38,38,'2024-03-17 00:52:47'),(39,39,'2024-04-16 19:22:48'),(40,40,'2024-05-13 00:35:32'),(41,41,'2024-05-21 15:07:53'),(42,42,'2024-05-08 05:00:33'),(43,43,'2024-02-12 09:24:33'),(44,44,'2024-01-01 00:00:04'),(45,45,'2024-03-07 16:01:54'),(46,46,'2024-05-11 23:36:32'),(47,47,'2024-01-01 00:00:04'),(48,48,'2024-03-01 18:17:49'),(49,49,'2024-03-10 14:25:52'),(50,50,'2024-03-06 10:47:39');
 /*!40000 ALTER TABLE `favourites` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `medias`
+--
+
+DROP TABLE IF EXISTS `medias`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `medias` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `product_id` bigint NOT NULL,
+  `name` varchar(250) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `fk_product_images_products1_idx` (`product_id`),
+  CONSTRAINT `fk_product_images_products` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `medias`
+--
+
+LOCK TABLES `medias` WRITE;
+/*!40000 ALTER TABLE `medias` DISABLE KEYS */;
+INSERT INTO `medias` VALUES (1,1,'p1.jpg'),(2,2,'p2.jpg'),(3,3,'p3.jpg'),(4,4,'p4.jpg'),(5,5,'p5.jpg'),(6,6,'p6.jpg'),(7,7,'p7.jpg'),(8,8,'p8.jpg'),(9,9,'p9.webp'),(10,10,'p10.jfif'),(11,11,'p11.jpg'),(12,12,'p12.jpg'),(13,13,'p13.jfif'),(14,14,'p14.jpg'),(15,15,'p15.webp'),(16,16,'p16.jpg'),(17,17,'p17.webp'),(18,18,'p18.jpg'),(19,19,'p19.webp'),(20,20,'p20.webp'),(21,21,'p21.jfif'),(22,22,'p22.jpg'),(23,23,'p23.jfif'),(24,24,'p24.jfif'),(25,25,'p25.jpg'),(26,43,'searverit.gif'),(27,30,'vehadwasal.png'),(28,28,'areinveeve.jpg'),(29,40,'edisesle.png'),(30,30,'mever639.jpg'),(31,28,'never.png'),(33,36,'onmealwa.bmp'),(37,26,'forin231.gif'),(39,31,'henthi813.png'),(40,45,'hethieras.bmp'),(43,49,'tireisar.jpg'),(44,26,'inasthaon599.bmp'),(45,50,'oulleforwit.bmp'),(47,34,'thistihi264.png'),(48,34,'ereheheha.jpg'),(49,45,'tongeraar4.jpg'),(50,42,'orandmehis.bmp');
+/*!40000 ALTER TABLE `medias` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -136,89 +223,6 @@ LOCK TABLES `payment_methods` WRITE;
 /*!40000 ALTER TABLE `payment_methods` DISABLE KEYS */;
 INSERT INTO `payment_methods` VALUES (3,'Alipay'),(1,'Cash'),(6,'Credit Card'),(5,'Debit Card'),(2,'Paypal'),(4,'WeChat');
 /*!40000 ALTER TABLE `payment_methods` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `product_categories`
---
-
-DROP TABLE IF EXISTS `product_categories`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `product_categories` (
-  `product_id` bigint NOT NULL,
-  `category_id` tinyint NOT NULL,
-  PRIMARY KEY (`product_id`,`category_id`),
-  KEY `fk_product_categories_categories1_idx` (`category_id`),
-  CONSTRAINT `fk_product_categories_categories1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_product_categories_products` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `product_categories`
---
-
-LOCK TABLES `product_categories` WRITE;
-/*!40000 ALTER TABLE `product_categories` DISABLE KEYS */;
-INSERT INTO `product_categories` VALUES (3,1),(14,1),(20,1),(17,6),(19,6),(10,8),(11,8),(13,8),(16,8),(21,8),(23,8),(25,8),(2,9),(11,17),(16,17),(12,23),(15,23),(1,26),(4,26),(5,26),(6,26),(7,26),(8,26),(9,26),(12,26),(15,26),(22,26),(24,26),(17,27),(21,28),(18,29);
-/*!40000 ALTER TABLE `product_categories` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `product_images`
---
-
-DROP TABLE IF EXISTS `product_images`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `product_images` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `product_id` bigint NOT NULL,
-  `name` varchar(250) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `fk_product_images_products1_idx` (`product_id`),
-  CONSTRAINT `fk_product_images_products` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `product_images`
---
-
-LOCK TABLES `product_images` WRITE;
-/*!40000 ALTER TABLE `product_images` DISABLE KEYS */;
-INSERT INTO `product_images` VALUES (1,1,'p1.jpg'),(2,2,'p2.jpg'),(3,3,'p3.jpg'),(4,4,'p4.jpg'),(5,5,'p5.jpg'),(6,6,'p6.jpg'),(7,7,'p7.jpg'),(8,8,'p8.jpg'),(9,9,'p9.webp'),(10,10,'p10.jfif'),(11,11,'p11.jpg'),(12,12,'p12.jpg'),(13,13,'p13.jfif'),(14,14,'p14.jpg'),(15,15,'p15.webp'),(16,16,'p16.jpg'),(17,17,'p17.webp'),(18,18,'p18.jpg'),(19,19,'p19.webp'),(20,20,'p20.webp'),(21,21,'p21.jfif'),(22,22,'p22.jpg'),(23,23,'p23.jfif'),(24,24,'p24.jfif'),(25,25,'p25.jpg'),(26,43,'searverit.gif'),(27,30,'vehadwasal.png'),(28,28,'areinveeve.jpg'),(29,40,'edisesle.png'),(30,30,'mever639.jpg'),(31,28,'never.png'),(33,36,'onmealwa.bmp'),(37,26,'forin231.gif'),(39,31,'henthi813.png'),(40,45,'hethieras.bmp'),(43,49,'tireisar.jpg'),(44,26,'inasthaon599.bmp'),(45,50,'oulleforwit.bmp'),(47,34,'thistihi264.png'),(48,34,'ereheheha.jpg'),(49,45,'tongeraar4.jpg'),(50,42,'orandmehis.bmp');
-/*!40000 ALTER TABLE `product_images` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `product_videos`
---
-
-DROP TABLE IF EXISTS `product_videos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `product_videos` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `product_id` bigint NOT NULL,
-  `name` varchar(250) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `fk_product_videos_products1_idx` (`product_id`),
-  CONSTRAINT `fk_product_videos_products` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `product_videos`
---
-
-LOCK TABLES `product_videos` WRITE;
-/*!40000 ALTER TABLE `product_videos` DISABLE KEYS */;
-INSERT INTO `product_videos` VALUES (1,33,'ndera840.bmp'),(2,18,'nthis985.bmp'),(3,40,'erahi.bmp'),(4,15,'aninhated.gif'),(5,28,'notwasthiat.gif'),(6,6,'isoulthaar.jpg'),(7,39,'edeato320.jpg'),(8,27,'thahatea.jpg'),(9,49,'thiis.png'),(10,37,'waitbutwa.gif'),(11,20,'hinhasthad7.png'),(12,3,'shoationon.bmp'),(13,7,'isreenle.png'),(14,38,'asera.jpg'),(15,41,'eraintiohin.png'),(16,13,'enther9.png'),(17,15,'eahadaruld31.jpg'),(18,24,'noteaaren.jpg'),(19,28,'hehatting4.jpg'),(20,18,'eaeaingea.bmp'),(21,6,'arethntthe892.gif'),(22,16,'ouhadhad647.png'),(23,31,'tindwitve.png'),(24,20,'inalhen.png'),(25,29,'andbutshohen74.jpg'),(26,47,'erawithisis.jpg'),(27,17,'esng990.gif'),(28,42,'oulndoner.png'),(29,1,'erne.gif'),(30,37,'ndasedion.png'),(31,19,'eaarentthe.bmp'),(32,6,'ereartoare.gif'),(33,27,'erentteto019.png'),(34,36,'hahahisst213.bmp'),(35,21,'arandarehen.jpg'),(36,46,'arngouera.bmp'),(37,21,'ionng5.gif'),(38,35,'enthahinme160.bmp'),(39,40,'ententthanot613.jpg'),(40,1,'allwasforyou80.png'),(41,24,'ereoulsho.png'),(42,17,'aresethre.bmp'),(43,36,'terseorher269.gif'),(44,25,'eraithbuthe062.png'),(45,11,'arhatheat.jpg'),(46,35,'alhewant.bmp'),(47,44,'ourarer.jpg'),(48,50,'tinethathe.png'),(49,43,'shoanas.bmp'),(50,36,'ndallnd0.png');
-/*!40000 ALTER TABLE `product_videos` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -394,6 +398,14 @@ LOCK TABLES `users` WRITE;
 INSERT INTO `users` VALUES (1,'agajan.st@gmail.com','Adam2046',1,'Agajan','Sahatov',8224306349573.82,'Turkmenistan','Mary','Yoloten','Momotay 16','2023-09-01 17:56:42'),(2,'agajansahatov@hotmail.com','Adam2046',2,'Agajan','Sahatow',691.54,'China','Shanxi','Jinzhong','Taiyuan University of Technology','2023-08-31 00:11:32'),(3,'+49 (0367) 660137','jDdpptsu9/PnmMknSN3VTA==',3,'Ellsworth','Ponder',6530353729050.97,'Morocco','Salem','Pierre','1042 Rose Hill Blvd, First Security Building, Jefferson City, Missouri, 94707','2023-09-01 06:41:11'),(4,'+49 2478 508194','4XXLEwpQu0coTSMujvfAng==',3,'Trinity','Beane',4092645117101.68,'Ireland','Austin','Murdock','11 East Hope Lane, Montgomery, Alabama, 76177','2023-11-15 01:04:02'),(5,'+44 407 407 0849','CclpI/aDHWJDTEkwqeWy8Q==',3,'Cassy','Saunders',7417.03,'Mongolia','Harrisburg','Zuni','1318 Brentwood Ct, Nipper Building, Olympia, Washington, 89919','2023-08-31 02:03:38'),(6,'+49 (6286) 887699','qfzQvYqilLM9zng8fPGMEA==',3,'Joshua','Dunbar',5908843211933.95,'Denmark','Tallahassee','Dammeron Valley','1974 West Church Ct, Fisher Building, Sacramento, CA, 85595','2023-10-13 18:27:20'),(7,'+380 39 777-004-6','Jc9sq7ELetu8UaDw6zgsSw==',3,'Hung','Lynch',9991422132185.75,'Panama','Denver','Washoe Valley','1883 Hidden Rose Hill Avenue, Montgomery, Alabama, 34553','2023-10-23 11:11:15'),(8,'+55 53 5320-4330','NYsB8IkyCMLcQXVVw74lcg==',3,'David','Castillo',8.88,'Croatia','Hartford','Pierson','149 Church Hwy, Comcast Building, Harrisburg, Pennsylvania, 62470','2023-08-31 00:00:09'),(9,'+380 51 969-973-3','cnYC10ACkyzQKmvlHq5Bdg==',3,'Charlie','Granger',4893526943770.71,'Austria','Sacramento','Bloomington','535 South Prospect Hill Hwy, MidAmerican Building, Phoenix, Arizona, 47599','2023-12-01 00:00:16'),(10,'+55 36 3175-9675','6kAsYALy3COI344eUSkgXg==',3,'Elza','Duncan',4530572113605.12,'Argentina','Phoenix','Colorado Springs','2135 Ironwood Blvd, Montgomery, Alabama, 36747','2023-11-25 21:56:44'),(11,'+49-3508-653177','vOlKEes+bfTDP3Vh1p0/XQ==',3,'Delmer','Grant',759.78,'Lebanon','Richmond','Murfreesboro','3815 1st Pkwy, Standard Building, Juneau, AK, 76816','2023-08-31 00:12:40'),(12,'+49 (6319) 870192','iiMLctaFP3SxtZK+7vZsJw==',3,'Criselda','Irwin',3898.13,'Argentina','Concord','Bloomsburg','332 NW Monument Street, Lincoln, Nebraska, 44039','2023-08-31 01:04:59'),(13,'+420 826 251 339','I4n/rLDpi00wrDUagBgZbQ==',3,'Clement','Tibbetts',3982718621011.27,'Portugal','Baton Rouge','Leopold','3749 Sharp Hill Dr, Diamond Building, Dover, DE, 50332','2023-09-16 14:47:09'),(14,'+55 18 5356-1817','V967cRdqkeY3FeXuVmDOkQ==',3,'Jamison','Lynn',7583032758432.27,'Samoa','Little Rock','Colquitt','435 Riddle Hill Way, Buhl Bldg, Raleigh, North Carolina, 16033','2023-09-06 19:44:03'),(15,'+33 7 42 02 33 23','i0Pg5skKOKcdz9bjHxHDEg==',3,'Sydney','Isaac',572.35,'Nicaragua','Austin','Friedens','2985 South Lake Circle, Nipper Bldg, Tallahassee, Florida, 14707','2023-08-31 00:09:33'),(16,'+33 0 94 66 48 26','fJmSYxqaI613Q+SqC2M7NQ==',3,'Sheila','Metz',NULL,'Brazil','Richmond','Bloomsbury','872 Hunting Hill Loop, Austin, Texas, 83010','2023-12-14 17:21:52'),(17,'+49 (1086) 416235','FlOqlVwO47cNcVStOlh7aA==',3,'Lenard','Pool',7726751012353.01,'Iceland','Santa Fe','Damon','3039 W Pine Tree St, First Security Bldg, Indianapolis, Indiana, 54166','2023-12-03 10:45:58'),(18,'+49 (1456) 725946','xnhtAulSUXr8Z1CvSZrkdQ==',3,'Efrain','Dunham',4986485591093.18,'Sri Lanka','Atlanta','Pierz','2151 Monument Way, Little Rock, AR, 08293','2023-09-30 06:46:45'),(19,'+33 5 12 82 05 62','mMKmfvliMwWKlBXQ5dtEtw==',3,'Waylon','Savage',4756768937825.63,'France','Lincoln','Murphy','275 Rockwood Ave, Superior Building, Little Rock, Arkansas, 26965','2023-11-12 23:58:31'),(20,'+49 7423 733761','aadMMmHNSa0hS8gX6GIFPw==',3,'Brande','Beard',6944150497772.76,'Malaysia','Denver','Pigeon','1184 Cedar Tree Highway, Frankfort, Kentucky, 26665','2023-09-12 15:21:30'),(21,'+32 6 135 40 45','w38SalP+8OUgc0l4Wkbzaw==',3,'Merrill','Metzger',1792715278050.07,'Peru','Oklahoma City','Colrain','2320 NW Glenwood Highway, Honolulu, Hawaii, 42570','2023-09-15 02:35:18'),(22,'+1 173-101-2968','GTAI8aaJrJ8m82vaAugrpw==',3,'Jannet','Grantham',1152284420753.00,'Fiji','Pierre','Friendship','381 Chapel Hill Ct, Des Moines, Iowa, 67526','2023-11-07 04:42:01'),(23,'+32 0 184 22 87','T5aQluNE7K1igbFLkjXqaQ==',3,'Hassan','Dunlap',1865366761692.58,'France','Tallahassee','Mount Desert','160 Ironwood Street, Little Rock, Arkansas, 52311','2023-11-22 13:44:50'),(24,'+380 37 984-897-1','WNleoO5klKEpzV7hZaKGyA==',3,'Abdul','Castle',NULL,'India','Montgomery','Leoti','3320 SE Sharp Hill Drive, Dover, DE, 68278','2023-12-04 12:18:27'),(25,'+44 6203 47 1719','vZzTuzHSwxlqlNtHEtPHKw==',3,'Michael','Tibbs',1071395205796.91,'Morocco','Columbus','Murphysboro','1965 Beachwood Drive, Buhl Building, Columbia, SC, 33903','2023-09-03 21:12:37'),(26,'+44 0768 938917','bBLhMTB8RfG8BbTPR5UQkg==',3,'Benjamin','Lyon',2748034343081.05,'Mexico','Montgomery','Dana Point','303 Riddle Hill St, Penobscot Bldg, Trenton, NJ, 21630','2023-11-13 00:07:31'),(27,'+380 96 468-232-0','u3koLRB9LA24IS2M4KbAVw==',3,'Abe','Savoy',3572864752438.17,'Nigeria','Helena','Mount Dora','3266 SW Riverview Highway, Nipper Bldg, Baton Rouge, Louisiana, 84965','2023-12-26 20:57:56'),(28,'+52 70 7666 1058','atTAU+5xVVCL2N4BJwcCJw==',3,'Maryland','Graves',6228271619591.68,'France','Sacramento','Blountstown','259 Woodcock Ln, Appartment 57, Lansing, Michigan, 60054','2023-12-11 09:22:48'),(29,'+420 575 243 985','NiX7x0XALZd7qa0IZsKdNg==',3,'Niesha','Isaacs',4643546631166.20,'Malaysia','Des Moines','Pigeon Forge','3397 Old Beachwood Rd, Fisher Bldg, Oklahoma City, Oklahoma, 04995','2023-12-29 15:37:03'),(30,'+1 364-651-4882','pt6M8EsDvNOvOmwr389kxw==',3,'Ellie','Poole',1305207784990.93,'Ukraine','Trenton','Colstrip','3501 W Ashwood Loop, Augusta, ME, 98229','2023-10-02 05:09:38'),(31,'+44 2631 56 3014','ktE66UOwJc/sDsn+m+kh1Q==',3,'Bernie','Tidwell',5551967149190.45,'Finland','Honolulu','Blountsville','3882 Bayview Drive, Equitable Building, Albany, New York, 92162','2023-08-31 00:07:16'),(32,'+44 1991 56 7630','BUtvkFg8/ODBRCb9sFh6PA==',3,'Antonia','Metzler',2517047660062.67,'Iraq','Little Rock','Colton','137 E Hunting Hill Parkway, Boston, Massachusetts, 03204','2023-12-03 20:13:41'),(33,'+44 7837 147072','/m39fr3USbZI5PFN2NPvBw==',3,'Caitlyn','Porter',435.80,'Georgia','Hartford','Blountville','3702 N Front Ct, Jefferson City, MO, 94113','2023-12-20 02:19:38'),(34,'+32 2 247 98 12','gsIKNoIi/yalyb59B0F3zQ==',3,'Rolande','Meyer',4860109943979.95,'Guyana','Carson City','Murray','553 52th Hwy, Santa Fe, New Mexico, 55341','2023-12-15 22:53:48'),(35,'+55 22 9830-9197','jSWcUzkF9a1WeEwpRJFUJQ==',3,'Elease','Porterfield',4300216775960.34,'Botswana','Raleigh','Piggott','200 SW Hope Blvd, Harrisburg, Pennsylvania, 02680','2023-12-25 06:11:39'),(36,'+33 9 99 10 00 43','VUiTBle4sKuNaAdSKxZ/Lg==',3,'Lorrie','Sawyer',5399366893953.48,'Belgium','Dover','Friendsville','594 East Rose Hill Court, STE 9899, Topeka, Kansas, 06709','2023-11-04 05:25:29'),(37,'+44 738 716 5859','tCrXkwdF40ZoO8AXNKILWw==',3,'Tosha','Tierney',NULL,'Switzerland','Montgomery','Colts Neck','461 New Monument Highway, Dover, Delaware, 92663','2023-08-31 01:43:51'),(38,'+44 904 449 9376','I/kCN8UdzxwaZlci31v55A==',3,'Jerrod','Dunn',6849561394656.52,'Brazil','Richmond','Blue Ball','1916 West Rose Hill Lane, 1st Floor, Juneau, AK, 17226','2023-11-09 10:02:57'),(39,'+33 2 52 72 25 16','QlSaVDw5sdhZBFkh33Bxug==',3,'Lovetta','Meyers',7857845496727.87,'Albania','Charleston','Spearfish','2150 NE Brentwood Parkway, Salem, Oregon, 96639','2023-09-28 22:54:11'),(40,'+44 1746 84 8126','OZsMTLI8AhpbtP/sFHl+1Q==',3,'Normand','Portillo',6230.15,'Austria','Sacramento','Lepanto','445 Rock Hill Rd, Equitable Bldg, Carson City, NV, 08847','2023-08-31 00:06:13'),(41,'+420 764 368 426','DN2+fHp/xy3kUg6HARgWDQ==',3,'Virgil','Bearden',747907465358.28,'Latvia','Pierre','Murrells Inlet','867 Rushwood Drive, Comcast Building, Sacramento, California, 95471','2023-10-13 05:54:59'),(42,'+44 8166 83 4830','hGfIsv5/fW22v5z8fqMG+w==',3,'Alana','Lyons',6201526407963.06,'Portugal','Providence','Pike','1110 Town Circle, Des Moines, IA, 99237','2023-10-07 03:39:50'),(43,'+49 (7814) 487503','sBXZ/vh6cPLMAp/H31u4/Q==',3,'Alison','Sawyers',372.68,'Belize','Montpelier','Mount Ephraim','1993 2nd Ln, 2nd Floor, Montpelier, VT, 86287','2023-12-29 09:54:48'),(44,'+33 3 09 12 27 18','kkhSa1MFGQ5KTFqs8do8iw==',3,'Ethelyn','Tijerina',3903751139700.59,'Botswana','Tallahassee','Danboro','893 Stonewood Highway, STE 30, Trenton, NJ, 08990','2023-11-22 21:09:20'),(45,'+971 9 911 2570','LY3wKqaBU0fkNt+SkS/wtA==',3,'Alaina','Isaacson',6374861761965.74,'Kuwait','Austin','Columbia','1647 Glenwood Ln, Macy\'s Bldg, Raleigh, North Carolina, 35791','2023-08-31 00:00:38'),(46,'+49 6838 848923','6yxFUQHPGZ34oTWkPh6/Pg==',3,'Missy','Grayson',2796143977179.94,'Kuwait','Des Moines','Blue Bell','1545 Buttonwood Pkwy, Richmond, Virginia, 46940','2023-12-22 11:50:07'),(47,'+44 8452 28 5930','04JiIrx32nvRGgIfoealIw==',3,'Cindy','Meza',9124942408837.01,'Luxembourg','Dover','Washougal','3963 Old Lake St, Topeka, KS, 77777','2023-08-31 00:00:48'),(48,'+52 55 0520 9514','BWHS0t87sWAFeM//n6qUUw==',3,'Abram','Posey',37.57,'Myanmar','Providence','Murrieta','1874 Highland Street, 1st FL, Springfield, IL, 71757','2023-12-31 08:16:26'),(49,'+971 1 776 4314','Zy+a4nK+0OfO+ArYtsh5fQ==',3,'Benton','Castleberry',NULL,'Kuwait','Annapolis','Columbia City','3080 Rockwood Cir, Tallahassee, Florida, 83203','2023-08-31 01:56:25'),(50,'+44 8915 73 9767','E23W0PuTZ1EWc6bWwjhrZA==',3,'Tomi','Saxon',NULL,'Switzerland','Phoenix','Friendswood','2325 Red Riddle Hill Highway, Montgomery, AL, 12569','2023-12-26 18:51:16'),(51,'johnsmith@email.com','123456',3,'John','Smith',0.00,'China','Shanxi','Taiyuan','Taiyuan University of Technology','2024-05-14 04:50:45'),(52,'johnnyenglish@email.com','123456',3,'Johnny','',1000.00,'China','Shanxi','Taiyuan','TYUT','2024-05-14 04:53:51'),(54,'johnnyenglish1@email.com','123456',3,'Johnny','',NULL,'China','Shanxi','Taiyuan','TYUT','2024-05-14 04:54:28');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping events for database 'utopia'
+--
+
+--
+-- Dumping routines for database 'utopia'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -404,4 +416,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-15  5:36:51
+-- Dump completed on 2024-05-15 12:08:12

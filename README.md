@@ -52,7 +52,7 @@ The `public` folder serves static assets, including HTML, images, and videos. Re
    - "/roles": returns list of all roles (user roles)
    - "/statuses": returns list of all statuses (order statuses)
    - "/shippers": returns list of all shippers
-   - "/payment_methods": returns list of all payment methods
+   - "/payment-methods": returns list of all payment methods
    - "/categorized-products": returns list of all categorized products;
 ## Contribution
 
