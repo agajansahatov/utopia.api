@@ -256,6 +256,7 @@ CREATE TABLE IF NOT EXISTS `utopia`.`medias` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `product_id` BIGINT NOT NULL,
   `name` VARCHAR(250) NOT NULL,
+  `is_main` TINYINT NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
   INDEX `fk_product_images_products1_idx` (`product_id` ASC) VISIBLE,

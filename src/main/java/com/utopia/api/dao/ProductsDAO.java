@@ -30,6 +30,17 @@ public class ProductsDAO {
         return value == null || value.trim().isEmpty();
     }
 
+    private Product mapProduct(ResultSet rs) throws SQLException {
+        Product product = new Product();
+        product.setId(rs.getLong("id"));
+        product.setImageName(rs.getString("image_name"));
+        product.setTitle(rs.getString("name"));
+        product.setPrice(rs.getBigDecimal("price"));
+        product.setCategory(rs.getString("category"));
+        product.setDescription(rs.getString("description"));
+        return product;
+    }
+
     public static Validator validateProduct(Product product) throws IllegalArgumentException {
         if (product == null) {
             return new Validator(false, "Product cannot be null.");
@@ -47,11 +58,56 @@ public class ProductsDAO {
         return new Validator(true, "Valid Product");
     }
 
+    public boolean exists(long id) throws DataAccessException {
+        String sql = "SELECT COUNT(*) FROM products WHERE id = ?";
+        Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
+        return count != null && count > 0;
+    }
+
     public long getSize() {
         String sql = "SELECT COUNT(*) FROM products";
         Long count = jdbcTemplate.queryForObject(sql, Long.class);
         return Optional.ofNullable(count).orElse(0L);
     }
+
+    public List<Product> getProducts() {
+        try {
+            String sql = "SELECT * FROM products";
+            RowMapper<Product> rowMapper = (rs, rowNum) -> mapProduct(rs);
+            return jdbcTemplate.query(sql, rowMapper);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        } catch (DataAccessException e) {
+            throw e;
+        }
+    }
+
+    public Product getProduct(long id) throws DataAccessException {
+        try {
+            String sql = "SELECT * FROM products WHERE id = ?";
+            RowMapper<Product> rowMapper = (rs, rowNum) -> mapProduct(rs);
+            return jdbcTemplate.queryForObject(sql, rowMapper, id);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        } catch (DataAccessException e) {
+            throw e;
+        }
+    }
+
+    public List<CategorizedProduct> getCategorizedProducts() throws DataAccessException {
+        String sql = "SELECT * from categorized_products";
+
+        RowMapper<CategorizedProduct> rowMapper = (rs, rowNum) -> {
+            CategorizedProduct categorizedProduct = new CategorizedProduct();
+            categorizedProduct.setProductId(rs.getLong("product_id"));
+            categorizedProduct.setCategoryId(rs.getShort("category_id"));
+            return categorizedProduct;
+        };
+
+        return jdbcTemplate.query(sql, rowMapper);
+    }
+
+
 
     public Product add(Product product) {
         String sql = "INSERT INTO products (image_name, title, price, category, description) " +
@@ -79,59 +135,5 @@ public class ProductsDAO {
         product.setId(generatedId);
 
         return product;
-    }
-
-    public List<Product> getProducts() {
-        try {
-            String sql = "SELECT * FROM products";
-            RowMapper<Product> rowMapper = (rs, rowNum) -> mapProduct(rs);
-            return jdbcTemplate.query(sql, rowMapper);
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        } catch (DataAccessException e) {
-            throw e;
-        }
-    }
-
-    public Product getProduct(long id) throws DataAccessException {
-        try {
-            String sql = "SELECT * FROM products WHERE id = ?";
-            RowMapper<Product> rowMapper = (rs, rowNum) -> mapProduct(rs);
-            return jdbcTemplate.queryForObject(sql, rowMapper, id);
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        } catch (DataAccessException e) {
-            throw e;
-        }
-    }
-
-    private Product mapProduct(ResultSet rs) throws SQLException {
-        Product product = new Product();
-        product.setId(rs.getLong("id"));
-        product.setImageName(rs.getString("image_name"));
-        product.setTitle(rs.getString("name"));
-        product.setPrice(rs.getBigDecimal("price"));
-        product.setCategory(rs.getString("category"));
-        product.setDescription(rs.getString("description"));
-        return product;
-    }
-
-    public boolean exists(long id) throws DataAccessException {
-        String sql = "SELECT COUNT(*) FROM products WHERE id = ?";
-        Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
-        return count != null && count > 0;
-    }
-
-    public List<CategorizedProduct> getCategorizedProducts() throws DataAccessException {
-        String sql = "SELECT * from categorized_products";
-
-        RowMapper<CategorizedProduct> rowMapper = (rs, rowNum) -> {
-            CategorizedProduct categorizedProduct = new CategorizedProduct();
-            categorizedProduct.setProductId(rs.getLong("product_id"));
-            categorizedProduct.setCategoryId(rs.getShort("category_id"));
-            return categorizedProduct;
-        };
-
-        return jdbcTemplate.query(sql, rowMapper);
     }
 }
