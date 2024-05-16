@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `utopia` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `utopia`;
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: localhost    Database: utopia
@@ -145,7 +147,7 @@ CREATE TABLE `medias` (
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `fk_product_images_products1_idx` (`product_id`),
   CONSTRAINT `fk_product_images_products` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -154,7 +156,7 @@ CREATE TABLE `medias` (
 
 LOCK TABLES `medias` WRITE;
 /*!40000 ALTER TABLE `medias` DISABLE KEYS */;
-INSERT INTO `medias` VALUES (1,1,'p1.jpg',1),(2,2,'p2.jpg',1),(3,3,'p3.jpg',1),(4,4,'p4.jpg',1),(5,5,'p5.jpg',1),(6,6,'p6.jpg',1),(7,7,'p7.jpg',1),(8,8,'p8.jpg',1),(9,9,'p9.webp',1),(10,10,'p10.jfif',1),(11,11,'p11.jpg',1),(12,12,'p12.jpg',1),(13,13,'p13.jfif',1),(14,14,'p14.jpg',1),(15,15,'p15.webp',1),(16,16,'p16.jpg',1),(17,17,'p17.webp',1),(18,18,'p18.jpg',1),(19,19,'p19.webp',1),(20,20,'p20.webp',1),(21,21,'p21.jfif',1),(22,22,'p22.jpg',1),(23,23,'p23.jfif',1),(24,24,'p24.jfif',1),(25,25,'p25.jpg',1),(26,38,'searverit.gif',1),(27,30,'vehadwasal.png',1),(28,28,'areinveeve.jpg',1),(29,36,'edisesle.png',1),(30,31,'mever639.jpg',1),(31,29,'never.png',1),(33,35,'onmealwa.bmp',1),(37,26,'forin231.gif',1),(39,32,'henthi813.png',1),(40,39,'hethieras.bmp',1),(43,41,'tireisar.jpg',1),(44,27,'inasthaon599.bmp',1),(45,42,'oulleforwit.bmp',1),(47,33,'thistihi264.png',1),(48,34,'ereheheha.jpg',1),(49,40,'tongeraar4.jpg',1),(50,37,'orandmehis.bmp',1),(51,43,'aaa.jpg',1),(52,44,'aaa.jpg',1),(53,45,'aaa.jpg',1),(54,46,'aaa.jpg',1),(55,47,'aaa.jpg',1),(56,48,'aaa.jpg',1),(57,49,'aaa.jpg',1),(58,50,'aaa.jpg',1);
+INSERT INTO `medias` VALUES (1,1,'p1.jpg',1),(2,2,'p2.jpg',1),(3,3,'p3.jpg',1),(4,4,'p4.jpg',1),(5,5,'p5.jpg',1),(6,6,'p6.jpg',1),(7,7,'p7.jpg',1),(8,8,'p8.jpg',1),(9,9,'p9.webp',1),(10,10,'p10.jfif',1),(11,11,'p11.jpg',1),(12,12,'p12.jpg',1),(13,13,'p13.jfif',1),(14,14,'p14.jpg',1),(15,15,'p15.webp',1),(16,16,'p16.jpg',1),(17,17,'p17.webp',1),(18,18,'p18.jpg',1),(19,19,'p19.webp',1),(20,20,'p20.webp',1),(21,21,'p21.jfif',1),(22,22,'p22.jpg',1),(23,23,'p23.jfif',1),(24,24,'p24.jfif',1),(25,25,'p25.jpg',1),(26,38,'searverit.gif',1),(27,30,'vehadwasal.png',1),(28,28,'areinveeve.jpg',1),(29,36,'edisesle.png',1),(30,31,'mever639.jpg',1),(31,29,'never.png',1),(33,35,'onmealwa.bmp',1),(37,26,'forin231.gif',1),(39,32,'henthi813.png',1),(40,39,'hethieras.bmp',1),(43,41,'tireisar.jpg',1),(44,27,'inasthaon599.bmp',1),(45,42,'oulleforwit.bmp',1),(47,33,'thistihi264.png',1),(48,34,'ereheheha.jpg',1),(49,40,'tongeraar4.jpg',1),(50,37,'orandmehis.bmp',1),(51,43,'aaa.jpg',1),(52,44,'aaa.jpg',1),(53,45,'aaa.jpg',1),(54,46,'aaa.jpg',1),(55,47,'aaa.jpg',1),(56,48,'aaa.jpg',1),(57,49,'aaa.jpg',1),(58,50,'aaa.jpg',1),(59,1,'aaa.jpg',0),(60,11,'aaa.jog',0),(61,11,'aaa.jpg',0),(62,1,'aaa.jpg',0);
 /*!40000 ALTER TABLE `medias` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -457,6 +459,65 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `get_categorized_products_as_array` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_categorized_products_as_array`(product_id BIGINT UNSIGNED) RETURNS json
+    READS SQL DATA
+BEGIN
+	DECLARE product_categories JSON;
+    
+	SELECT 
+		JSON_ARRAYAGG(
+			JSON_OBJECT(
+				"id", cp.category_id,
+                "name", (SELECT name FROM categories c WHERE c.id = cp.category_id)
+            )
+		) 
+		INTO product_categories
+	FROM categorized_products cp
+	WHERE cp.product_id = product_id;
+    
+    RETURN product_categories;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `get_medias_as_array` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_medias_as_array`(product_id BIGINT UNSIGNED) RETURNS json
+    READS SQL DATA
+BEGIN
+	DECLARE media_list JSON;
+    
+	SELECT JSON_ARRAYAGG((JSON_OBJECT("id", id, "name", name, "is_main", is_main))) INTO media_list
+	FROM medias m
+	WHERE m.product_id = product_id;
+    
+    RETURN media_list;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `add_user` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -493,6 +554,34 @@ BEGIN
 	END IF;
     
     INSERT INTO users VALUES(DEFAULT, contact, password, role, firstname, lastname, balance, country, province, city, address, DEFAULT);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_product` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_product`(id BIGINT UNSIGNED)
+BEGIN
+	SELECT
+		*,
+		get_medias_as_array(id) AS medias,
+		get_categorized_products_as_array(id) AS categories,
+		(SELECT COUNT(*) FROM favourites WHERE product_id = p.id) AS likes_count,
+		(SELECT COUNT(*) FROM traces WHERE product_id = p.id) AS visits_count,
+		(SELECT COUNT(*) FROM orders WHERE product_id = p.id) AS orders_count,
+		(SELECT COUNT(*) FROM comments WHERE product_id = p.id) AS comments_count
+	FROM products p
+    WHERE p.id = id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -632,4 +721,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-15 18:41:15
+-- Dump completed on 2024-05-17  2:30:00
