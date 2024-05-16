@@ -9,7 +9,7 @@ READS SQL DATA
 BEGIN
 	DECLARE media_names JSON;
     
-	SELECT JSON_ARRAYAGG(name) INTO media_names
+	SELECT JSON_ARRAYAGG((JSON_OBJECT("id", id, "name", name, "is_main", is_main))) INTO media_names
 	FROM medias m
 	WHERE m.product_id = product_id
     GROUP BY m.product_id;
