@@ -48,11 +48,15 @@ The DAO pattern abstracts and encapsulates data access operations into separate 
 The `public` folder serves static assets, including HTML, images, and videos. Requests to the root endpoint return the `index.html` by default, while other endpoints are handled by controller classes.
 
 ## API ENDPOINTS
-   - "/categories": returns list of all categories (possible for a product)
-   - "/roles": returns list of all roles (user roles)
-   - "/statuses": returns list of all statuses (order statuses)
-   - "/shippers": returns list of all shippers
-   - "/payment-methods": returns list of all payment methods
+   - "/products": returns list of all products (the list is shuffled everytime);
+   - "/products?page=3&amount=10": returns the third page using pagination (The result set will be chosen among all products). The list will be having 10 records, and they will be shuffled in each other every time. (The records in each page doesn't change);
+   - "/products?category=1": returns all products with the given category id.
+   - "/products?page=1&amount=10&category=1": pagination using category. Pay attention to page and amount arguments, if you set them more than the number of the products with the given category you will get an error.
+   - "/categories": returns list of all categories (possible for a product);
+   - "/roles": returns list of all roles (user roles);
+   - "/statuses": returns list of all statuses (order statuses);
+   - "/shippers": returns list of all shippers;
+   - "/payment-methods": returns list of all payment methods;
    - "/categorized-products": returns list of all categorized products;
 ## Contribution
 
