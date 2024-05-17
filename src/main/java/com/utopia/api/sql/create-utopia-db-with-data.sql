@@ -272,7 +272,7 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `sales_price`,
  1 AS `description`,
  1 AS `date`,
- 1 AS `media`*/;
+ 1 AS `main_media`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -475,13 +475,7 @@ BEGIN
 	DECLARE product_categories JSON;
     
 	SELECT 
-		JSON_ARRAYAGG(
-			JSON_OBJECT(
-				"id", cp.category_id,
-                "name", (SELECT name FROM categories c WHERE c.id = cp.category_id)
-            )
-		) 
-		INTO product_categories
+		JSON_ARRAYAGG(cp.category_id) INTO product_categories
 	FROM categorized_products cp
 	WHERE cp.product_id = product_id;
     
@@ -608,7 +602,7 @@ BEGIN
     DECLARE start_index BIGINT UNSIGNED;
 
     -- Get total number of products and pass it to size variable accordingly
-    IF category_id IS NOT NULL THEN
+    IF category_id IS NOT NULL AND category_id > 0 THEN
         -- Count products in the specified category
         SELECT count_products_by_category(category_id) INTO size;
     ELSE
@@ -640,7 +634,7 @@ BEGIN
     END IF;
 
     -- Fetch the products based on category_id with pagination
-    IF category_id IS NOT NULL THEN
+    IF category_id IS NOT NULL AND category_id > 0 THEN
         SELECT p.*
         FROM categorized_products cp
         JOIN products_view p
@@ -707,7 +701,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `products_view` AS select `p`.`id` AS `id`,`p`.`title` AS `title`,`p`.`original_price` AS `original_price`,`p`.`sales_price` AS `sales_price`,`p`.`description` AS `description`,`p`.`date` AS `date`,`m`.`name` AS `media` from (`products` `p` join `medias` `m` on(((`p`.`id` = `m`.`product_id`) and (`m`.`is_main` = 1)))) order by `p`.`id` */;
+/*!50001 VIEW `products_view` AS select `p`.`id` AS `id`,`p`.`title` AS `title`,`p`.`original_price` AS `original_price`,`p`.`sales_price` AS `sales_price`,concat(left(`p`.`description`,500),' ...') AS `description`,`p`.`date` AS `date`,`m`.`name` AS `main_media` from (`products` `p` join `medias` `m` on(((`p`.`id` = `m`.`product_id`) and (`m`.`is_main` = 1)))) order by `p`.`id` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -721,4 +715,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-17  2:30:00
+-- Dump completed on 2024-05-17 10:53:14

@@ -7,16 +7,11 @@ import com.utopia.api.utilities.Validator;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 
 public class ProductsDAO {
@@ -52,7 +47,7 @@ public class ProductsDAO {
         product.setPrice(rs.getBigDecimal("sales_price"));
         product.setDescription(rs.getString("description"));
         product.setDate(rs.getTimestamp("date"));
-        product.setMedia(rs.getString("media"));
+        product.setMainMedia(rs.getString("main_media"));
         return product;
     }
 
@@ -79,7 +74,7 @@ public class ProductsDAO {
         return count != null && count > 0;
     }
 
-    public List<Product> getProducts(int page, int amount, int category_id) {
+    public List<Product> getProducts(Integer page, Integer amount, Integer category_id) {
         try {
             String sql = "CALL get_products(?, ?, ?);";
             RowMapper<Product> rowMapper = (rs, rowNum) -> mapProduct(rs);

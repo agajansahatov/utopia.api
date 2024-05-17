@@ -202,13 +202,7 @@ BEGIN
 	DECLARE product_categories JSON;
     
 	SELECT 
-		JSON_ARRAYAGG(
-			JSON_OBJECT(
-				"id", cp.category_id,
-                "name", (SELECT name FROM categories c WHERE c.id = cp.category_id)
-            )
-		) 
-		INTO product_categories
+		JSON_ARRAYAGG(cp.category_id) INTO product_categories
 	FROM categorized_products cp
 	WHERE cp.product_id = product_id;
     
@@ -335,7 +329,7 @@ BEGIN
     DECLARE start_index BIGINT UNSIGNED;
 
     -- Get total number of products and pass it to size variable accordingly
-    IF category_id IS NOT NULL THEN
+    IF category_id IS NOT NULL AND category_id > 0 THEN
         -- Count products in the specified category
         SELECT count_products_by_category(category_id) INTO size;
     ELSE
@@ -367,7 +361,7 @@ BEGIN
     END IF;
 
     -- Fetch the products based on category_id with pagination
-    IF category_id IS NOT NULL THEN
+    IF category_id IS NOT NULL AND category_id > 0 THEN
         SELECT p.*
         FROM categorized_products cp
         JOIN products_view p
@@ -430,4 +424,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-17  2:30:43
+-- Dump completed on 2024-05-17 10:53:29

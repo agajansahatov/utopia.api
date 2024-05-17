@@ -10,7 +10,7 @@ public class Product {
     private BigDecimal price;
     private String description;
     private Timestamp date;
-    private String media;
+    private String mainMedia;
 
     public Product() {
     }
@@ -21,7 +21,7 @@ public class Product {
         this.price = price;
         this.description = description;
         this.date = date;
-        this.media = media;
+        this.mainMedia = media;
     }
 
     public Long getId() {
@@ -64,11 +64,11 @@ public class Product {
         this.date = date;
     }
 
-    public String getMedia() {
-        return media;
+    public String getMainMedia() {
+        return mainMedia;
     }
 
-    public void setMedia(String media) {
-        this.media = media;
+    public void setMainMedia(String mainMedia) {
+        this.mainMedia = mainMedia;
     }
 }
