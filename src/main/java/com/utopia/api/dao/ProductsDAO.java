@@ -30,17 +30,6 @@ public class ProductsDAO {
         return value == null || value.trim().isEmpty();
     }
 
-    private Product mapProduct(ResultSet rs) throws SQLException {
-        Product product = new Product();
-        product.setId(rs.getLong("id"));
-        product.setImageName(rs.getString("image_name"));
-        product.setTitle(rs.getString("name"));
-        product.setPrice(rs.getBigDecimal("price"));
-        product.setCategory(rs.getString("category"));
-        product.setDescription(rs.getString("description"));
-        return product;
-    }
-
     public static Validator validateProduct(Product product) throws IllegalArgumentException {
         if (product == null) {
             return new Validator(false, "Product cannot be null.");
@@ -51,23 +40,25 @@ public class ProductsDAO {
         if (product.getPrice() == null || product.getPrice().compareTo(BigDecimal.ZERO) < 0) {
             return new Validator(false, "Product price must be a positive value.");
         }
-        if (isNullOrEmpty(product.getCategory())) {
-            return new Validator(false, "Product category cannot be null or empty.");
-        }
 
         return new Validator(true, "Valid Product");
+    }
+
+    private Product mapProduct(ResultSet rs) throws SQLException {
+        Product product = new Product();
+        product.setId(rs.getLong("id"));
+        product.setTitle(rs.getString("title"));
+        product.setPrice(rs.getBigDecimal("sales_price"));
+        product.setDescription(rs.getString("description"));
+        product.setDate(rs.getTimestamp("date"));
+        product.setMedia(rs.getString("media"));
+        return product;
     }
 
     public boolean exists(long id) throws DataAccessException {
         String sql = "SELECT COUNT(*) FROM products WHERE id = ?";
         Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
         return count != null && count > 0;
-    }
-
-    public long getSize() {
-        String sql = "SELECT COUNT(*) FROM products";
-        Long count = jdbcTemplate.queryForObject(sql, Long.class);
-        return Optional.ofNullable(count).orElse(0L);
     }
 
     public List<Product> getProducts() {
@@ -120,7 +111,7 @@ public class ProductsDAO {
                     @Override
                     public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                         PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                        ps.setString(1, product.getImageName());
+                        ps.setString(1, product.getMedia());
                         ps.setString(2, product.getTitle());
                         ps.setBigDecimal(3, product.getPrice());
                         ps.setString(4, product.getCategory());

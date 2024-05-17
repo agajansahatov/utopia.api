@@ -245,7 +245,7 @@ public class AdminController {
         }
 
         //Save product to the database
-        product.setImageName(fileName);
+        product.setMedia(fileName);
         try {
             Product addedProduct = productsDAO.add(product);
             return ResponseEntity.status(HttpStatus.CREATED).body(addedProduct);
