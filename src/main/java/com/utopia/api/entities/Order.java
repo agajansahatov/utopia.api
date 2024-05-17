@@ -9,9 +9,9 @@ public class Order {
     private int quantity;
     private Timestamp order_date;
     private Timestamp shipped_date;
-    private String shipper;
-    private String payment_method;
-    private String status;
+    private String shipper_id;
+    private String payment_method_id;
+    private String status_id;
 
     public Long getId() {
         return id;
@@ -37,20 +37,20 @@ public class Order {
         this.productId = productId;
     }
 
-    public String getPayment_method() {
-        return payment_method;
+    public String getPayment_method_id() {
+        return payment_method_id;
     }
 
-    public void setPayment_method(String payment_method) {
-        this.payment_method = payment_method;
+    public void setPayment_method_id(String payment_method_id) {
+        this.payment_method_id = payment_method_id;
     }
 
-    public String getStatus() {
-        return status;
+    public String getStatus_id() {
+        return status_id;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatus_id(String status_id) {
+        this.status_id = status_id;
     }
 
     public int getQuantity() {
@@ -77,11 +77,11 @@ public class Order {
         this.shipped_date = shipped_date;
     }
 
-    public String getShipper() {
-        return shipper;
+    public String getShipper_id() {
+        return shipper_id;
     }
 
-    public void setShipper(String shipper) {
-        this.shipper = shipper;
+    public void setShipper_id(String shipper_id) {
+        this.shipper_id = shipper_id;
     }
 }

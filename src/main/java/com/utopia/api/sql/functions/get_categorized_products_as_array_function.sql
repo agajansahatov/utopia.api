@@ -10,13 +10,7 @@ BEGIN
 	DECLARE product_categories JSON;
     
 	SELECT 
-		JSON_ARRAYAGG(
-			JSON_OBJECT(
-				"id", cp.category_id,
-                "name", (SELECT name FROM categories c WHERE c.id = cp.category_id)
-            )
-		) 
-		INTO product_categories
+		JSON_ARRAYAGG(cp.category_id) INTO product_categories
 	FROM categorized_products cp
 	WHERE cp.product_id = product_id;
     
