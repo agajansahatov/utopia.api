@@ -13,7 +13,7 @@ BEGIN
     DECLARE start_index BIGINT UNSIGNED;
 
     -- Get total number of products and pass it to size variable accordingly
-    IF category_id IS NOT NULL THEN
+    IF category_id IS NOT NULL AND category_id > 0 THEN
         -- Count products in the specified category
         SELECT count_products_by_category(category_id) INTO size;
     ELSE
@@ -45,7 +45,7 @@ BEGIN
     END IF;
 
     -- Fetch the products based on category_id with pagination
-    IF category_id IS NOT NULL THEN
+    IF category_id IS NOT NULL AND category_id > 0 THEN
         SELECT p.*
         FROM categorized_products cp
         JOIN products_view p

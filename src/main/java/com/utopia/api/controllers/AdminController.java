@@ -197,68 +197,68 @@ public class AdminController {
     }
 
     // Add a new product endpoint
-    @PostMapping("/admin/products")
-    public ResponseEntity<Object> addProduct(@RequestHeader("x-auth-token") String token,
-                                             @ModelAttribute Product product,
-                                             @RequestParam("file") MultipartFile file) {
-        //Token validation
-        JwtChecked jwtChecked = jwtUtil.validate(token);
-        if (!jwtChecked.isValid || (jwtChecked.userRole != 1 && jwtChecked.userRole != 2)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
-        }
-
-        //File validation
-        String[] allowedExtensions = {"jpg", "jpeg", "png", "gif", "webp", "bmp", "tiff", "tif", "svg", "svgz", "heif", "heic", "ico"};
-        Validator fileValidator = Validator.validateFile(file, "image", allowedExtensions);
-        if(!fileValidator.isValid()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(fileValidator.getMessage());
-        }
-
-        //Product Validation
-        Validator productValidator = ProductsDAO.validateProduct(product);
-        if (!productValidator.isValid()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(productValidator.getMessage());
-        }
-
-        //Set ImageName and Directory
-        String originalFilename = file.getOriginalFilename();
-        assert originalFilename != null;
-        String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
-        String fileName = "p" + ImageNameGenerator.generateUniqueName(jwtChecked.userId) + "." + fileExtension;
-        String path = System.getProperty("user.dir") + "/public/images/products/";
-        Path directoryPath = Paths.get(path);
-        if (Files.notExists(directoryPath)) {
-            try {
-                Files.createDirectories(directoryPath);
-            } catch (IOException e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while creating the directory");
-            }
-        }
-        String filePath = path + fileName;
-
-        //Transfer the image to the server directory
-        try {
-            file.transferTo(new File(filePath));
-        } catch (IOException e) {
-            System.err.println("Error while transferring the file ("+ e.getCause() + "): " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while transferring the file");
-        }
-
-        //Save product to the database
-        product.setMedia(fileName);
-        try {
-            Product addedProduct = productsDAO.add(product);
-            return ResponseEntity.status(HttpStatus.CREATED).body(addedProduct);
-        } catch (Exception e) {
-            System.err.println("Error during add product ("+ e.getCause() + "): " + e.getMessage());
-            try {
-                Files.deleteIfExists(Paths.get(filePath));
-            } catch (IOException ex) {
-                System.err.println("Product has not added to the db and the transferred image is cannot be deleted ("+ e.getCause() + "): " + e.getMessage());
-            }
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding product to database");
-        }
-    }
+//    @PostMapping("/admin/products")
+//    public ResponseEntity<Object> addProduct(@RequestHeader("x-auth-token") String token,
+//                                             @ModelAttribute Product product,
+//                                             @RequestParam("file") MultipartFile file) {
+//        //Token validation
+//        JwtChecked jwtChecked = jwtUtil.validate(token);
+//        if (!jwtChecked.isValid || (jwtChecked.userRole != 1 && jwtChecked.userRole != 2)) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+//        }
+//
+//        //File validation
+//        String[] allowedExtensions = {"jpg", "jpeg", "png", "gif", "webp", "bmp", "tiff", "tif", "svg", "svgz", "heif", "heic", "ico"};
+//        Validator fileValidator = Validator.validateFile(file, "image", allowedExtensions);
+//        if(!fileValidator.isValid()) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(fileValidator.getMessage());
+//        }
+//
+//        //Product Validation
+//        Validator productValidator = ProductsDAO.validateProduct(product);
+//        if (!productValidator.isValid()) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(productValidator.getMessage());
+//        }
+//
+//        //Set ImageName and Directory
+//        String originalFilename = file.getOriginalFilename();
+//        assert originalFilename != null;
+//        String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+//        String fileName = "p" + ImageNameGenerator.generateUniqueName(jwtChecked.userId) + "." + fileExtension;
+//        String path = System.getProperty("user.dir") + "/public/images/products/";
+//        Path directoryPath = Paths.get(path);
+//        if (Files.notExists(directoryPath)) {
+//            try {
+//                Files.createDirectories(directoryPath);
+//            } catch (IOException e) {
+//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while creating the directory");
+//            }
+//        }
+//        String filePath = path + fileName;
+//
+//        //Transfer the image to the server directory
+//        try {
+//            file.transferTo(new File(filePath));
+//        } catch (IOException e) {
+//            System.err.println("Error while transferring the file ("+ e.getCause() + "): " + e.getMessage());
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while transferring the file");
+//        }
+//
+//        //Save product to the database
+//        product.setMedia(fileName);
+//        try {
+//            Product addedProduct = productsDAO.add(product);
+//            return ResponseEntity.status(HttpStatus.CREATED).body(addedProduct);
+//        } catch (Exception e) {
+//            System.err.println("Error during add product ("+ e.getCause() + "): " + e.getMessage());
+//            try {
+//                Files.deleteIfExists(Paths.get(filePath));
+//            } catch (IOException ex) {
+//                System.err.println("Product has not added to the db and the transferred image is cannot be deleted ("+ e.getCause() + "): " + e.getMessage());
+//            }
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding product to database");
+//        }
+//    }
 
     // Endpoint to update a product
     // Endpoint to delete a product

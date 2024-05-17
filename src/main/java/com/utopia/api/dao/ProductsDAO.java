@@ -2,6 +2,7 @@ package com.utopia.api.dao;
 
 import com.utopia.api.entities.CategorizedProduct;
 import com.utopia.api.entities.Product;
+import com.utopia.api.entities.ProductInfo;
 import com.utopia.api.utilities.Validator;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -55,17 +56,34 @@ public class ProductsDAO {
         return product;
     }
 
+    private ProductInfo mapProductInfo(ResultSet rs) throws SQLException {
+        ProductInfo productInfo = new ProductInfo();
+        productInfo.setId(rs.getLong("id"));
+        productInfo.setTitle(rs.getString("title"));
+        productInfo.setPrice(rs.getBigDecimal("sales_price"));
+        productInfo.setDescription(rs.getString("description"));
+        productInfo.setDate(rs.getTimestamp("date"));
+        productInfo.setProperties(rs.getString("properties"));
+        productInfo.setMedias(rs.getString("medias"));
+        productInfo.setCategories(rs.getString("categories"));
+        productInfo.setLikesCount(rs.getLong("likesCount"));
+        productInfo.setVisitsCount(rs.getLong("visitsCount"));
+        productInfo.setOrdersCount(rs.getLong("ordersCount"));
+        productInfo.setCommentsCount(rs.getLong("commentsCount"));
+        return productInfo;
+    }
+
     public boolean exists(long id) throws DataAccessException {
         String sql = "SELECT COUNT(*) FROM products WHERE id = ?";
         Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
         return count != null && count > 0;
     }
 
-    public List<Product> getProducts() {
+    public List<Product> getProducts(int page, int amount, int category_id) {
         try {
-            String sql = "SELECT * FROM products";
+            String sql = "CALL get_products(?, ?, ?);";
             RowMapper<Product> rowMapper = (rs, rowNum) -> mapProduct(rs);
-            return jdbcTemplate.query(sql, rowMapper);
+            return jdbcTemplate.query(sql, rowMapper, page, amount, category_id);
         } catch (EmptyResultDataAccessException e) {
             return null;
         } catch (DataAccessException e) {
@@ -73,10 +91,10 @@ public class ProductsDAO {
         }
     }
 
-    public Product getProduct(long id) throws DataAccessException {
+    public ProductInfo getProductInfo(long id) throws DataAccessException {
         try {
-            String sql = "SELECT * FROM products WHERE id = ?";
-            RowMapper<Product> rowMapper = (rs, rowNum) -> mapProduct(rs);
+            String sql = "CALL get_product(?);";
+            RowMapper<ProductInfo> rowMapper = (rs, rowNum) -> mapProductInfo(rs);
             return jdbcTemplate.queryForObject(sql, rowMapper, id);
         } catch (EmptyResultDataAccessException e) {
             return null;
@@ -98,33 +116,31 @@ public class ProductsDAO {
         return jdbcTemplate.query(sql, rowMapper);
     }
 
-
-
-    public Product add(Product product) {
-        String sql = "INSERT INTO products (image_name, title, price, category, description) " +
-                "VALUES (?, ?, ?, ?, ?)";
-
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(
-                new PreparedStatementCreator() {
-                    @Override
-                    public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                        PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                        ps.setString(1, product.getMedia());
-                        ps.setString(2, product.getTitle());
-                        ps.setBigDecimal(3, product.getPrice());
-                        ps.setString(4, product.getCategory());
-                        ps.setString(5, product.getDescription());
-                        return ps;
-                    }
-                },
-                keyHolder
-        );
-
-        Long generatedId = Objects.requireNonNull(keyHolder.getKey()).longValue();
-        product.setId(generatedId);
-
-        return product;
-    }
+//    public Product add(Product product) {
+//        String sql = "INSERT INTO products (image_name, title, price, category, description) " +
+//                "VALUES (?, ?, ?, ?, ?)";
+//
+//        KeyHolder keyHolder = new GeneratedKeyHolder();
+//
+//        jdbcTemplate.update(
+//                new PreparedStatementCreator() {
+//                    @Override
+//                    public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+//                        PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+//                        ps.setString(1, product.getMedia());
+//                        ps.setString(2, product.getTitle());
+//                        ps.setBigDecimal(3, product.getPrice());
+//                        ps.setString(4, product.getCategory());
+//                        ps.setString(5, product.getDescription());
+//                        return ps;
+//                    }
+//                },
+//                keyHolder
+//        );
+//
+//        Long generatedId = Objects.requireNonNull(keyHolder.getKey()).longValue();
+//        product.setId(generatedId);
+//
+//        return product;
+//    }
 }

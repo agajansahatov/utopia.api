@@ -3,6 +3,7 @@ package com.utopia.api.controllers;
 import com.utopia.api.dao.ProductsDAO;
 import com.utopia.api.entities.CategorizedProduct;
 import com.utopia.api.entities.Product;
+import com.utopia.api.entities.ProductInfo;
 import com.utopia.api.utilities.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,10 +12,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,9 +30,13 @@ public class ProductsController {
 
     // Get all products endpoint
     @GetMapping("/products")
-    public ResponseEntity<Object> getProducts() {
+    public ResponseEntity<Object> getProducts(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer amount,
+            @RequestParam(required = false) Integer category
+    ) {
         try {
-            List<Product> productList = productsDAO.getProducts();
+            List<Product> productList = productsDAO.getProducts(page, amount, category);
             Collections.shuffle(productList);
             return ResponseEntity.ok(productList);
         } catch (Exception e) {
@@ -44,11 +46,11 @@ public class ProductsController {
     }
 
     // Get a specific product endpoint
-    @GetMapping("/products/{productId}")
-    public ResponseEntity<Object> getProduct(@PathVariable("productId") long id) {
+    @GetMapping("/products/{id}")
+    public ResponseEntity<Object> getProduct(@PathVariable("id") long id) {
         try {
-            Product product = productsDAO.getProduct(id);
-            return ResponseEntity.ok(product);
+            ProductInfo productInfo = productsDAO.getProductInfo(id);
+            return ResponseEntity.ok(productInfo);
         } catch (EmptyResultDataAccessException e) {
             LOGGER.error("Product not found with ID: {}", id, e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This product is not found on our server");
