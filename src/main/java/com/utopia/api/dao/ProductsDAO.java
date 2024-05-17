@@ -61,10 +61,10 @@ public class ProductsDAO {
         productInfo.setProperties(rs.getString("properties"));
         productInfo.setMedias(rs.getString("medias"));
         productInfo.setCategories(rs.getString("categories"));
-        productInfo.setLikesCount(rs.getLong("likesCount"));
-        productInfo.setVisitsCount(rs.getLong("visitsCount"));
-        productInfo.setOrdersCount(rs.getLong("ordersCount"));
-        productInfo.setCommentsCount(rs.getLong("commentsCount"));
+        productInfo.setLikesCount(rs.getLong("likes_count"));
+        productInfo.setVisitsCount(rs.getLong("visits_count"));
+        productInfo.setOrdersCount(rs.getLong("orders_count"));
+        productInfo.setCommentsCount(rs.getLong("comments_count"));
         return productInfo;
     }
 

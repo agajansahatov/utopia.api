@@ -2,6 +2,7 @@ package com.utopia.api.entities;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 
 public class ProductInfo {
     private Long id;
@@ -10,8 +11,8 @@ public class ProductInfo {
     private String description;
     private Timestamp date;
     private String properties;
-    private String medias;
-    private String categories;
+    private List<Media> medias; // Add this field
+    private List<Long> categories; // Add this field
     private Long likesCount;
     private Long visitsCount;
     private Long ordersCount;
