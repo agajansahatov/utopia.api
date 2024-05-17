@@ -5,6 +5,7 @@ import com.utopia.api.dao.OrdersDAO;
 import com.utopia.api.dao.UsersDAO;
 import com.utopia.api.entities.Product;
 import com.utopia.api.entities.Order;
+import com.utopia.api.entities.ProductInfo;
 import com.utopia.api.entities.User;
 import com.utopia.api.utilities.JwtChecked;
 import com.utopia.api.utilities.JwtUtil;
@@ -87,13 +88,13 @@ public class OrdersController {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("All orders must belong to the current user");
                 }
 
-                Product product = productsDAO.getProduct(order.getProductId());
-                if(product == null){
+                ProductInfo productInfo = productsDAO.getProductInfo(order.getProductId());
+                if(productInfo == null){
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body("Product with the id - " + order.getProductId() + " is not found!");
                 }
 
-                BigDecimal totalPrice = product.getPrice().multiply(BigDecimal.valueOf(order.getQuantity()));
+                BigDecimal totalPrice = productInfo.getPrice().multiply(BigDecimal.valueOf(order.getQuantity()));
                 sum = sum.add(totalPrice);
                 if (sum.compareTo(user.getBalance()) > 0) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)

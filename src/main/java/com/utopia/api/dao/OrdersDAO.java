@@ -28,41 +28,31 @@ public class OrdersDAO {
         order.setProductId(rs.getLong("product_id"));
         order.setQuantity(rs.getInt("quantity"));
         order.setOrder_date(rs.getTimestamp("order_date"));
-        order.setOrder_date(rs.getTimestamp("order_date"));
-        order.setTitle(rs.getString("title"));
-        order.setPrice(rs.getBigDecimal("sales_price"));
-        order.setDescription(rs.getString("description"));
-        order.setMedia(rs.getString("media"));
+        order.setShipped_date(rs.getTimestamp("shipped_date"));
+        order.setShipper_id(rs.getShort("shipper_id"));
+        order.setPayment_method_id(rs.getShort("payment_method_id"));
+        order.setStatus_id(rs.getShort("status_id"));
         return order;
     }
 
     public List<Order> getOrders(long userId) {
         String sql = "SELECT * FROM orders WHERE user_id = ?";
-
-        RowMapper<Order> rowMapper = (rs, rowNum) -> {
-            Order order = new Order();
-            order.setId(rs.getLong("id"));
-            order.setUserId(rs.getLong("user_id")); // Corrected column name
-            order.setProductId(rs.getLong("product_id"));
-            order.setPayment_method_id(rs.getString("destination"));
-            order.setQuantity(rs.getInt("quantity"));
-            order.setStatus_id(rs.getString("status"));
-            order.setOrder_date(rs.getTimestamp("date"));
-            return order;
-        };
-
+        RowMapper<Order> rowMapper = (rs, rowNum) -> mapOrder(rs);
         return jdbcTemplate.query(sql, rowMapper, userId);
     }
 
 
     public void add(Order order) {
-        String sql = "INSERT INTO orders (user_id, product_id, destination, quantity, status) "
-                + "VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO orders (user_id, product_id, quantity, order_date, shipped_date, "
+                + "shipper_id, payment_method_id, status_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
                 order.getUserId(),
                 order.getProductId(),
-                order.getPayment_method_id(),
                 order.getQuantity(),
+                order.getOrder_date(),
+                order.getShipped_date(),
+                order.getShipper_id(),
+                order.getPayment_method_id(),
                 order.getStatus_id()
         );
     }
