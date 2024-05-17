@@ -3,6 +3,7 @@ package com.utopia.api.entities;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 public class ProductInfo {
     private Long id;
@@ -10,7 +11,7 @@ public class ProductInfo {
     private BigDecimal price;
     private String description;
     private Timestamp date;
-    private String properties;
+    private Map<String, Object> properties;
     private List<Media> medias; // Add this field
     private List<Long> categories; // Add this field
     private Long likesCount;
@@ -21,7 +22,7 @@ public class ProductInfo {
     public ProductInfo() {
     }
 
-    public ProductInfo(Long id, String title, BigDecimal price, String description, Timestamp date, String properties, String medias, String categories, Long likesCount, Long visitsCount, Long ordersCount, Long commentsCount) {
+    public ProductInfo(Long id, String title, BigDecimal price, String description, Timestamp date, Map<String, Object> properties, List<Media> medias, List<Long> categories, Long likesCount, Long visitsCount, Long ordersCount, Long commentsCount) {
         this.id = id;
         this.title = title;
         this.price = price;
@@ -76,27 +77,27 @@ public class ProductInfo {
         this.date = date;
     }
 
-    public String getProperties() {
+    public Map<String, Object> getProperties() {
         return properties;
     }
 
-    public void setProperties(String properties) {
+    public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
     }
 
-    public String getMedias() {
+    public List<Media> getMedias() {
         return medias;
     }
 
-    public void setMedias(String medias) {
+    public void setMedias(List<Media> medias) {
         this.medias = medias;
     }
 
-    public String getCategories() {
+    public List<Long> getCategories() {
         return categories;
     }
 
-    public void setCategories(String categories) {
+    public void setCategories(List<Long> categories) {
         this.categories = categories;
     }
 

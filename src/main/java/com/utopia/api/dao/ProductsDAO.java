@@ -1,14 +1,19 @@
 package com.utopia.api.dao;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.utopia.api.entities.CategorizedProduct;
 import com.utopia.api.entities.Product;
 import com.utopia.api.entities.ProductInfo;
+import com.utopia.api.entities.Media;
 import com.utopia.api.utilities.Validator;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.List;
@@ -51,20 +56,45 @@ public class ProductsDAO {
         return product;
     }
 
-    private ProductInfo mapProductInfo(ResultSet rs) throws SQLException {
+    private ProductInfo mapProductInfo(ResultSet rs) throws SQLException, IOException, JsonProcessingException {
         ProductInfo productInfo = new ProductInfo();
         productInfo.setId(rs.getLong("id"));
         productInfo.setTitle(rs.getString("title"));
         productInfo.setPrice(rs.getBigDecimal("sales_price"));
         productInfo.setDescription(rs.getString("description"));
         productInfo.setDate(rs.getTimestamp("date"));
-        productInfo.setProperties(rs.getString("properties"));
-        productInfo.setMedias(rs.getString("medias"));
-        productInfo.setCategories(rs.getString("categories"));
         productInfo.setLikesCount(rs.getLong("likes_count"));
         productInfo.setVisitsCount(rs.getLong("visits_count"));
         productInfo.setOrdersCount(rs.getLong("orders_count"));
         productInfo.setCommentsCount(rs.getLong("comments_count"));
+        // Parse properties JSON object
+        String propertiesJson = rs.getString("properties");
+        if (propertiesJson != null && !propertiesJson.isEmpty()) {
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> properties = mapper.readValue(propertiesJson, new TypeReference<Map<String, Object>>() {});
+            productInfo.setProperties(properties);
+        } else {
+            productInfo.setProperties(null);
+        }
+        // Parse medias JSON array
+        String mediasJson = rs.getString("medias");
+        if (mediasJson != null && !mediasJson.isEmpty()) {
+            ObjectMapper mapper = new ObjectMapper();
+            List<Media> medias = mapper.readValue(mediasJson, new TypeReference<List<Media>>() {});
+            productInfo.setMedias(medias);
+        } else {
+            productInfo.setMedias(null);
+        }
+        // Parse categories JSON array
+        String categoriesJson = rs.getString("categories");
+        if (categoriesJson != null && !categoriesJson.isEmpty()) {
+            ObjectMapper mapper = new ObjectMapper();
+            List<Long> categories = mapper.readValue(categoriesJson, new TypeReference<List<Long>>() {});
+            productInfo.setCategories(categories);
+        } else {
+            productInfo.setCategories(null);
+        }
+
         return productInfo;
     }
 
@@ -81,20 +111,22 @@ public class ProductsDAO {
             return jdbcTemplate.query(sql, rowMapper, page, amount, category_id);
         } catch (EmptyResultDataAccessException e) {
             return null;
-        } catch (DataAccessException e) {
-            throw e;
         }
     }
 
     public ProductInfo getProductInfo(long id) throws DataAccessException {
         try {
             String sql = "CALL get_product(?);";
-            RowMapper<ProductInfo> rowMapper = (rs, rowNum) -> mapProductInfo(rs);
+            RowMapper<ProductInfo> rowMapper = (rs, rowNum) -> {
+                try {
+                    return mapProductInfo(rs);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            };
             return jdbcTemplate.queryForObject(sql, rowMapper, id);
         } catch (EmptyResultDataAccessException e) {
             return null;
-        } catch (DataAccessException e) {
-            throw e;
         }
     }
 
