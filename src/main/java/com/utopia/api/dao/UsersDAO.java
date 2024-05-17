@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,8 +93,6 @@ public class UsersDAO {
             return jdbcTemplate.queryForObject(sql, rowMapper, id);
         } catch (EmptyResultDataAccessException e) {
             return null;
-        } catch (DataAccessException e) {
-            throw e;
         }
     }
 
@@ -106,8 +103,6 @@ public class UsersDAO {
             return jdbcTemplate.queryForObject(sql, rowMapper, contact);
         } catch (EmptyResultDataAccessException e) {
             return null; // Return null when user with the given contact is not found
-        } catch (DataAccessException e) {
-            throw e;
         }
     }
 
@@ -118,29 +113,19 @@ public class UsersDAO {
             return jdbcTemplate.query(sql, rowMapper);
         } catch (EmptyResultDataAccessException e) {
             return null;
-        } catch (DataAccessException e) {
-            throw e;
         }
     }
 
     public boolean exists(String contact) throws DataAccessException {
-        try {
-            String sql = "SELECT COUNT(*) FROM users WHERE contact = ?";
-            Long count = jdbcTemplate.queryForObject(sql, Long.class, contact);
-            return Optional.ofNullable(count).orElse(0L) > 0;
-        } catch (DataAccessException e) {
-            throw e;
-        }
+        String sql = "SELECT COUNT(*) FROM users WHERE contact = ?";
+        Long count = jdbcTemplate.queryForObject(sql, Long.class, contact);
+        return Optional.ofNullable(count).orElse(0L) > 0;
     }
 
     public boolean exists(long id) throws DataAccessException {
-        try {
-            String sql = "SELECT COUNT(*) FROM users WHERE id = ?";
-            Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
-            return count != null && count > 0;
-        } catch (DataAccessException e) {
-            throw e;
-        }
+        String sql = "SELECT COUNT(*) FROM users WHERE id = ?";
+        Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
+        return count != null && count > 0;
     }
 
     public Short getRole(long userId) throws DataAccessException {
@@ -149,18 +134,12 @@ public class UsersDAO {
             return jdbcTemplate.queryForObject(sql, Short.class, userId);
         } catch (EmptyResultDataAccessException e) {
             return null;
-        } catch (DataAccessException e) {
-            throw e;
         }
     }
 
     public void setAuthTime(long userId, Timestamp authTime) throws DataAccessException {
-        try {
-            String sql = "UPDATE users SET auth_time = ? WHERE id = ?";
-            jdbcTemplate.update(sql, authTime, userId);
-        } catch (DataAccessException e) {
-            throw e;
-        }
+        String sql = "UPDATE users SET auth_time = ? WHERE id = ?";
+        jdbcTemplate.update(sql, authTime, userId);
     }
 
     public Timestamp getAuthTime(long userId) throws DataAccessException {
@@ -169,8 +148,6 @@ public class UsersDAO {
             return jdbcTemplate.queryForObject(sql, Timestamp.class, userId);
         } catch (EmptyResultDataAccessException e) {
             return null; // Return null when user with the given id is not found
-        } catch (DataAccessException e) {
-            throw e;
         }
     }
 }

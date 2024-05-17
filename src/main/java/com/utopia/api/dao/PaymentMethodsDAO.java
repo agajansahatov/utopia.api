@@ -2,7 +2,6 @@ package com.utopia.api.dao;
 
 import com.utopia.api.entities.PaymentMethod;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
@@ -24,15 +23,8 @@ public class PaymentMethodsDAO {
     }
 
     public List<PaymentMethod> getAll() throws DataAccessException {
-        try {
-            String sql = "SELECT * FROM payment_methods";
-            RowMapper<PaymentMethod> rowMapper = (rs, rowNum) -> mapPaymentMethod(rs);
-            return jdbcTemplate.query(sql, rowMapper);
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        } catch (DataAccessException e) {
-            throw e;
-        }
+        String sql = "SELECT * FROM payment_methods";
+        RowMapper<PaymentMethod> rowMapper = (rs, rowNum) -> mapPaymentMethod(rs);
+        return jdbcTemplate.query(sql, rowMapper);
     }
-
 }

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,8 +20,8 @@ public class RolesController {
     private final RolesDAO rolesDAO;
 
     @Autowired
-    public RolesController(RolesDAO rolesDAO) {
-        this.rolesDAO = rolesDAO;
+    public RolesController(JdbcTemplate jdbcTemplate) {
+        this.rolesDAO = new RolesDAO(jdbcTemplate);
     }
 
     @GetMapping("/roles")
