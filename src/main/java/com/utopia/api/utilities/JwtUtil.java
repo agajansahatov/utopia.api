@@ -51,7 +51,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .claim("userId", user.getId())
-                .claim("userRole", user.getRole())
+                .claim("userRole", user.getRole_id())
                 .setIssuedAt(authTimeFromDb)
                 .setExpiration(expirationDate)
                 .signWith(key)

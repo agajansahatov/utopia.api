@@ -3,9 +3,7 @@ package com.utopia.api.controllers;
 import com.utopia.api.dao.ProductsDAO;
 import com.utopia.api.dao.UsersDAO;
 import com.utopia.api.dto.UserResponseDTO;
-import com.utopia.api.entities.Product;
 import com.utopia.api.entities.User;
-import com.utopia.api.utilities.ImageNameGenerator;
 import com.utopia.api.utilities.JwtChecked;
 import com.utopia.api.utilities.JwtUtil;
 import com.utopia.api.utilities.Validator;
@@ -15,14 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -93,13 +85,13 @@ public class AdminController {
 
             // Auth: owner (Only owners can update a user's role)
             boolean isRoleUpdated = false;
-            if(req.getRole() != null) {
+            if(req.getRole_id() != null) {
                 if(jwtChecked.userRole != 1) {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                             .body("Unauthorized: You cannot update the user role");
                 }
 
-                user.setRole(req.getRole());
+                user.setRole_id(req.getRole_id());
                 isRoleUpdated = true;
             }
 

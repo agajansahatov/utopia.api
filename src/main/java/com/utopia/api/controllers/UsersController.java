@@ -39,17 +39,37 @@ public class UsersController {
     public ResponseEntity<Object> addUser(@RequestBody User req) {
 
         if(!User.isValid(req))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid properties!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid contact or password.");
 
-        String hashedPassword = passwordEncoder.encode(req.getPassword());
-        req.setPassword(hashedPassword);
+        if (req.getFirstname() == null || req.getFirstname().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Firstname is required.");
+        }
 
-        req.setBalance(BigDecimal.valueOf(100000));
+        if (req.getCountry() == null || req.getCountry().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Country is required.");
+        }
+
+        if(req.getProvince() == null || req.getProvince().isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Province is required.");
+        }
+
+        if(req.getCity() == null || req.getCity().isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("City is required.");
+        }
+
+        if(req.getAddress() == null || req.getAddress().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Address is required.");
+        }
 
         try {
             if (usersDAO.exists(req.getContact())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User with this contact already exists");
             }
+
+            String hashedPassword = passwordEncoder.encode(req.getPassword());
+            req.setPassword(hashedPassword);
+
+            req.setBalance(BigDecimal.valueOf(100000));
 
             usersDAO.add(req);
 
@@ -59,7 +79,7 @@ public class UsersController {
             return ResponseEntity.status(HttpStatus.CREATED).body(jwtToken);
         } catch (Exception e) {
             LOGGER.error("Error during user registration: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during user registration");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred during user registration.");
         }
     }
 
@@ -99,7 +119,7 @@ public class UsersController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Invalid token or userId");
         }
 
-        if(req.getRole() != null) {
+        if(req.getRole_id() != null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: You cannot update the user role");
         }
         if(req.getBalance() != null) {

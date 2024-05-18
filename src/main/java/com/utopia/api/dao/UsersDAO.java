@@ -5,7 +5,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -58,7 +57,7 @@ public class UsersDAO {
         jdbcTemplate.update(sql,
                 user.getContact(),
                 user.getPassword(),
-                user.getRole(),
+                user.getRole_id(),
                 user.getFirstname(),
                 user.getLastname(),
                 user.getBalance(),
@@ -74,7 +73,7 @@ public class UsersDAO {
         user.setId(rs.getLong("id"));
         user.setContact(rs.getString("contact"));
         user.setPassword(rs.getString("password"));
-        user.setRole(rs.getShort("role"));
+        user.setRole_id(rs.getShort("role_id"));
         user.setFirstname(rs.getString("firstname"));
         user.setLastname(rs.getString("lastname"));
         user.setCountry(rs.getString("country"));

@@ -52,7 +52,7 @@ The `public` folder serves static assets, including HTML, images, and videos. Re
    - "/products?page=3&amount=10": returns the third page using pagination (The result set will be chosen among all products). The list will be having 10 records, and they will be shuffled in each other every time. (The records in each page doesn't change);
    - "/products?category=1": returns all products with the given category id.
    - "/products?page=1&amount=10&category=1": pagination using category. Pay attention to page and amount arguments, if you set them more than the number of the products with the given category you will get an error.
-   - "/products/40": returns all the details of the given product as pathVariable.
+   - "/products/40": returns all details of the given product as pathVariable.
    - "/categories": returns list of all categories (possible for a product);
    - "/roles": returns list of all roles (user roles);
    - "/statuses": returns list of all statuses (order statuses);
