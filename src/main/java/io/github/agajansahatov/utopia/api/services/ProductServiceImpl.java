@@ -1,8 +1,11 @@
 package io.github.agajansahatov.utopia.api.services;
 
-import io.github.agajansahatov.utopia.api.entities.Product;
+import io.github.agajansahatov.utopia.api.mappers.ProductMapper;
+import io.github.agajansahatov.utopia.api.models.ProductDetailsForCustomerDTO;
+import io.github.agajansahatov.utopia.api.models.ProductSummaryForCustomerDTO;
 import io.github.agajansahatov.utopia.api.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,31 +13,19 @@ import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-
     private final ProductRepository productRepository;
 
+    private final ProductMapper productMapper;
+
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper) {
         this.productRepository = productRepository;
+        this.productMapper = productMapper;
     }
-
     @Override
-    public List<Product> findAllProducts() {
-        return productRepository.findAll();
-    }
-
-    @Override
-    public Optional<Product> findProductById(Long id) {
-        return productRepository.findById(id);
-    }
-
-    @Override
-    public Product saveProduct(Product product) {
-        return productRepository.save(product);
-    }
-
-    @Override
-    public void deleteProduct(Long id) {
-        productRepository.deleteById(id);
+    @NonNull
+    public Optional<ProductDetailsForCustomerDTO> getProductForCustomer(Long id) {
+        return productRepository.findById(id)
+                .map(productMapper::productToProductDetailsForCustomerDTO);
     }
 }

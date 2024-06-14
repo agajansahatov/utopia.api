@@ -28,6 +28,9 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal salesPrice;
 
+    @Column(nullable = false)
+    private int numberInStock = 0;
+
     @Column
     private String description;
 
@@ -37,32 +40,32 @@ public class Product {
     @Column(columnDefinition = "json")
     private String properties;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "categorized_products",
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    @JsonIgnore
     private List<Category> categories;
 
-    @ManyToMany(mappedBy = "likedProducts")
     @JsonIgnore
+    @ManyToMany(mappedBy = "likedProducts")
     private List<User> likedByUsers;
 
-    @ManyToMany(mappedBy = "visitedProducts")
     @JsonIgnore
+    @ManyToMany(mappedBy = "visitedProducts")
     private List<User> visitedByUsers;
 
-    @OneToMany(mappedBy = "product")
     @JsonIgnore
+    @OneToMany(mappedBy = "product")
     private List<Order> orders;
 
-    @OneToMany(mappedBy = "product")
     @JsonIgnore
+    @OneToMany(mappedBy = "product")
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "product")
     @JsonIgnore
+    @OneToMany(mappedBy = "product")
     private List<Media> medias;
 }

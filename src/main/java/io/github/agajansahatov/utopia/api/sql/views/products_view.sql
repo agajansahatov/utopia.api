@@ -8,6 +8,7 @@ SELECT
     p.title,
     p.original_price,
     p.sales_price,
+    p.number_in_stock,
     CONCAT(LEFT(p.description, 500), ' ...') AS description,
     p.date,
     m.name as "main_media"

@@ -1,5 +1,6 @@
 package io.github.agajansahatov.utopia.api.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,6 +20,7 @@ public class Category {
     @Column(nullable = false, unique = true, length = 50)
     private String name;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "categories")
     private List<Product> products;
 }
