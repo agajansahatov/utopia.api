@@ -9,7 +9,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
-@Primary
 @Service
 public class ProductServiceEagerImpl implements ProductService{
     private final ProductRepository productRepository;

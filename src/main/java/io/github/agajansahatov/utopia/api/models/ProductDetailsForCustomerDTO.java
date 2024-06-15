@@ -24,8 +24,10 @@ public class ProductDetailsForCustomerDTO {
     private Date date;
     @JsonRawValue
     private String properties;
-    private List<Media> medias;
-    private List<Category> categories;
+    @JsonRawValue
+    private String medias;
+    @JsonRawValue
+    private String categories;
     private int numberInStock;
     private int likesCount;
     private int visitsCount;
