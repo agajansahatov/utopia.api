@@ -7,7 +7,6 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
-
     @Mapping(target = "price", source = "salesPrice")
     @Mapping(target = "likesCount", expression = "java(product.getLikedByUsers().size())")
     @Mapping(target = "visitsCount", expression = "java(product.getVisitedByUsers().size())")

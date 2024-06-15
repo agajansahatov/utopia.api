@@ -1,8 +1,8 @@
 USE utopia;
 
-DROP VIEW IF EXISTS products_view;
+DROP VIEW IF EXISTS products_summary_view;
 
-CREATE VIEW products_view AS
+CREATE VIEW products_summary_view AS
 SELECT 
 	p.id,
     p.title,

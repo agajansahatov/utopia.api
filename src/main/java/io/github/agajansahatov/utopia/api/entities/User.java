@@ -1,5 +1,6 @@
 package io.github.agajansahatov.utopia.api.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +25,7 @@ public class User {
     @Column(nullable = false, length = 255)
     private String password;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
@@ -55,6 +57,7 @@ public class User {
     @Column(nullable = false)
     private Date authTime;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "favourites",
@@ -63,6 +66,7 @@ public class User {
     )
     private List<Product> likedProducts;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "traces",
@@ -71,9 +75,11 @@ public class User {
     )
     private List<Product> visitedProducts;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Comment> comments;
 }

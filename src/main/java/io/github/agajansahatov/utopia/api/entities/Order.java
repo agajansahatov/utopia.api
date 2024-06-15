@@ -1,5 +1,6 @@
 package io.github.agajansahatov.utopia.api.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,10 +17,12 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
@@ -34,14 +37,17 @@ public class Order {
     @Column
     private Date shippedDate;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "shipper_id")
     private Shipper shipper;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "payment_method_id", nullable = false)
     private PaymentMethod paymentMethod;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
     private Status status;

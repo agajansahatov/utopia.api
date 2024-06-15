@@ -1,5 +1,6 @@
 package io.github.agajansahatov.utopia.api.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,6 +20,7 @@ public class Role {
     @Column(nullable = false, unique = true, length = 50)
     private String name;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "role")
     private List<User> users;
 }

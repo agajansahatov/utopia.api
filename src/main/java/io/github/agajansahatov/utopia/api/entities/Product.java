@@ -29,7 +29,7 @@ public class Product {
     private BigDecimal salesPrice;
 
     @Column(nullable = false)
-    private int numberInStock = 0;
+    private int numberInStock;
 
     @Column
     private String description;
