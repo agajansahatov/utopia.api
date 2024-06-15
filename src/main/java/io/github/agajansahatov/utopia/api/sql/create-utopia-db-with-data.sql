@@ -259,14 +259,39 @@ INSERT INTO `products` VALUES (1,'A high quality turkmen carpet',899.00,999.00,1
 UNLOCK TABLES;
 
 --
--- Temporary view structure for view `products_view`
+-- Temporary view structure for view `products_details_view`
 --
 
-DROP TABLE IF EXISTS `products_view`;
-/*!50001 DROP VIEW IF EXISTS `products_view`*/;
+DROP TABLE IF EXISTS `products_details_view`;
+/*!50001 DROP VIEW IF EXISTS `products_details_view`*/;
 SET @saved_cs_client     = @@character_set_client;
 /*!50503 SET character_set_client = utf8mb4 */;
-/*!50001 CREATE VIEW `products_view` AS SELECT 
+/*!50001 CREATE VIEW `products_details_view` AS SELECT 
+ 1 AS `id`,
+ 1 AS `title`,
+ 1 AS `original_price`,
+ 1 AS `sales_price`,
+ 1 AS `number_in_stock`,
+ 1 AS `description`,
+ 1 AS `date`,
+ 1 AS `properties`,
+ 1 AS `medias`,
+ 1 AS `categories`,
+ 1 AS `likes_count`,
+ 1 AS `visits_count`,
+ 1 AS `orders_count`,
+ 1 AS `comments_count`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `products_summary_view`
+--
+
+DROP TABLE IF EXISTS `products_summary_view`;
+/*!50001 DROP VIEW IF EXISTS `products_summary_view`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `products_summary_view` AS SELECT 
  1 AS `id`,
  1 AS `title`,
  1 AS `original_price`,
@@ -450,7 +475,7 @@ BEGIN
 	
 	SELECT COUNT(*) INTO count
 	FROM categorized_products cp
-	JOIN products_view p
+	JOIN products p
 		ON cp.product_id = p.id
 	WHERE cp.category_id = category_id;
     
@@ -477,8 +502,15 @@ BEGIN
 	DECLARE product_categories JSON;
     
 	SELECT 
-		JSON_ARRAYAGG(cp.category_id) INTO product_categories
+		JSON_ARRAYAGG(
+			(JSON_OBJECT(
+				"id", cp.category_id, 
+				"name", c.name
+			))
+		) INTO product_categories
 	FROM categorized_products cp
+    JOIN categories c
+		ON c.id = cp.category_id
 	WHERE cp.product_id = product_id;
     
     RETURN product_categories;
@@ -646,14 +678,14 @@ BEGIN
     IF category_id IS NOT NULL AND category_id > 0 THEN
         SELECT p.*
         FROM categorized_products cp
-        JOIN products_view p
+        JOIN products_summary_view p
             ON cp.product_id = p.id
         WHERE cp.category_id = category_id
         LIMIT start_index, amount;
     ELSE
         -- Fetch all products with pagination
         SELECT * 
-        FROM products_view 
+        FROM products_summary_view 
         LIMIT start_index, amount;
     END IF;
 END ;;
@@ -685,9 +717,9 @@ BEGIN
 		p.sales_price,
 		p.description,
 		p.date,
-		p.media
+		p.main_media
 	FROM categorized_products cp
-	JOIN products_view p
+	JOIN products_summary_view p
 		ON cp.product_id = p.id
 	WHERE cp.category_id = category_id;
 END ;;
@@ -698,10 +730,10 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
--- Final view structure for view `products_view`
+-- Final view structure for view `products_details_view`
 --
 
-/*!50001 DROP VIEW IF EXISTS `products_view`*/;
+/*!50001 DROP VIEW IF EXISTS `products_details_view`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
@@ -710,7 +742,25 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `products_view` AS select `p`.`id` AS `id`,`p`.`title` AS `title`,`p`.`original_price` AS `original_price`,`p`.`sales_price` AS `sales_price`,`p`.`number_in_stock` AS `number_in_stock`,concat(left(`p`.`description`,500),' ...') AS `description`,`p`.`date` AS `date`,`m`.`name` AS `main_media` from (`products` `p` join `medias` `m` on(((`p`.`id` = `m`.`product_id`) and (`m`.`is_main` = 1)))) order by `p`.`id` */;
+/*!50001 VIEW `products_details_view` AS select `p`.`id` AS `id`,`p`.`title` AS `title`,`p`.`original_price` AS `original_price`,`p`.`sales_price` AS `sales_price`,`p`.`number_in_stock` AS `number_in_stock`,`p`.`description` AS `description`,`p`.`date` AS `date`,`p`.`properties` AS `properties`,`get_medias_as_array`(`p`.`id`) AS `medias`,`get_categorized_products_as_array`(`p`.`id`) AS `categories`,(select count(0) from `favourites` where (`favourites`.`product_id` = `p`.`id`)) AS `likes_count`,(select count(0) from `traces` where (`traces`.`product_id` = `p`.`id`)) AS `visits_count`,(select count(0) from `orders` where (`orders`.`product_id` = `p`.`id`)) AS `orders_count`,(select count(0) from `comments` where (`comments`.`product_id` = `p`.`id`)) AS `comments_count` from `products` `p` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `products_summary_view`
+--
+
+/*!50001 DROP VIEW IF EXISTS `products_summary_view`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `products_summary_view` AS select `p`.`id` AS `id`,`p`.`title` AS `title`,`p`.`original_price` AS `original_price`,`p`.`sales_price` AS `sales_price`,`p`.`number_in_stock` AS `number_in_stock`,concat(left(`p`.`description`,500),' ...') AS `description`,`p`.`date` AS `date`,`m`.`name` AS `main_media` from (`products` `p` join `medias` `m` on(((`p`.`id` = `m`.`product_id`) and (`m`.`is_main` = 1)))) order by `p`.`id` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -724,4 +774,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-06-14  5:54:01
+-- Dump completed on 2024-06-15 15:49:33

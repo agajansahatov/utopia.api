@@ -48,14 +48,14 @@ BEGIN
     IF category_id IS NOT NULL AND category_id > 0 THEN
         SELECT p.*
         FROM categorized_products cp
-        JOIN products_view p
+        JOIN products_summary_view p
             ON cp.product_id = p.id
         WHERE cp.category_id = category_id
         LIMIT start_index, amount;
     ELSE
         -- Fetch all products with pagination
         SELECT * 
-        FROM products_view 
+        FROM products_summary_view 
         LIMIT start_index, amount;
     END IF;
 END $$

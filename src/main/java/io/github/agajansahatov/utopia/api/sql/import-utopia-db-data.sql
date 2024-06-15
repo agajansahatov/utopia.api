@@ -175,7 +175,7 @@ BEGIN
 	
 	SELECT COUNT(*) INTO count
 	FROM categorized_products cp
-	JOIN products_view p
+	JOIN products p
 		ON cp.product_id = p.id
 	WHERE cp.category_id = category_id;
     
@@ -202,8 +202,15 @@ BEGIN
 	DECLARE product_categories JSON;
     
 	SELECT 
-		JSON_ARRAYAGG(cp.category_id) INTO product_categories
+		JSON_ARRAYAGG(
+			(JSON_OBJECT(
+				"id", cp.category_id, 
+				"name", c.name
+			))
+		) INTO product_categories
 	FROM categorized_products cp
+    JOIN categories c
+		ON c.id = cp.category_id
 	WHERE cp.product_id = product_id;
     
     RETURN product_categories;
@@ -371,14 +378,14 @@ BEGIN
     IF category_id IS NOT NULL AND category_id > 0 THEN
         SELECT p.*
         FROM categorized_products cp
-        JOIN products_view p
+        JOIN products_summary_view p
             ON cp.product_id = p.id
         WHERE cp.category_id = category_id
         LIMIT start_index, amount;
     ELSE
         -- Fetch all products with pagination
         SELECT * 
-        FROM products_view 
+        FROM products_summary_view 
         LIMIT start_index, amount;
     END IF;
 END ;;
@@ -410,9 +417,9 @@ BEGIN
 		p.sales_price,
 		p.description,
 		p.date,
-		p.media
+		p.main_media
 	FROM categorized_products cp
-	JOIN products_view p
+	JOIN products_summary_view p
 		ON cp.product_id = p.id
 	WHERE cp.category_id = category_id;
 END ;;
@@ -431,4 +438,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-06-14  5:54:29
+-- Dump completed on 2024-06-15 15:50:13

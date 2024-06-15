@@ -15,7 +15,7 @@ BEGIN
 	
 	SELECT COUNT(*) INTO count
 	FROM categorized_products cp
-	JOIN products_view p
+	JOIN products p
 		ON cp.product_id = p.id
 	WHERE cp.category_id = category_id;
     

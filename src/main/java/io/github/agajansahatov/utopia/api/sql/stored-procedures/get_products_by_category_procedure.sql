@@ -18,7 +18,7 @@ BEGIN
 		p.date,
 		p.main_media
 	FROM categorized_products cp
-	JOIN products_view p
+	JOIN products_summary_view p
 		ON cp.product_id = p.id
 	WHERE cp.category_id = category_id;
 END $$
