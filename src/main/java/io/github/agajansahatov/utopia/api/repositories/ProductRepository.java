@@ -3,6 +3,7 @@ package io.github.agajansahatov.utopia.api.repositories;
 import io.github.agajansahatov.utopia.api.entities.Product;
 import io.github.agajansahatov.utopia.api.models.ProductDetailsForCustomerDTO;
 import io.github.agajansahatov.utopia.api.projections.ProductDetailsProjection;
+import io.github.agajansahatov.utopia.api.projections.ProductSummaryProjection;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "SELECT * FROM products_details_view WHERE id = :id", nativeQuery = true)
     Optional<ProductDetailsProjection> findProductDetailsById(@Param("id") Long id);
+
+    @Query(value = "SELECT * FROM products_summary_view WHERE id = :id", nativeQuery = true)
+    Optional<ProductSummaryProjection> findProductSummaryById(@Param("id") Long id);
 }

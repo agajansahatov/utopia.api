@@ -2,6 +2,7 @@ package io.github.agajansahatov.utopia.api.services;
 
 import io.github.agajansahatov.utopia.api.mappers.ProductMapper;
 import io.github.agajansahatov.utopia.api.models.ProductDetailsForCustomerDTO;
+import io.github.agajansahatov.utopia.api.models.ProductSummaryForCustomerDTO;
 import io.github.agajansahatov.utopia.api.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -22,8 +23,13 @@ public class ProductServiceEagerImpl implements ProductService{
 
     @Override
     @NonNull
-    public Optional<ProductDetailsForCustomerDTO> getProductForCustomer(Long id) {
+    public Optional<ProductDetailsForCustomerDTO> getProductDetails(Long id) {
         return productRepository.findById(id)
                 .map(productMapper::productToProductDetailsForCustomerDTO);
+    }
+
+    @Override
+    public Optional<ProductSummaryForCustomerDTO> getProductSummary(Long id) {
+        return Optional.empty();
     }
 }

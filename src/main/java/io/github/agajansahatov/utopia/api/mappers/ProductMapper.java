@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.agajansahatov.utopia.api.entities.Product;
 import io.github.agajansahatov.utopia.api.models.ProductDetailsForCustomerDTO;
+import io.github.agajansahatov.utopia.api.models.ProductSummaryForCustomerDTO;
 import io.github.agajansahatov.utopia.api.projections.ProductDetailsProjection;
+import io.github.agajansahatov.utopia.api.projections.ProductSummaryProjection;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -23,8 +25,6 @@ public interface ProductMapper {
     @Mapping(target = "categories", source = "categories", qualifiedByName = "convertListToJson")
     ProductDetailsForCustomerDTO productToProductDetailsForCustomerDTO(Product product);
 
-    @Mapping(target = "price", source = "salesPrice")
-    ProductDetailsForCustomerDTO projectionToProductDetailsForCustomerDTO(ProductDetailsProjection projection);
 
     @Named("convertListToJson")
     static String convertListToJson(Object list) {
@@ -34,4 +34,10 @@ public interface ProductMapper {
             throw new RuntimeException("Failed to convert list to JSON", e);
         }
     }
+
+    @Mapping(target = "price", source = "salesPrice")
+    ProductDetailsForCustomerDTO projectionToProductDetailsForCustomerDTO(ProductDetailsProjection projection);
+
+    @Mapping(target = "price", source = "salesPrice")
+    ProductSummaryForCustomerDTO projectionToProductSummaryForCustomerDTO(ProductSummaryProjection projection);
 }

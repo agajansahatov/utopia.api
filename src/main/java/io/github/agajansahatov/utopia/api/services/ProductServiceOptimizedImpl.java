@@ -2,7 +2,9 @@ package io.github.agajansahatov.utopia.api.services;
 
 import io.github.agajansahatov.utopia.api.mappers.ProductMapper;
 import io.github.agajansahatov.utopia.api.models.ProductDetailsForCustomerDTO;
+import io.github.agajansahatov.utopia.api.models.ProductSummaryForCustomerDTO;
 import io.github.agajansahatov.utopia.api.projections.ProductDetailsProjection;
+import io.github.agajansahatov.utopia.api.projections.ProductSummaryProjection;
 import io.github.agajansahatov.utopia.api.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -24,8 +26,14 @@ public class ProductServiceOptimizedImpl implements ProductService {
     }
 
     @Override
-    public Optional<ProductDetailsForCustomerDTO> getProductForCustomer(Long id) {
+    public Optional<ProductDetailsForCustomerDTO> getProductDetails(Long id) {
         Optional<ProductDetailsProjection> projection = productRepository.findProductDetailsById(id);
         return projection.map(productMapper::projectionToProductDetailsForCustomerDTO);
+    }
+
+    @Override
+    public Optional<ProductSummaryForCustomerDTO> getProductSummary(Long id) {
+        Optional<ProductSummaryProjection> projection = productRepository.findProductSummaryById(id);
+        return projection.map(productMapper::projectionToProductSummaryForCustomerDTO);
     }
 }
