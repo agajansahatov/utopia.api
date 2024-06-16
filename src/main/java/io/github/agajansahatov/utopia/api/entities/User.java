@@ -6,7 +6,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -64,7 +65,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
-    private List<Product> likedProducts;
+    private Set<Product> likedProducts = new LinkedHashSet<>();
 
     @JsonIgnore
     @ManyToMany
@@ -73,13 +74,13 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
-    private List<Product> visitedProducts;
+    private Set<Product> visitedProducts = new LinkedHashSet<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
-    private List<Order> orders;
+    private Set<Order> orders = new LinkedHashSet<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
-    private List<Comment> comments;
+    private Set<Comment> comments = new LinkedHashSet<>();
 }

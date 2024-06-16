@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -22,5 +24,5 @@ public class Category {
 
     @JsonIgnore
     @ManyToMany(mappedBy = "categories")
-    private List<Product> products;
+    private Set<Product> products = new LinkedHashSet<>();
 }

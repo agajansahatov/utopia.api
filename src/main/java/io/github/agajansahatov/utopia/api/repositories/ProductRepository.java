@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     @NonNull
     @EntityGraph(attributePaths = {"medias", "categories", "likedByUsers", "visitedByUsers", "orders", "comments"})
-    Optional<Product> findById(@NonNull Long id);
+    Optional<Product> findWithAllDetailsById(@NonNull Long id);
 
     @Query(value = "SELECT * FROM products_details_view WHERE id = :id", nativeQuery = true)
     Optional<ProductDetailsProjection> findProductDetailsById(@Param("id") Long id);

@@ -2,6 +2,7 @@ package io.github.agajansahatov.utopia.api.services;
 
 import io.github.agajansahatov.utopia.api.mappers.ProductMapper;
 import io.github.agajansahatov.utopia.api.models.ProductDetailsForCustomerDTO;
+import io.github.agajansahatov.utopia.api.models.ProductForCustomerDTO;
 import io.github.agajansahatov.utopia.api.models.ProductSummaryForCustomerDTO;
 import io.github.agajansahatov.utopia.api.projections.ProductDetailsProjection;
 import io.github.agajansahatov.utopia.api.projections.ProductSummaryProjection;
@@ -13,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-@Primary
 @Service
 public class ProductServiceOptimizedImpl implements ProductService {
     private final ProductRepository productRepository;
@@ -23,6 +23,13 @@ public class ProductServiceOptimizedImpl implements ProductService {
     public ProductServiceOptimizedImpl(ProductRepository productRepository, ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
+    }
+
+    // Same with ProductServiceEagerImpl
+    @Override
+    public Optional<ProductForCustomerDTO> getProduct(Long id) {
+        return productRepository.findById(id)
+                .map(productMapper::productToProductForCustomerDTO);
     }
 
     @Override
