@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-@Primary
 @Service
 public class ProductServiceEagerImpl implements ProductService{
     private final ProductRepository productRepository;
@@ -25,6 +24,7 @@ public class ProductServiceEagerImpl implements ProductService{
         this.productMapper = productMapper;
     }
 
+    // Same with ProductServiceOptimizedImpl
     @Override
     public Optional<ProductForCustomerDTO> getProduct(Long id) {
         return productRepository.findById(id)

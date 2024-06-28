@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Primary
 @Service
 public class ProductServiceOptimizedImpl implements ProductService {
     private final ProductRepository productRepository;

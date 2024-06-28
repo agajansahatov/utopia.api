@@ -42,6 +42,7 @@ public interface ProductMapper {
     @Mapping(target = "mainMedia", source = "product", qualifiedByName = "getMainMediaName")
     ProductSummaryForCustomerDTO productToProductSummaryForCustomerDTO(Product product);
 
+    
     @Mapping(target = "price", source = "salesPrice")
     @Mapping(target = "likesCount", expression = "java(product.getLikedByUsers().size())")
     @Mapping(target = "visitsCount", expression = "java(product.getVisitedByUsers().size())")
