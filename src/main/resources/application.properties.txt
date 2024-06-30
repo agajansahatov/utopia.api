@@ -1,0 +1,15 @@
+spring.application.name=utopia.api
+
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.url=jdbc:mysql://localhost:portNumber/utopia
+spring.datasource.username=
+spring.datasource.password=
+
+spring.jpa.database=mysql
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.properties.hibernate.show_sql=false
+spring.jpa.properties.hibernate.format_sql=true
+
+rsa.private-key=classpath:certs/private.pem
+rsa.public-key=classpath:certs/public.pem

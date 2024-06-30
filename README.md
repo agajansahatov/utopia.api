@@ -59,6 +59,13 @@ The `public` folder serves static assets, including HTML, images, and videos. Re
    - "/shippers": returns list of all shippers;
    - "/payment-methods": returns list of all payment methods;
    - "/categorized-products": returns list of all categorized products;
+
+## Reminders
+   - For generating the secret keys for jwt token, you should open the src/main/resources/certs folder in the console and type this commands:
+     - "openssl genrsa -out keypair.pem 2048"
+     - "openssl rsa -in keypair.pem -pubout -out public.pem"
+     - "openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in keypair.pem -out private.pem"
+
 ## Contribution
 
 Contributions to this project are welcome. Feel free to fork the repository, make improvements, and submit pull requests to collaborate with the development efforts.

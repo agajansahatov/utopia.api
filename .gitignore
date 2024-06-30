@@ -41,6 +41,9 @@ out/
 
 application.properties
 /src/main/resources/application.properties
+/src/main/resources/certs/
+private.pem
+public.pem
 
 /public/images/products/
 # Unignore the specific file within the directory
