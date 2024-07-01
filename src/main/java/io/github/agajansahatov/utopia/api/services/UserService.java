@@ -15,6 +15,9 @@
         private final UserRepository userRepository;
         private final PasswordEncoder passwordEncoder;
 
+        // This method is a method of UserDetailsService,
+        // which is used by the SecurityConfig
+        // to do the auth
         @Override
         public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
             // Here we used findByContact,

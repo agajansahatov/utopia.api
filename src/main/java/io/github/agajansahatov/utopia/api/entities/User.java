@@ -90,7 +90,9 @@ public class User implements UserDetails {
     private Set<Comment> comments = new LinkedHashSet<>();
 
     // The rest is the all the methods of the
-    // UserDetails interface that we need implement
+    // UserDetails interface that we need implement,
+    // which is used by UserDetailsService
+    // which is used by SecurityConfig
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,5 +1,6 @@
 package io.github.agajansahatov.utopia.api.services;
 
+import io.github.agajansahatov.utopia.api.entities.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -22,16 +23,19 @@ public class JwtTokenService {
     public String generateToken(Authentication authentication) {
         Instant now = Instant.now();
 
-        String scope = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
+        // Assuming that getAuthorities() returns a collection with exactly one element (role)
+        String role = authentication.getAuthorities().iterator().next().getAuthority();
+
+        User user = (User) authentication.getPrincipal();
+        String fullName = user.getFirstname() + " " + user.getLastname();
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
+                .issuer("utopia.api")
                 .issuedAt(now)
-                .expiresAt(now.plus(1, ChronoUnit.MINUTES))
-                .subject(authentication.getName())
-                .claim("scope", scope)
+                .expiresAt(now.plus(10, ChronoUnit.MINUTES))
+                .subject(fullName)
+                .claim("id", user.getId())
+                .claim("role", role)
                 .build();
 
         return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
