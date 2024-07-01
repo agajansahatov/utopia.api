@@ -16,8 +16,10 @@ import java.util.*;
 @Setter
 @Entity
 @Table(name = "users")
-// Here we need also to implement the UserDetails interface
+// Here we also need to implement the UserDetails interface
 // Because the spring security authorization uses it
+// We could also implement a CustomUserDetails model,
+// but this seemed a cleaner approach
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -103,24 +105,28 @@ public class User implements UserDetails {
 
     @Override
     @JsonIgnore
+    // In the future we can add a property for this and persist it on the db
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
     @JsonIgnore
+    // In the future we can add a property for this and persist it on the db
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
     @JsonIgnore
+    // In the future we can add a property for this and persist it on the db
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
     @JsonIgnore
+    // In the future we can add a property for this and persist it on the db
     public boolean isEnabled() {
         return true;
     }

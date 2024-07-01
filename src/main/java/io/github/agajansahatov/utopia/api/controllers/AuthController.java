@@ -1,8 +1,12 @@
 package io.github.agajansahatov.utopia.api.controllers;
 
-import io.github.agajansahatov.utopia.api.services.JwtService;
+import io.github.agajansahatov.utopia.api.models.requests.AuthRequest;
+import io.github.agajansahatov.utopia.api.services.JwtTokenService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -12,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -20,17 +23,17 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtService tokenService;
+    private final JwtTokenService tokenService;
 
     @PostMapping
-    public String authenticate(@RequestBody Map<String, String> userCredentials) {
+    public ResponseEntity<?> authenticate(@Valid @RequestBody AuthRequest authRequest) {
         try {
-            String username = userCredentials.get("contact");
-            String password = userCredentials.get("password");
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            return tokenService.generateToken(authentication);
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authRequest.getContact(), authRequest.getPassword())
+            );
+            return ResponseEntity.ok(tokenService.generateToken(authentication));
         } catch (AuthenticationException e) {
-            throw new UsernameNotFoundException("Invalid credentials");
+            throw new BadCredentialsException("Invalid credentials");
         }
     }
 }
