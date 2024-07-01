@@ -1,9 +1,8 @@
 package io.github.agajansahatov.utopia.api.repositories;
 
 import io.github.agajansahatov.utopia.api.entities.Product;
-import io.github.agajansahatov.utopia.api.models.ProductDetailsForCustomerDTO;
-import io.github.agajansahatov.utopia.api.projections.ProductDetailsProjection;
-import io.github.agajansahatov.utopia.api.projections.ProductSummaryProjection;
+import io.github.agajansahatov.utopia.api.models.ProductDetailsProjection;
+import io.github.agajansahatov.utopia.api.models.ProductSummaryProjection;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

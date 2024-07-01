@@ -1,4 +1,4 @@
-package io.github.agajansahatov.utopia.api.projections;
+package io.github.agajansahatov.utopia.api.models;
 
 import java.math.BigDecimal;
 import java.util.Date;

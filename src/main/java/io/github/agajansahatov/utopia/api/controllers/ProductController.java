@@ -1,16 +1,10 @@
 package io.github.agajansahatov.utopia.api.controllers;
 
 
-import io.github.agajansahatov.utopia.api.models.ProductDetailsForCustomerDTO;
-import io.github.agajansahatov.utopia.api.models.ProductSummaryForCustomerDTO;
 import io.github.agajansahatov.utopia.api.services.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController

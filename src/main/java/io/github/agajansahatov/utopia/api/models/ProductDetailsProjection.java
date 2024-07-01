@@ -1,12 +1,7 @@
-package io.github.agajansahatov.utopia.api.projections;
-
-import com.fasterxml.jackson.annotation.JsonRawValue;
-import io.github.agajansahatov.utopia.api.entities.Category;
-import io.github.agajansahatov.utopia.api.entities.Media;
+package io.github.agajansahatov.utopia.api.models;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 public interface ProductDetailsProjection {
     Long getId();

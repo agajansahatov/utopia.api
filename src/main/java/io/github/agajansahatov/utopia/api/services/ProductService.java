@@ -1,8 +1,8 @@
 package io.github.agajansahatov.utopia.api.services;
 
-import io.github.agajansahatov.utopia.api.models.ProductDetailsForCustomerDTO;
-import io.github.agajansahatov.utopia.api.models.ProductForCustomerDTO;
-import io.github.agajansahatov.utopia.api.models.ProductSummaryForCustomerDTO;
+import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductDetailsForCustomerDTO;
+import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductForCustomerDTO;
+import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductSummaryForCustomerDTO;
 
 import java.util.Optional;
 

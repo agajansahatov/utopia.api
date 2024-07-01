@@ -2,9 +2,9 @@ package io.github.agajansahatov.utopia.api.unit.controllers;
 
 import io.github.agajansahatov.utopia.api.config.SecurityConfig;
 import io.github.agajansahatov.utopia.api.controllers.ProductController;
-import io.github.agajansahatov.utopia.api.models.ProductDetailsForCustomerDTO;
-import io.github.agajansahatov.utopia.api.models.ProductForCustomerDTO;
-import io.github.agajansahatov.utopia.api.models.ProductSummaryForCustomerDTO;
+import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductDetailsForCustomerDTO;
+import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductForCustomerDTO;
+import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductSummaryForCustomerDTO;
 import io.github.agajansahatov.utopia.api.services.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

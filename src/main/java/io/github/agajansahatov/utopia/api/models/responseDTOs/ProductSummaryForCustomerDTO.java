@@ -1,4 +1,4 @@
-package io.github.agajansahatov.utopia.api.models;
+package io.github.agajansahatov.utopia.api.models.responseDTOs;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

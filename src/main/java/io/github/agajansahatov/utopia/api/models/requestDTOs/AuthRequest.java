@@ -1,4 +1,4 @@
-package io.github.agajansahatov.utopia.api.models.requests;
+package io.github.agajansahatov.utopia.api.models.requestDTOs;
 
 import io.github.agajansahatov.utopia.api.validators.Contact;
 import jakarta.validation.constraints.NotBlank;

@@ -1,6 +1,6 @@
 package io.github.agajansahatov.utopia.api.controllers;
 
-import io.github.agajansahatov.utopia.api.models.requests.AuthRequest;
+import io.github.agajansahatov.utopia.api.models.requestDTOs.AuthRequest;
 import io.github.agajansahatov.utopia.api.services.JwtTokenService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

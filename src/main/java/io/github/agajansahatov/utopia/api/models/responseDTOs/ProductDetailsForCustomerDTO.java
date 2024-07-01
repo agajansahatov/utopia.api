@@ -1,8 +1,6 @@
-package io.github.agajansahatov.utopia.api.models;
+package io.github.agajansahatov.utopia.api.models.responseDTOs;
 
 import com.fasterxml.jackson.annotation.JsonRawValue;
-import io.github.agajansahatov.utopia.api.entities.Category;
-import io.github.agajansahatov.utopia.api.entities.Media;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +8,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
