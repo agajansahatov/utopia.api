@@ -38,7 +38,7 @@ public class ProductControllerTest {
         product.setId(1L);
         product.setTitle("Sample Product");
 
-        given(productService.getProduct(1L)).willReturn(Optional.of(product));
+//        given(productService.getProduct(1L)).willReturn(Optional.of(product));
 
         // When & Then
         mockMvc.perform(get("/api/products/1")
@@ -55,7 +55,7 @@ public class ProductControllerTest {
         product.setId(1L);
         product.setTitle("Sample Product");
 
-        given(productService.getProduct(1L)).willReturn(Optional.of(product));
+//        given(productService.getProduct(1L)).willReturn(Optional.of(product));
 
         // When & Then
         mockMvc.perform(get("/api/products/1?view=default")
@@ -89,7 +89,7 @@ public class ProductControllerTest {
         product.setId(1L);
         product.setTitle("Sample Product");
 
-        given(productService.getProductDetails(1L)).willReturn(Optional.of(product));
+//        given(productService.getProductDetails(1L)).willReturn(Optional<>);
 
         // When & Then
         mockMvc.perform(get("/api/products/1?view=details")

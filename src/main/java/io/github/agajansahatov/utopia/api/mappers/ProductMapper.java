@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.agajansahatov.utopia.api.entities.Product;
 import io.github.agajansahatov.utopia.api.entities.Media;
+import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductDetailsForAdminAndOwnerDTO;
 import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductDetailsForCustomerDTO;
 import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductForCustomerDTO;
 import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductSummaryForCustomerDTO;
@@ -54,6 +55,8 @@ public interface ProductMapper {
 
     @Mapping(target = "price", source = "salesPrice")
     ProductDetailsForCustomerDTO projectionToProductDetailsForCustomerDTO(ProductDetailsProjection projection);
+
+    ProductDetailsForAdminAndOwnerDTO projectionToProductDetailsForAdminAndCustomerDTO(ProductDetailsProjection projection);
 
     @Mapping(target = "price", source = "salesPrice")
     ProductSummaryForCustomerDTO projectionToProductSummaryForCustomerDTO(ProductSummaryProjection projection);

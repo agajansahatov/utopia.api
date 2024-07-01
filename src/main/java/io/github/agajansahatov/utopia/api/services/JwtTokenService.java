@@ -2,7 +2,6 @@ package io.github.agajansahatov.utopia.api.services;
 
 import io.github.agajansahatov.utopia.api.entities.User;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.stream.Collectors;
 
 @Service
 public class JwtTokenService {
@@ -32,7 +30,7 @@ public class JwtTokenService {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("utopia.api")
                 .issuedAt(now)
-                .expiresAt(now.plus(10, ChronoUnit.MINUTES))
+                .expiresAt(now.plus(10, ChronoUnit.DAYS))
                 .subject(fullName)
                 .claim("id", user.getId())
                 .claim("role", role)
