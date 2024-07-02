@@ -2,6 +2,7 @@ package io.github.agajansahatov.utopia.api.controllers;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.github.agajansahatov.utopia.api.services.ProductService;
@@ -18,7 +19,11 @@ public class ProductController {
         if(id == null)
             return ResponseEntity.badRequest()
                     .body("Product id cannot be null.");
-        // Check if the id exists
+
+        if (!productService.exists(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Product is not found");
+        }
 
         if (view.equalsIgnoreCase("default")) {
             return productService.getProduct(id)
@@ -38,7 +43,7 @@ public class ProductController {
                     .orElseGet(() -> ResponseEntity.notFound().build());
         }
 
-        return ResponseEntity.badRequest()
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body("The view param can be unset, 'default', 'details', or 'summary'.");
     }
 }

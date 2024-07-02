@@ -60,4 +60,8 @@ public class ProductService {
 
         return projection.map(productMapper::projectionToProductSummaryForCustomerDTO);
     }
+
+    public boolean exists(Long id) {
+        return productRepository.existsById(id);
+    }
 }

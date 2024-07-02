@@ -19,7 +19,11 @@ public class Application{
 	@Bean
 	CommandLineRunner commandLineRunner(PasswordEncoder passwordEncoder){
 		return args -> {
-			System.out.println(passwordEncoder.encode("123456"));
+			System.out.println();
+			System.out.println("EncodedPassword('123456'): ".concat(passwordEncoder.encode("123456")));
+			System.out.println();
+			System.out.println("Hello World!!!");
+			System.out.println();
 		};
 	}
 }
