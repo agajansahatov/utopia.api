@@ -33,12 +33,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, UserService userService) throws Exception {
-        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("role");
-        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-
         http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/*"))
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/auth").permitAll()
@@ -46,13 +40,24 @@ public class SecurityConfig {
                             .anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(getJwtClaimsConfig()))
                         .jwt(Customizer.withDefaults())
                         .bearerTokenResolver(request -> request.getHeader("x-auth-token"))
                 )
                 .userDetailsService(userService);
 
         return http.build();
+    }
+
+    private JwtAuthenticationConverter getJwtClaimsConfig() {
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("role");
+        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+
+        return jwtAuthenticationConverter;
     }
 
     @Bean

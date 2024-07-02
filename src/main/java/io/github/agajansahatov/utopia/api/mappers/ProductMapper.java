@@ -25,6 +25,7 @@ public interface ProductMapper {
 
     @Mapping(target = "price", source = "salesPrice")
     ProductForCustomerDTO productToProductForCustomerDTO(Product p);
+    ProductForAdminDTO productToProductForAdminDTO(Product p);
 
     @Mapping(target = "price", source = "salesPrice")
     ProductDetailsForCustomerDTO projectionToProductDetailsForCustomerDTO(ProductDetailsProjection p);

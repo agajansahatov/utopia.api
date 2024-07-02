@@ -13,7 +13,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public final class ProductDetailsForAdminDTO implements ProductDetails {
+public final class ProductDetailsForAdminDTO implements ProductDetailsDTO {
     private Long id;
     private String title;
     private BigDecimal originalPrice;

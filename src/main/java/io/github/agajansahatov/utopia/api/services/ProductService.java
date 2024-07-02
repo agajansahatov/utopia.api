@@ -1,10 +1,11 @@
 package io.github.agajansahatov.utopia.api.services;
 
+import io.github.agajansahatov.utopia.api.entities.Product;
 import io.github.agajansahatov.utopia.api.mappers.ProductMapper;
-import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductDetails;
+import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductDTO;
+import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductDetailsDTO;
 import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductForCustomerDTO;
-import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductSummary;
-import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductSummaryForCustomerDTO;
+import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductSummaryDTO;
 import io.github.agajansahatov.utopia.api.models.ProductDetailsProjection;
 import io.github.agajansahatov.utopia.api.models.ProductSummaryProjection;
 import io.github.agajansahatov.utopia.api.repositories.ProductRepository;
@@ -28,12 +29,18 @@ public class ProductService {
         this.productMapper = productMapper;
     }
 
-    public Optional<ProductForCustomerDTO> getProduct(Long id) {
-        return productRepository.findById(id)
-                .map(productMapper::productToProductForCustomerDTO);
+    public Optional<ProductDTO> getProduct(Long id) {
+        Optional<Product> product = productRepository.findById(id);
+
+        String role = getCurrentAuthRole();
+        if(role.equalsIgnoreCase(ROLE_OWNER) || role.equalsIgnoreCase(ROLE_ADMIN)){
+            return product.map(productMapper::productToProductForAdminDTO);
+        }
+
+        return product.map(productMapper::productToProductForCustomerDTO);
     }
 
-    public Optional<ProductDetails> getProductDetails(Long id) {
+    public Optional<ProductDetailsDTO> getProductDetails(Long id) {
         Optional<ProductDetailsProjection> projection = productRepository.findProductDetailsById(id);
 
         String role = getCurrentAuthRole();
@@ -43,7 +50,7 @@ public class ProductService {
         return projection.map(productMapper::projectionToProductDetailsForCustomerDTO);
     }
 
-    public Optional<ProductSummary> getProductSummary(Long id) {
+    public Optional<ProductSummaryDTO> getProductSummary(Long id) {
         Optional<ProductSummaryProjection> projection = productRepository.findProductSummaryById(id);
 
         String role = getCurrentAuthRole();

@@ -13,10 +13,12 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public final class ProductForCustomerDTO implements ProductDTO {
+public final class ProductForAdminDTO implements ProductDTO {
     private Long id;
     private String title;
-    private BigDecimal price;
+    private BigDecimal originalPrice;
+    private BigDecimal salesPrice;
+    private int numberInStock;
     private String description;
     private Date date;
     @JsonRawValue
