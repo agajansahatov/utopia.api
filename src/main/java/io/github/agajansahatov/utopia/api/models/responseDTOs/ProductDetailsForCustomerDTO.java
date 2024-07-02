@@ -13,7 +13,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDetailsForCustomerDTO {
+public final class ProductDetailsForCustomerDTO implements ProductDetails {
     private Long id;
     private String title;
     private BigDecimal price;
@@ -25,7 +25,6 @@ public class ProductDetailsForCustomerDTO {
     private String medias;
     @JsonRawValue
     private String categories;
-    private int numberInStock;
     private int likesCount;
     private int visitsCount;
     private int ordersCount;

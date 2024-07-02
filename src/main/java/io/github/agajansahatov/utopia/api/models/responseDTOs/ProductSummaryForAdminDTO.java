@@ -1,6 +1,5 @@
 package io.github.agajansahatov.utopia.api.models.responseDTOs;
 
-import com.fasterxml.jackson.annotation.JsonRawValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,12 +12,13 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductForCustomerDTO {
+public final class ProductSummaryForAdminDTO implements ProductSummary {
     private Long id;
     private String title;
-    private BigDecimal price;
+    private BigDecimal originalPrice;
+    private BigDecimal salesPrice;
+    private int numberInStock;
     private String description;
     private Date date;
-    @JsonRawValue
-    private String properties;
+    private String mainMedia;
 }

@@ -25,17 +25,19 @@ public class ProductController {
                     .map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.notFound().build());
         }
+
         if (view.equalsIgnoreCase("summary")) {
             return productService.getProductSummary(id)
                     .map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.notFound().build());
         }
+
         if (view.equalsIgnoreCase("details")){
             return productService.getProductDetails(id)
                     .map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.notFound().build());
         }
-        // In case if the view is not equal to default, summary, or details
+
         return ResponseEntity.badRequest()
                 .body("The view param can be unset, 'default', 'details', or 'summary'.");
     }

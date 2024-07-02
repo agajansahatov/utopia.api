@@ -12,7 +12,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductSummaryForCustomerDTO {
+public final class ProductSummaryForCustomerDTO implements ProductSummary {
     private Long id;
     private String title;
     private BigDecimal price;

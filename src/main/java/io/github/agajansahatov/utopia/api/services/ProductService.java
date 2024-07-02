@@ -1,7 +1,9 @@
 package io.github.agajansahatov.utopia.api.services;
 
 import io.github.agajansahatov.utopia.api.mappers.ProductMapper;
+import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductDetails;
 import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductForCustomerDTO;
+import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductSummary;
 import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductSummaryForCustomerDTO;
 import io.github.agajansahatov.utopia.api.models.ProductDetailsProjection;
 import io.github.agajansahatov.utopia.api.models.ProductSummaryProjection;
@@ -31,20 +33,24 @@ public class ProductService {
                 .map(productMapper::productToProductForCustomerDTO);
     }
 
-    public Optional<?> getProductDetails(Long id) {
-        String role = getCurrentAuthRole();
-        log.debug("Role: {}", role);
-
-        if(role.equalsIgnoreCase(ROLE_OWNER) || role.equalsIgnoreCase(ROLE_ADMIN)){
-            Optional<ProductDetailsProjection> projection = productRepository.findProductDetailsById(id);
-            return projection.map(productMapper::projectionToProductDetailsForAdminAndCustomerDTO);
-        }
+    public Optional<ProductDetails> getProductDetails(Long id) {
         Optional<ProductDetailsProjection> projection = productRepository.findProductDetailsById(id);
+
+        String role = getCurrentAuthRole();
+        if(role.equalsIgnoreCase(ROLE_OWNER) || role.equalsIgnoreCase(ROLE_ADMIN)){
+            return projection.map(productMapper::projectionToProductDetailsForAdminDTO);
+        }
         return projection.map(productMapper::projectionToProductDetailsForCustomerDTO);
     }
 
-    public Optional<ProductSummaryForCustomerDTO> getProductSummary(Long id) {
+    public Optional<ProductSummary> getProductSummary(Long id) {
         Optional<ProductSummaryProjection> projection = productRepository.findProductSummaryById(id);
+
+        String role = getCurrentAuthRole();
+        if(role.equalsIgnoreCase(ROLE_OWNER) || role.equalsIgnoreCase(ROLE_ADMIN)){
+            return projection.map(productMapper::projectionToProductSummaryForAdminDTO);
+        }
+
         return projection.map(productMapper::projectionToProductSummaryForCustomerDTO);
     }
 }

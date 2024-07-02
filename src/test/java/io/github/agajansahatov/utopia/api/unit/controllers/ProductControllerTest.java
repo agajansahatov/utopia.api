@@ -2,6 +2,7 @@ package io.github.agajansahatov.utopia.api.unit.controllers;
 
 import io.github.agajansahatov.utopia.api.config.SecurityConfig;
 import io.github.agajansahatov.utopia.api.controllers.ProductController;
+import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductDetails;
 import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductDetailsForCustomerDTO;
 import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductForCustomerDTO;
 import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductSummaryForCustomerDTO;
@@ -89,7 +90,7 @@ public class ProductControllerTest {
         product.setId(1L);
         product.setTitle("Sample Product");
 
-//        given(productService.getProductDetails(1L)).willReturn(Optional<>);
+        given(productService.getProductDetails(1L)).willReturn(Optional.of(product));
 
         // When & Then
         mockMvc.perform(get("/api/products/1?view=details")
