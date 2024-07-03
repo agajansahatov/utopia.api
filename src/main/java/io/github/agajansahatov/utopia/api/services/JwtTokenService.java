@@ -36,8 +36,8 @@ public class JwtTokenService {
                 .issuer("utopia.api")
                 .issuedAt(now)
                 .expiresAt(now.plus(10, ChronoUnit.DAYS))
-                .subject(fullName)
                 .claim("id", user.getId())
+                .subject(fullName)
                 .claim("role", role)
                 .build();
 

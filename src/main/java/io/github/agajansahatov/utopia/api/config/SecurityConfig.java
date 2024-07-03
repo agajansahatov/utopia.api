@@ -40,7 +40,7 @@ public class SecurityConfig {
                             .anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(getJwtClaimsConfig()))
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(getCustomJwtAuthenticationConverter()))
                         .jwt(Customizer.withDefaults())
                         .bearerTokenResolver(request -> request.getHeader("x-auth-token"))
                 )
@@ -49,7 +49,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    private JwtAuthenticationConverter getJwtClaimsConfig() {
+    private JwtAuthenticationConverter getCustomJwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthoritiesClaimName("role");
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");

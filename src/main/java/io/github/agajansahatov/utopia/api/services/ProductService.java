@@ -4,7 +4,6 @@ import io.github.agajansahatov.utopia.api.entities.Product;
 import io.github.agajansahatov.utopia.api.mappers.ProductMapper;
 import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductDTO;
 import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductDetailsDTO;
-import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductForCustomerDTO;
 import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductSummaryDTO;
 import io.github.agajansahatov.utopia.api.models.ProductDetailsProjection;
 import io.github.agajansahatov.utopia.api.models.ProductSummaryProjection;
