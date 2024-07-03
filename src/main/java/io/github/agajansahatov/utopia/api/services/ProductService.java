@@ -32,6 +32,8 @@ public class ProductService {
         Optional<Product> product = productRepository.findById(id);
 
         String role = getCurrentAuthRole();
+        log.debug(role);
+
         if(role.equalsIgnoreCase(ROLE_OWNER) || role.equalsIgnoreCase(ROLE_ADMIN)){
             return product.map(productMapper::productToProductForAdminDTO);
         }

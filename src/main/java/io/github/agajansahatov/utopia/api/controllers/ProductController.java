@@ -16,10 +16,6 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProduct(@PathVariable Long id, @RequestParam(required = false, defaultValue = "default") String view) {
-        if(id == null)
-            return ResponseEntity.badRequest()
-                    .body("Product id cannot be null.");
-
         if (!productService.exists(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Product is not found");

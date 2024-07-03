@@ -1,6 +1,7 @@
 package io.github.agajansahatov.utopia.api.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.github.agajansahatov.utopia.api.models.responseDTOs.ProductForAdminDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
