@@ -22,8 +22,11 @@ public class TestUtils {
 
     private final MockMvc mockMvc;
 
+    private final UserService userService;
+
     public TestUtils(MockMvc mockMvc, PasswordEncoder passwordEncoder, UserService userService) {
         this.mockMvc = mockMvc;
+        this.userService = userService;
 
         user = new User();
         user.setId(1L);
@@ -37,8 +40,6 @@ public class TestUtils {
         role.setName("owner");
 
         user.setRole(role);
-
-        given(userService.loadUserByUsername(user.getContact())).willReturn(user);
     }
 
     public User getTestUser(String roleName) {
@@ -68,17 +69,20 @@ public class TestUtils {
         return password;
     }
 
-    private String getAuthRequest() throws JsonProcessingException {
+    public String getAuthRequest(String contact, String password) throws JsonProcessingException {
         AuthRequest authRequest = new AuthRequest();
-        authRequest.setContact(user.getContact());
+        authRequest.setContact(contact);
         authRequest.setPassword(password);
 
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(authRequest);
     }
 
-    private String getToken() throws Exception {
-        String authRequestAsJson = getAuthRequest();
+    private String getTokenBySendingRequest() throws Exception {
+        given(userService.loadUserByUsername(user.getContact())).willReturn(user);
+
+        String authRequestAsJson = getAuthRequest(user.getContact(), getPlainUserPassword());
+
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(authRequestAsJson))
@@ -91,20 +95,20 @@ public class TestUtils {
         role.setId((byte) 1);
         role.setName("owner");
         user.setRole(role);
-        return getToken();
+        return getTokenBySendingRequest();
     }
 
     public String getJwtTokenAsAdmin() throws Exception {
         role.setId((byte) 2);
         role.setName("admin");
         user.setRole(role);
-        return getToken();
+        return getTokenBySendingRequest();
     }
 
     public String getJwtTokenAsCustomer() throws Exception {
         role.setId((byte) 3);
         role.setName("customer");
         user.setRole(role);
-        return getToken();
+        return getTokenBySendingRequest();
     }
 }

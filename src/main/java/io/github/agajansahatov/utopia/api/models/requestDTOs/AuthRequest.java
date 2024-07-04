@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 public class AuthRequest {
     @NotBlank(message = "Contact is required. You should either provide an email or a phone number.")
+    @Size(min = 7, max = 255, message = "Contact must be between 7 and 255 characters")
     @Contact(message = "Contact should be a valid email or phone number")
     private String contact;
 
