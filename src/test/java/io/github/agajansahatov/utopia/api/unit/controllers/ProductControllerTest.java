@@ -46,7 +46,7 @@ public class ProductControllerTest {
 
     private Product product;
 
-    private String getProductUrl;
+    private String productUrl;
 
     private final ProductMapper productMapper = new ProductMapperImpl();
 
@@ -61,12 +61,12 @@ public class ProductControllerTest {
         product = new Product();
         product.setId(1L);
         product.setTitle("Sample Product");
-        product.setOriginalPrice(BigDecimal.valueOf(10));
-        product.setSalesPrice(BigDecimal.valueOf(15));
+        product.setOriginalPrice(BigDecimal.valueOf(10.00));
+        product.setSalesPrice(BigDecimal.valueOf(15.00));
 
         given(productService.exists(product.getId())).willReturn(true);
 
-        getProductUrl = String.format("/api/products/%d", product.getId());
+        productUrl = String.format("%s/%d", ProductController.ENDPOINT_PATH, product.getId());
     }
 
     @Test
@@ -74,7 +74,7 @@ public class ProductControllerTest {
         ProductDTO productDTO = productMapper.productToProductForCustomerDTO(product);
         given(productService.getProduct(product.getId())).willReturn(Optional.of(productDTO));
 
-        mockMvc.perform(get(getProductUrl).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get(productUrl).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(equalTo(product.getId().intValue()))))
@@ -90,18 +90,18 @@ public class ProductControllerTest {
         TestUtils testUtils = new TestUtils(mockMvc, passwordEncoder, userService);
         String jwtToken = testUtils.getJwtTokenAsOwner();
 
-        mockMvc.perform(get(getProductUrl).header("x-auth-token", jwtToken).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get(productUrl).header("x-auth-token", jwtToken).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(equalTo(product.getId().intValue()))))
                 .andExpect(jsonPath("$.title", is(product.getTitle())))
-                .andExpect(jsonPath("$.originalPrice", is(product.getOriginalPrice().intValue())))
-                .andExpect(jsonPath("$.salesPrice", is(product.getSalesPrice().intValue())));
+                .andExpect(jsonPath("$.originalPrice", is(product.getOriginalPrice().doubleValue())))
+                .andExpect(jsonPath("$.salesPrice", is(product.getSalesPrice().doubleValue())));
     }
 
     @Test
     void getProduct_WithIncorrectAuth_Returns401() throws Exception {
-        mockMvc.perform(get(getProductUrl)
+        mockMvc.perform(get(productUrl)
                         .header("x-auth-token", "invalid_jwt_token")
                         .accept(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isUnauthorized());
@@ -112,14 +112,15 @@ public class ProductControllerTest {
         Long invalidId = 999L;
         given(productService.exists(invalidId)).willReturn(false);
 
-        mockMvc.perform(get(String.format("/api/products/%d", invalidId))
+        mockMvc.perform(get(String.format("%s/%d", ProductController.ENDPOINT_PATH, invalidId))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void getProduct_WithIncorrectView_Returns400() throws Exception {
-        mockMvc.perform(get(String.format("%s?view=blabla", getProductUrl))
+        mockMvc.perform(get(productUrl)
+                .queryParam("view", "blabla")
                 .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isBadRequest());
     }
@@ -129,7 +130,8 @@ public class ProductControllerTest {
         ProductDTO productDTO = productMapper.productToProductForCustomerDTO(product);
         given(productService.getProduct(product.getId())).willReturn(Optional.of(productDTO));
 
-        mockMvc.perform(get(String.format("%s?view=default", getProductUrl))
+        mockMvc.perform(get(productUrl)
+                        .queryParam("view", "default")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -142,7 +144,8 @@ public class ProductControllerTest {
         ProductSummaryDTO productSummaryDTO = productMapper.productToProductSummaryForCustomerDTO(product);
         given(productService.getProductSummary(product.getId())).willReturn(Optional.of(productSummaryDTO));
 
-        mockMvc.perform(get(String.format("%s?view=summary", getProductUrl))
+        mockMvc.perform(get(productUrl)
+                        .queryParam("view", "summary")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -155,7 +158,8 @@ public class ProductControllerTest {
         ProductDetailsDTO productDetailsDTO = productMapper.productToProductDetailsForCustomerDTO(product);
         given(productService.getProductDetails(product.getId())).willReturn(Optional.of(productDetailsDTO));
 
-        mockMvc.perform(get(String.format("%s?view=details", getProductUrl))
+        mockMvc.perform(get(productUrl)
+                        .queryParam("view", "details")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

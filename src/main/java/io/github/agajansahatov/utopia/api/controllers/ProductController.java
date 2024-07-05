@@ -9,8 +9,9 @@ import io.github.agajansahatov.utopia.api.services.ProductService;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping(ProductController.ENDPOINT_PATH)
 public class ProductController {
+    public static final String ENDPOINT_PATH = "/api/products";
 
     private final ProductService productService;
 
