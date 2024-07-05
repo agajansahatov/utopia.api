@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping(AuthController.ENDPOINT_PATH)
 @RequiredArgsConstructor
 public class AuthController {
-
+    public static final String ENDPOINT_PATH = "/api/auth";
     private final AuthenticationManager authenticationManager;
     private final JwtTokenService tokenService;
 

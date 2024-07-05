@@ -15,6 +15,9 @@ public class RolesConfig {
 
     public static String getCurrentAuthRole() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return null;
+        }
         return authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .findFirst()
