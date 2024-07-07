@@ -29,11 +29,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-configuration-processor'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
 
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
@@ -47,3 +45,23 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+//sourceSets {
+//	main {
+//		java {
+//			srcDir 'src/main/java'
+//		}
+//		resources {
+//			srcDir 'src/main/resources'
+//		}
+//	}
+//	test {
+//		java {
+//			srcDir 'src/test/java'
+//		}
+//		resources {
+//			srcDir 'src/test/resources'
+//			srcDir 'src/main/java/io/github/agajansahatov/utopia/api/sql' // Add this line
+//		}
+//	}
+//}

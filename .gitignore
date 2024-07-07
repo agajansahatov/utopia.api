@@ -41,6 +41,8 @@ out/
 
 application.properties
 /src/main/resources/application.properties
+application-test.properties
+/src/main/resources/application-test.properties
 /src/main/resources/certs/
 private.pem
 public.pem

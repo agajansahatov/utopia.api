@@ -1,8 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `utopia` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `utopia`;
+CREATE DATABASE  IF NOT EXISTS `utopia_test` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `utopia_test`;
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
--- Host: localhost    Database: utopia
+-- Host: localhost    Database: utopia_test
 -- ------------------------------------------------------
 -- Server version	8.0.35
 
@@ -318,11 +318,11 @@ CREATE TABLE `users` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping events for database 'utopia'
+-- Dumping events for database 'utopia_test'
 --
 
 --
--- Dumping routines for database 'utopia'
+-- Dumping routines for database 'utopia_test'
 --
 /*!50003 DROP FUNCTION IF EXISTS `count_products_by_category` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -684,4 +684,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-07-07  9:28:14
+-- Dump completed on 2024-07-07  9:29:17
