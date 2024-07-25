@@ -21,16 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
     public static final String ENDPOINT_PATH = "/api/auth";
-    private final AuthenticationManager authenticationManager;
     private final JwtTokenService tokenService;
 
     @PostMapping
     public ResponseEntity<?> authenticate(@Valid @RequestBody AuthRequest authRequest) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authRequest.getContact(), authRequest.getPassword())
-            );
-            return ResponseEntity.ok(tokenService.generateToken(authentication));
+            return ResponseEntity.ok(tokenService.generateToken(authRequest));
         } catch (AuthenticationException e) {
             throw new BadCredentialsException("Invalid credentials");
         }
