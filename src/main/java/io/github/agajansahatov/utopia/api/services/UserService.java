@@ -41,10 +41,18 @@
                     .orElseThrow(() -> new UsernameNotFoundException("User not found with contact: " + username));
         }
 
-        public User registerUser(User user) {
+        public User register(User user) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             return userRepository.save(user);
         }
+
+        public User updateUser(User updatedUser) {
+            // You will need to check if the user exists or not at first
+
+            updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+            return userRepository.save(updatedUser);
+        }
+
 
         public boolean userExists(String contact) {
             return userRepository.findByContact(contact).isPresent();

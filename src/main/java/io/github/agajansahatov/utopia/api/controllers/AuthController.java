@@ -23,9 +23,14 @@ public class AuthController {
     @PostMapping
     public ResponseEntity<?> authenticate(@Valid @RequestBody AuthRequest authRequest) {
         try {
+            // The authenticationManager in the userService.generateToken() method validates the user credentials
             return ResponseEntity.ok(userService.generateToken(authRequest.getContact(), authRequest.getPassword()));
-        } catch (AuthenticationException e) {
+        } catch (BadCredentialsException e) {
             throw new BadCredentialsException("Invalid credentials");
+        } catch (AuthenticationException e) {
+            throw new RuntimeException("Authentication failed for some reason in the server", e);
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred", e);
         }
     }
 }
